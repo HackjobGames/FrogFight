@@ -8,6 +8,8 @@ public class RunningState : State
     protected float velocity;
     private float horizontal_input;
     private float vertical_input;
+    private float turnSpeed = .1f;
+    private Transform cam;
     public RunningState(Character character, StateMachine stateMachine) : base(character, stateMachine){
 
     }
@@ -16,6 +18,7 @@ public class RunningState : State
     {
         base.Enter();
         horizontal_input = vertical_input = 0.0f;
+        cam = Camera.main.gameObject.transform;
     }
 
     public override void Exit()
@@ -46,12 +49,16 @@ public class RunningState : State
         
         Vector3 input_vector = new Vector3(horizontal_input,0,vertical_input);
         float speed_modifier = input_vector.magnitude;
-        Vector3 direction = input_vector.normalized;
-
+        Vector3 dir = input_vector.normalized;
+        print(input_vector);
         if(input_vector.magnitude >= 0.1f){
-            character.Move(speed_modifier, direction);
+          float targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
+          float angle = Mathf.SmoothDampAngle(character.transform.eulerAngles.y, targetAngle, ref turnSpeed, .1f);
+          character.transform.rotation = Quaternion.Euler(0f, angle, 0f); 
+          Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+          character.Move(speed_modifier, moveDir.normalized);
         } else {
-            character.Stop();
+          character.Stop();
         }
     }
 }
