@@ -1,0 +1,37 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class JumpingState : State
+{
+    public JumpingState(Character character, StateMachine stateMachine) : base(character, stateMachine){
+
+    }
+
+    public override void Enter()
+    {
+        base.Enter();
+        character.transform.Translate(Vector3.up * + .11f);
+        character.ApplyImpulse(Vector3.up * character.jump_force);
+    }
+    public override void Exit()
+    {
+        base.Exit();
+    }
+
+    public override void HandleInput()
+    {
+        base.HandleInput();
+        if(character.collision.on_ground){
+            state_machine.ChangeState(character.running_state);
+        }
+    }
+    public override void LogicUpdate()
+    {
+        base.LogicUpdate();
+    }
+    public override void PhysicsUpdate()
+    {
+        base.PhysicsUpdate();
+    }
+}
