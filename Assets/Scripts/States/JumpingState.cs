@@ -6,6 +6,7 @@ public class JumpingState : State
 {
     private float charge;
     private Vector3 angle;
+    private int ticks = 100;
     public JumpingState(Character character, StateMachine stateMachine) : base(character, stateMachine){
     }
 
@@ -14,6 +15,7 @@ public class JumpingState : State
         base.Enter();
         charge = 0;
         character.jump_arc.enabled = true;
+        character.jump_arc.positionCount = ticks;
     }
     public override void Exit()
     {
@@ -35,24 +37,19 @@ public class JumpingState : State
       base.LogicUpdate();
       charge = (character.max_jump_force >= charge) ? charge + Time.deltaTime : character.max_jump_force;
       angle = new Vector3(Camera.main.transform.forward.x, 1, Camera.main.transform.forward.z);
-      character.jump_arc.positionCount = 300;
-      character.jump_arc.SetPositions(CalculateArcArray());
     }
 
     public override void PhysicsUpdate()
     {
-        base.PhysicsUpdate();
+      base.PhysicsUpdate();
+      character.jump_arc.SetPositions(CalculateArcArray());
     }
     Vector3[] CalculateArcArray()
     {
         float grav = Mathf.Abs(Physics.gravity.y);
-        print(grav);
-        int ticks = 300;
         Vector3[] arcArray = new Vector3[ticks];
         float launchAngle = Mathf.Atan(angle.y/Mathf.Sqrt((angle.x * angle.x) + (angle.z * angle.z)));
-        print(launchAngle);
         float velocity = charge * angle.magnitude;
-        
         for (int t = 0; t < ticks; t++)
         {
             float val = t * Time.deltaTime;
