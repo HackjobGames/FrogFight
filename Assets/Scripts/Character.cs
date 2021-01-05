@@ -5,7 +5,7 @@ using UnityEngine;
 public class Character : MonoBehaviour
 {
     public StateMachine movement_machine;
-    public State running_state;
+    public State standing_state;
     public State jumping_state;
     public State falling_state;
     [SerializeField]
@@ -21,7 +21,9 @@ public class Character : MonoBehaviour
     [SerializeField]
     private float stop_speed = 11f;
     [SerializeField]
-    public float jump_force = 11f;
+    public float max_jump_force = 15f;
+    [SerializeField]
+    public float jump_charge_speed = 10f;
     public Collision collision;
 
     private Rigidbody rigid_body;
@@ -46,11 +48,11 @@ public class Character : MonoBehaviour
         collision = GetComponent<Collision>();
 
         movement_machine = new StateMachine();
-        running_state = new  RunningState(this,movement_machine);
+        standing_state = new  StandingState(this,movement_machine);
         jumping_state = new JumpingState(this,movement_machine);
         falling_state = new FallingState(this,movement_machine);
 
-        movement_machine.Initialize(running_state);
+        movement_machine.Initialize(standing_state);
     }
 
 
