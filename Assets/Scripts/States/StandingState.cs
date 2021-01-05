@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FallingState : State
+public class StandingState : State
 {
-    public string name = "Falling";
-    public FallingState(Character character, StateMachine stateMachine) : base(character, stateMachine){
+    public StandingState(Character character, StateMachine stateMachine) : base(character, stateMachine){
 
     }
 
@@ -21,17 +20,18 @@ public class FallingState : State
     public override void HandleInput()
     {
         base.HandleInput();
+        if(Input.GetButtonDown("Jump")&&character.collision.on_ground){
+            state_machine.ChangeState(character.jumping_state);
+        } else if(!character.collision.on_ground){
+            state_machine.ChangeState(character.falling_state);
+        }
     }
     public override void LogicUpdate()
     {
         base.LogicUpdate();
-        if(character.collision.on_ground){
-            state_machine.ChangeState(character.standing_state);
-        }
     }
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
     }
 }
-
