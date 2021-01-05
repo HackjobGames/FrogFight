@@ -8,6 +8,7 @@ public class Character : MonoBehaviour
     public State standing_state;
     public State jumping_state;
     public State falling_state;
+    public LineRenderer jump_arc;
     [SerializeField]
     private float gravity = -9.81f;
     [SerializeField]
@@ -46,6 +47,7 @@ public class Character : MonoBehaviour
     {
         rigid_body = GetComponent<Rigidbody>();
         collision = GetComponent<Collision>();
+        jump_arc.enabled = false;
 
         movement_machine = new StateMachine();
         standing_state = new  StandingState(this,movement_machine);
