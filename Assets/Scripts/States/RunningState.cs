@@ -38,8 +38,6 @@ public class RunningState : State
         base.LogicUpdate();
         if(Input.GetButtonDown("Jump")&&character.collision.on_ground){
             state_machine.ChangeState(character.jumping_state);
-        } else if(Input.GetMouseButtonDown(0)){
-            state_machine.ChangeState(character.swinging_state);
         } else if(!character.collision.on_ground){
             state_machine.ChangeState(character.falling_state);
         }
