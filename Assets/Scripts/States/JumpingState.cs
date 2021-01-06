@@ -4,62 +4,36 @@ using UnityEngine;
 
 public class JumpingState : State
 {
-    private float charge;
-    private Vector3 angle;
-    private int ticks = 100;
     public JumpingState(Character character, StateMachine stateMachine) : base(character, stateMachine){
+
     }
 
     public override void Enter()
     {
         base.Enter();
-        charge = 0;
-        character.jump_arc.enabled = true;
-        character.jump_arc.positionCount = ticks;
+        character.transform.Translate(Vector3.up * + .11f);
+        character.ApplyImpulse(Vector3.up * character.jump_force);
     }
     public override void Exit()
     {
         base.Exit();
-        character.jump_arc.enabled = false;
     }
 
     public override void HandleInput()
     {
         base.HandleInput();
-        if(Input.GetButtonUp("Jump")) {
-          character.transform.rotation = Quaternion.Euler(0f, Camera.main.transform.rotation.eulerAngles.y, 0f); 
-          character.ApplyImpulse(angle * charge);
-          state_machine.ChangeState(character.falling_state);
-        } else if(Input.GetMouseButtonDown(0)){
+        if(character.collision.on_ground){
+            state_machine.ChangeState(character.running_state);
+        }else if(Input.GetMouseButtonDown(0)){
             state_machine.ChangeState(character.swinging_state);
         }
     }
     public override void LogicUpdate()
     {
-      base.LogicUpdate();
-      charge = (character.max_jump_force >= charge) ? charge + Time.deltaTime : character.max_jump_force;
-      angle = new Vector3(Camera.main.transform.forward.x, 1, Camera.main.transform.forward.z);
+        base.LogicUpdate();
     }
-
     public override void PhysicsUpdate()
     {
-      base.PhysicsUpdate();
-      character.jump_arc.SetPositions(CalculateArcArray());
-    }
-    Vector3[] CalculateArcArray()
-    {
-        float grav = Mathf.Abs(Physics.gravity.y);
-        Vector3[] arcArray = new Vector3[ticks];
-        float launchAngle = Mathf.Atan(angle.y/Mathf.Sqrt((angle.x * angle.x) + (angle.z * angle.z)));
-        float velocity = charge * angle.magnitude;
-        for (int t = 0; t < ticks; t++)
-        {
-            float val = t * Time.deltaTime;
-            arcArray[t] = new Vector3(angle.x * charge * val, (velocity * val * Mathf.Sin(launchAngle)) - (.5f * grav * val * val), angle.z * charge * val) + character.transform.position;
-        }
-
-        return arcArray;
+        base.PhysicsUpdate();
     }
 }
-
-

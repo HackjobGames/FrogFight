@@ -5,11 +5,10 @@ using UnityEngine;
 public class Character : MonoBehaviour
 {
     public StateMachine movement_machine;
-    public State standing_state;
+    public State running_state;
     public State jumping_state;
     public State swinging_state;
     public State falling_state;
-    public LineRenderer jump_arc;
     [SerializeField]
     private float gravity = -9.81f;
     [SerializeField]
@@ -24,9 +23,7 @@ public class Character : MonoBehaviour
     private float stop_speed = 11f;
     [SerializeField]
     private float max_tongue_distance = 100f;
-    public float max_jump_force = 15f;
-    [SerializeField]
-    public float jump_charge_speed = 10f;
+    public float jump_force = 11f;
     public Collision collision;
     [SerializeField]
     private LineRenderer tongue;
@@ -95,15 +92,14 @@ public class Character : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         rigid_body = GetComponent<Rigidbody>();
         collision = GetComponent<Collision>();
-        jump_arc.enabled = false;
 
         movement_machine = new StateMachine();
-        standing_state = new  StandingState(this,movement_machine);
+        running_state = new  RunningState(this,movement_machine);
         jumping_state = new JumpingState(this,movement_machine);
         falling_state = new FallingState(this,movement_machine);
         swinging_state = new SwingingState(this,movement_machine);
 
-        movement_machine.Initialize(standing_state);
+        movement_machine.Initialize(running_state);
     }
 
 

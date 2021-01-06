@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class FallingState : State
 {
-    public string name = "Falling";
     public FallingState(Character character, StateMachine stateMachine) : base(character, stateMachine){
 
     }
