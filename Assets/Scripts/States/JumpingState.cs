@@ -24,6 +24,8 @@ public class JumpingState : State
         base.HandleInput();
         if(character.collision.on_ground){
             state_machine.ChangeState(character.running_state);
+        }else if(Input.GetMouseButtonDown(0)){
+            state_machine.ChangeState(character.swinging_state);
         }
     }
     public override void LogicUpdate()
