@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StandingState : State
+public class IdleState : State
 {
-    public StandingState(Character character, StateMachine stateMachine) : base(character, stateMachine){
+    public IdleState(Character character, StateMachine stateMachine) : base(character, stateMachine){
 
     }
 
@@ -20,10 +20,10 @@ public class StandingState : State
     public override void HandleInput()
     {
         base.HandleInput();
-        if(Input.GetButtonDown("Jump")&&character.collision.on_ground){
-            state_machine.ChangeState(character.jumping_state);
-        } else if(!character.collision.on_ground){
-            state_machine.ChangeState(character.falling_state);
+        if(Input.GetMouseButtonDown(1)){
+            state_machine.ChangeState(character.aiming_state);
+        } else if(Input.GetMouseButtonDown(0)){
+            state_machine.ChangeState(character.grappling_state);
         }
     }
     public override void LogicUpdate()

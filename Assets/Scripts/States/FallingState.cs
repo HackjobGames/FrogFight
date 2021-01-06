@@ -27,8 +27,6 @@ public class FallingState : State
         base.LogicUpdate();
         if(character.collision.on_ground){
             state_machine.ChangeState(character.standing_state);
-        } else if(Input.GetMouseButtonDown(0)){
-            state_machine.ChangeState(character.swinging_state);
         }
     }
     public override void PhysicsUpdate()

@@ -30,8 +30,6 @@ public class JumpingState : State
           character.transform.rotation = Quaternion.Euler(0f, Camera.main.transform.rotation.eulerAngles.y, 0f); 
           character.ApplyImpulse(angle * charge);
           state_machine.ChangeState(character.falling_state);
-        }else if(Input.GetMouseButtonDown(0)){
-          state_machine.ChangeState(character.swinging_state);
         }
     }
     public override void LogicUpdate()

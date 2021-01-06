@@ -9,6 +9,11 @@ public class Character : MonoBehaviour
     public State jumping_state;
     public State falling_state;
     public State swinging_state;
+
+    public StateMachine action_machine;    
+    public State aiming_state;
+    public State grappling_state;
+    public State idle_state;
     public LineRenderer jump_arc;
     [SerializeField]
     private float gravity = -9.81f;
@@ -86,6 +91,7 @@ public class Character : MonoBehaviour
     }
 
     public void UpdateTonguePositions(){
+        tongue.positionCount = 2;
         tongue.SetPosition(0,mouth.position);
         tongue.SetPosition(1,grapple_point);
     }
@@ -103,6 +109,14 @@ public class Character : MonoBehaviour
         swinging_state = new SwingingState(this,movement_machine);
 
         movement_machine.Initialize(standing_state);
+
+        action_machine = new StateMachine();
+
+        idle_state = new IdleState(this, action_machine);
+        aiming_state = new AimingState(this, action_machine);
+        grappling_state = new GrappleState(this, action_machine);
+
+        action_machine.Initialize(idle_state);
     }
 
 
@@ -111,11 +125,17 @@ public class Character : MonoBehaviour
         movement_machine.cur_state.HandleInput();
 
         movement_machine.cur_state.LogicUpdate();
+
+        action_machine.cur_state.HandleInput();
+
+        action_machine.cur_state.LogicUpdate();
     }
 
     private void FixedUpdate() 
     {
         movement_machine.cur_state.PhysicsUpdate();
+
+        action_machine.cur_state.PhysicsUpdate();
 
         rigid_body.AddForce(Vector3.up * gravity,ForceMode.Acceleration);
     }
