@@ -42,6 +42,8 @@ public class RunningState : State
             state_machine.ChangeState(character.swinging_state);
         } else if(!character.collision.on_ground){
             state_machine.ChangeState(character.falling_state);
+        } else if ((new Vector3(horizontal_input,0,vertical_input)).magnitude <.1f) {
+            state_machine.ChangeState(character.standing_state);
         }
     }
 
