@@ -56,6 +56,9 @@ public class Character : MonoBehaviour
     [SerializeField]
     private GameObject crosshair;
 
+    private float tongue_distance;
+    private Vector3 mouthDiff;
+
     public void Move(float speed_modifier, Vector3 direction){
         if(Mathf.Abs(rigid_body.velocity.magnitude) > max_speed) {
             rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, direction * speed * speed_modifier, dec_speed * Time.deltaTime);
@@ -88,12 +91,12 @@ public class Character : MonoBehaviour
                     joint.autoConfigureConnectedAnchor = false;
                     joint.connectedAnchor = hit_location.transform.position;
                 }
-                float dist_from_point = Vector3.Distance(player.position, grapple_point);
-                joint.maxDistance = dist_from_point * .8f;
-                joint.minDistance = dist_from_point * .3f;
+                tongue_distance = Vector3.Distance(player.position, grapple_point);
+                joint.minDistance = 0;
+                joint.minDistance = tongue_distance;
 
-                joint.spring = 10f;
-                joint.damper = 7f;
+                joint.spring = 999f;
+                joint.damper = 0f;
                 joint.massScale = 4.5f;
 
                 tongue.positionCount = 2;
@@ -113,10 +116,16 @@ public class Character : MonoBehaviour
         Destroy(hit_location);
     }
 
+    public void RetractTongue() {
+      joint.minDistance -= .1f;
+    }
+
     public void UpdateTonguePositions(){
         tongue.positionCount = 2;
+        Vector3 diff = hit_location.transform.position - mouth.position;
         tongue.SetPosition(0,mouth.position);
         tongue.SetPosition(1,hit_location.transform.position);
+        
     }
 
     public void activate_main_camera(){
@@ -132,6 +141,7 @@ public class Character : MonoBehaviour
     }
     private void Start()
     {
+        mouthDiff = player.transform.position - mouth.position;
         Cursor.lockState = CursorLockMode.Locked;
         rigid_body = GetComponent<Rigidbody>();
         collision = GetComponent<Collision>();

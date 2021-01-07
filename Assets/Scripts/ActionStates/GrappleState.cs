@@ -27,6 +27,8 @@ public class GrappleState : State
         base.HandleInput();
         if(Input.GetMouseButtonUp(0)){
             state_machine.ChangeState(character.idle_state);
+        } else if (Input.mouseScrollDelta.y > 0f ) {
+          character.RetractTongue();
         }
     }
     public override void LogicUpdate()
