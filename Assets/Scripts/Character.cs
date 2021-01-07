@@ -49,6 +49,13 @@ public class Character : MonoBehaviour
     [SerializeField]
     private Transform player;
     private GameObject hit_location;
+    [SerializeField]
+    private Cinemachine.CinemachineFreeLook cam;
+    [SerializeField]
+    private Cinemachine.CinemachineFreeLook zoom_cam;
+    [SerializeField]
+    private GameObject crosshair;
+
     public void Move(float speed_modifier, Vector3 direction){
         if(Mathf.Abs(rigid_body.velocity.magnitude) > max_speed) {
             rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, direction * speed * speed_modifier, dec_speed * Time.deltaTime);
@@ -110,6 +117,18 @@ public class Character : MonoBehaviour
         tongue.positionCount = 2;
         tongue.SetPosition(0,mouth.position);
         tongue.SetPosition(1,hit_location.transform.position);
+    }
+
+    public void activate_main_camera(){
+        cam.enabled = true;
+        zoom_cam.enabled = false;
+        crosshair.SetActive(false);
+    }
+
+    public void activate_zoom_camera(){
+        cam.enabled = false;
+        zoom_cam.enabled = true;
+        crosshair.SetActive(true);
     }
     private void Start()
     {
