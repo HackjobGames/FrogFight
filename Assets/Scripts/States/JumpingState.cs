@@ -35,7 +35,7 @@ public class JumpingState : State
     public override void LogicUpdate()
     {
       base.LogicUpdate();
-      charge = (character.max_jump_force >= charge) ? charge + Time.deltaTime : character.max_jump_force;
+      charge = (character.max_jump_force >= charge) ? charge + character.jump_charge_speed * Time.deltaTime : character.max_jump_force;
       angle = new Vector3(Camera.main.transform.forward.x, 1, Camera.main.transform.forward.z);
     }
 
