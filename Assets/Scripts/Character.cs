@@ -48,6 +48,7 @@ public class Character : MonoBehaviour
     private Transform main_camera;
     [SerializeField]
     private Transform player;
+    private GameObject hit_location;
     public void Move(float speed_modifier, Vector3 direction){
         if(Mathf.Abs(rigid_body.velocity.magnitude) > max_speed) {
             rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, direction * speed * speed_modifier, dec_speed * Time.deltaTime);
@@ -63,15 +64,26 @@ public class Character : MonoBehaviour
     public void ApplyImpulse(Vector3 force){
         rigid_body.AddForce(force, ForceMode.Impulse);
     }
-    public void StartGrapple(){
-        RaycastHit hit;
-
-        if(Physics.Raycast(main_camera.position, main_camera.forward, out hit, max_tongue_distance, is_grappleable)){
-            grapple_point = hit.point;
-            joint = player.gameObject.AddComponent<SpringJoint>();
-            joint.autoConfigureConnectedAnchor = false;
-            joint.connectedAnchor = grapple_point;
-
+    public bool StartGrapple(){
+        RaycastHit camera_hit;
+        RaycastHit player_hit;
+        if(Physics.Raycast(main_camera.position, main_camera.forward, out camera_hit, max_tongue_distance, is_grappleable)){
+            hit_location = new GameObject();
+            if(Physics.Raycast(mouth.position, (camera_hit.point- mouth.position).normalized, out player_hit, max_tongue_distance, is_grappleable)){
+                if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("MoveableObject")){
+                    hit_location.transform.position = player_hit.point;
+                    hit_location.transform.parent = player_hit.transform;
+                    joint = player_hit.transform.gameObject.AddComponent<SpringJoint>();
+                    joint.autoConfigureConnectedAnchor = false;
+                    joint.connectedAnchor = player.position;
+                } else if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground")){
+                    hit_location.transform.position = player_hit.point;
+                    hit_location.transform.parent = player_hit.transform;
+                    joint = player.gameObject.AddComponent<SpringJoint>();
+                    joint.autoConfigureConnectedAnchor = false;
+                    joint.connectedAnchor = hit_location.transform.position;
+                }
+            }
             float dist_from_point = Vector3.Distance(player.position, grapple_point);
             joint.maxDistance = dist_from_point * .8f;
             joint.minDistance = dist_from_point * .3f;
@@ -81,6 +93,9 @@ public class Character : MonoBehaviour
             joint.massScale = 4.5f;
 
             tongue.positionCount = 2;
+            return true;
+        } else {
+            return false;
         }
 
     }
@@ -88,12 +103,13 @@ public class Character : MonoBehaviour
     public void StopGrapple(){
         tongue.positionCount = 0;
         Destroy(joint);
+        Destroy(hit_location);
     }
 
     public void UpdateTonguePositions(){
         tongue.positionCount = 2;
         tongue.SetPosition(0,mouth.position);
-        tongue.SetPosition(1,grapple_point);
+        tongue.SetPosition(1,hit_location.transform.position);
     }
     private void Start()
     {

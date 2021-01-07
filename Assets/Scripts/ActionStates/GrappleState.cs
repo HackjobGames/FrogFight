@@ -11,7 +11,9 @@ public class GrappleState : State
     public override void Enter()
     {
         base.Enter();
-        character.StartGrapple();
+        if(!character.StartGrapple()){
+            state_machine.ChangeState(character.idle_state);
+        }
     }
     public override void Exit()
     {
