@@ -68,32 +68,32 @@ public class Character : MonoBehaviour
         RaycastHit camera_hit;
         RaycastHit player_hit;
         if(Physics.Raycast(main_camera.position, main_camera.forward, out camera_hit, max_tongue_distance, is_grappleable)){
-            hit_location = new GameObject();
             if(Physics.Raycast(mouth.position, (camera_hit.point- mouth.position).normalized, out player_hit, max_tongue_distance, is_grappleable)){
+                hit_location = new GameObject();
+                hit_location.transform.position = player_hit.point;
+                hit_location.transform.parent = player_hit.transform;
                 if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("MoveableObject")){
-                    hit_location.transform.position = player_hit.point;
-                    hit_location.transform.parent = player_hit.transform;
                     joint = player_hit.transform.gameObject.AddComponent<SpringJoint>();
                     joint.autoConfigureConnectedAnchor = false;
                     joint.connectedAnchor = player.position;
                 } else if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground")){
-                    hit_location.transform.position = player_hit.point;
-                    hit_location.transform.parent = player_hit.transform;
                     joint = player.gameObject.AddComponent<SpringJoint>();
                     joint.autoConfigureConnectedAnchor = false;
                     joint.connectedAnchor = hit_location.transform.position;
                 }
+                float dist_from_point = Vector3.Distance(player.position, grapple_point);
+                joint.maxDistance = dist_from_point * .8f;
+                joint.minDistance = dist_from_point * .3f;
+
+                joint.spring = 10f;
+                joint.damper = 7f;
+                joint.massScale = 4.5f;
+
+                tongue.positionCount = 2;
+
+                return true;
             }
-            float dist_from_point = Vector3.Distance(player.position, grapple_point);
-            joint.maxDistance = dist_from_point * .8f;
-            joint.minDistance = dist_from_point * .3f;
-
-            joint.spring = 10f;
-            joint.damper = 7f;
-            joint.massScale = 4.5f;
-
-            tongue.positionCount = 2;
-            return true;
+            return false;
         } else {
             return false;
         }
