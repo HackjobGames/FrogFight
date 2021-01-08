@@ -19,7 +19,7 @@ public class GrappleState : State
         } else {
             if(character.collision.on_ground){
                 grapple_engaged = true;
-                character.enable_tongue();
+                character.EnableTongue();
             }
         }
     }
@@ -43,6 +43,11 @@ public class GrappleState : State
         base.LogicUpdate();
         character.UpdateTonguePositions();
         if(grapple_engaged){
+            if(character.collision.on_ground){
+                character.DisableTongue(grapple_engaged);
+                grapple_engaged = false;
+            }
+
             if(character.rigid_body.velocity.y < 0){
                 character.increase_gravity();
             } else if(character.rigid_body.velocity.y >= 0){
@@ -51,7 +56,7 @@ public class GrappleState : State
         } else {
             if(character.rigid_body.velocity.y <= 0 || character.cur_tongue_distance > character.initial_tongue_distance){
                 grapple_engaged = true;
-                character.enable_tongue();
+                character.EnableTongue();
             }
         }
 

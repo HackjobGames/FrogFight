@@ -99,15 +99,17 @@ public class Character : MonoBehaviour
 
     }
 
-    public void enable_tongue(){
+    public void EnableTongue(){
         if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("MoveableObject")){
             joint = player_hit.transform.gameObject.AddComponent<SpringJoint>();
             joint.autoConfigureConnectedAnchor = false;
             joint.connectedAnchor = player.position;
+            Debug.Log("tongue enabled");
         } else if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground")){
             joint = player.gameObject.AddComponent<SpringJoint>();
             joint.autoConfigureConnectedAnchor = false;
             joint.connectedAnchor = hit_location.transform.position;
+            Debug.Log("tongue enabled");
         } else {
             return;
         }
@@ -117,12 +119,20 @@ public class Character : MonoBehaviour
         joint.maxDistance = dist_from_point * .6f;
         joint.minDistance = dist_from_point * .25f;
 
-        joint.spring = 3f;
+        joint.spring = 0f;
         joint.damper = 20f;
         joint.massScale = 4.5f;
 
         tongue.positionCount = 2;
     }
+
+    public void DisableTongue(bool grapple_engaged){
+        Debug.Log("tongue disabled");
+        if(grapple_engaged){
+            Destroy(joint);
+        }
+    }
+
     public void StopGrapple(bool grapple_engaged){
         tongue.positionCount = 0;
         if(grapple_engaged){
