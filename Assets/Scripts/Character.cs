@@ -69,6 +69,13 @@ public class Character : MonoBehaviour
     private RaycastHit camera_hit;
     private RaycastHit player_hit;
 
+    [SerializeField]
+    private Transform head;
+    [SerializeField]
+    private Transform focal_point;
+    private Quaternion head_initial_pos;
+
+
     public void Move(float speed_modifier, Vector3 direction){
         if(Mathf.Abs(rigid_body.velocity.magnitude) > max_speed) {
             rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, direction * speed * speed_modifier, dec_speed * Time.deltaTime);
@@ -104,17 +111,14 @@ public class Character : MonoBehaviour
             joint = player_hit.transform.gameObject.AddComponent<SpringJoint>();
             joint.autoConfigureConnectedAnchor = false;
             joint.connectedAnchor = player.position;
-            Debug.Log("tongue enabled");
         } else if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground")){
             joint = player.gameObject.AddComponent<SpringJoint>();
             joint.autoConfigureConnectedAnchor = false;
             joint.connectedAnchor = hit_location.transform.position;
-            Debug.Log("tongue enabled");
         } else {
             return;
         }
 
-        print(Vector3.Distance(player.position, player_hit.transform.position));
         float dist_from_point = Vector3.Distance(mouth.position, player_hit.transform.position);
         joint.maxDistance = dist_from_point * .6f;
         joint.minDistance = dist_from_point * .25f;
@@ -127,13 +131,14 @@ public class Character : MonoBehaviour
     }
 
     public void DisableTongue(bool grapple_engaged){
-        Debug.Log("tongue disabled");
         if(grapple_engaged){
             Destroy(joint);
         }
     }
 
     public void StopGrapple(bool grapple_engaged){
+        var dir = (focal_point.position - head.position).normalized;
+        head.rotation = Quaternion.LookRotation(dir);
         tongue.positionCount = 0;
         if(grapple_engaged){
             Destroy(joint);
@@ -146,6 +151,10 @@ public class Character : MonoBehaviour
         tongue.SetPosition(0,mouth.position);
         tongue.SetPosition(1,hit_location.transform.position);
         cur_tongue_distance = Vector3.Distance(mouth.position, hit_location.transform.position);
+
+        var dir = (hit_location.transform.position - head.position).normalized;
+        var rotation = Quaternion.LookRotation(dir);
+        head.rotation = Quaternion.Slerp(head.rotation, rotation, Time.deltaTime * 2f);
     }
 
     public void activate_main_camera(){
@@ -179,6 +188,8 @@ public class Character : MonoBehaviour
         collision = GetComponent<Collision>();
         jump_arc.enabled = false;
         cur_gravity = default_gravity;
+        head_initial_pos = head.rotation;
+        head.rotation = head_initial_pos;
 
         movement_machine = new StateMachine();
         standing_state = new  StandingState(this,movement_machine);
