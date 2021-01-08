@@ -55,6 +55,10 @@ public class GrappleState : State
             }
         }
 
+        if(character.collision.on_ceiling){
+            state_machine.ChangeState(character.idle_state);
+        }
+
     }
     public override void PhysicsUpdate()
     {
