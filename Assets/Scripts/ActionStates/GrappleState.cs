@@ -49,7 +49,7 @@ public class GrappleState : State
                 character.decrease_gravity();
             }
         } else {
-            if(character.rigid_body.velocity.y <= 0){
+            if(character.rigid_body.velocity.y <= 0 || character.cur_tongue_distance > character.initial_tongue_distance){
                 grapple_engaged = true;
                 character.enable_tongue();
             }

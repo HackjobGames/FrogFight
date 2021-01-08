@@ -50,6 +50,8 @@ public class Character : MonoBehaviour
     private SpringJoint joint;
     [SerializeField]
     private float max_tongue_distance = 100000f;
+    public float initial_tongue_distance { get; private set; }
+    public float cur_tongue_distance { get; private set; }
     [SerializeField]
     private Transform mouth;
     [SerializeField]
@@ -88,6 +90,8 @@ public class Character : MonoBehaviour
             hit_location = new GameObject();
             hit_location.transform.position = player_hit.point;
             hit_location.transform.parent = player_hit.transform;
+            initial_tongue_distance = Vector3.Distance(player.position, player_hit.transform.position);
+            cur_tongue_distance = initial_tongue_distance;
             return true;
         } else {
             return false;
@@ -109,7 +113,7 @@ public class Character : MonoBehaviour
         }
 
         print(Vector3.Distance(player.position, player_hit.transform.position));
-        float dist_from_point = Vector3.Distance(player.position, player_hit.transform.position);
+        float dist_from_point = Vector3.Distance(mouth.position, player_hit.transform.position);
         joint.maxDistance = dist_from_point * .6f;
         joint.minDistance = dist_from_point * .25f;
 
@@ -131,6 +135,7 @@ public class Character : MonoBehaviour
         tongue.positionCount = 2;
         tongue.SetPosition(0,mouth.position);
         tongue.SetPosition(1,hit_location.transform.position);
+        cur_tongue_distance = Vector3.Distance(mouth.position, hit_location.transform.position);
     }
 
     public void activate_main_camera(){
