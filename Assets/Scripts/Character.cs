@@ -34,14 +34,13 @@ public class Character : MonoBehaviour
     public Collision collision;
     [SerializeField]
     private LineRenderer tongue;
-    private Vector3 grapple_point;
    [SerializeField]
     private LayerMask is_grappleable;
 
     private Rigidbody rigid_body;
     private SpringJoint joint;
     [SerializeField]
-    private float max_tongue_distance = 100f;
+    private float max_tongue_distance = 100000f;
     [SerializeField]
     private Transform mouth;
     [SerializeField]
@@ -74,33 +73,32 @@ public class Character : MonoBehaviour
     public bool StartGrapple(){
         RaycastHit camera_hit;
         RaycastHit player_hit;
-        if(Physics.Raycast(main_camera.position, main_camera.forward, out camera_hit, max_tongue_distance, is_grappleable)){
-            if(Physics.Raycast(mouth.position, (camera_hit.point- mouth.position).normalized, out player_hit, max_tongue_distance, is_grappleable)){
-                hit_location = new GameObject();
-                hit_location.transform.position = player_hit.point;
-                hit_location.transform.parent = player_hit.transform;
-                if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("MoveableObject")){
-                    joint = player_hit.transform.gameObject.AddComponent<SpringJoint>();
-                    joint.autoConfigureConnectedAnchor = false;
-                    joint.connectedAnchor = player.position;
-                } else if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground")){
-                    joint = player.gameObject.AddComponent<SpringJoint>();
-                    joint.autoConfigureConnectedAnchor = false;
-                    joint.connectedAnchor = hit_location.transform.position;
-                }
-                float dist_from_point = Vector3.Distance(player.position, grapple_point);
-                joint.maxDistance = dist_from_point * .8f;
-                joint.minDistance = dist_from_point * .3f;
-
-                joint.spring = 10f;
-                joint.damper = 7f;
-                joint.massScale = 4.5f;
-
-                tongue.positionCount = 2;
-
-                return true;
+        if(Physics.Raycast(main_camera.position, main_camera.forward, out camera_hit, max_tongue_distance, is_grappleable) &&
+          Physics.Raycast(mouth.position, (camera_hit.point- mouth.position).normalized, out player_hit, max_tongue_distance, is_grappleable)) {
+            hit_location = new GameObject();
+            hit_location.transform.position = player_hit.point;
+            hit_location.transform.parent = player_hit.transform;
+            if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("MoveableObject")){
+                joint = player_hit.transform.gameObject.AddComponent<SpringJoint>();
+                joint.autoConfigureConnectedAnchor = false;
+                joint.connectedAnchor = player.position;
+            } else if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground")){
+                joint = player.gameObject.AddComponent<SpringJoint>();
+                joint.autoConfigureConnectedAnchor = false;
+                joint.connectedAnchor = hit_location.transform.position;
             }
-            return false;
+            print(Vector3.Distance(player.position, camera_hit.transform.position));
+            float dist_from_point = Vector3.Distance(player.position, camera_hit.transform.position);
+            joint.maxDistance = dist_from_point * .6f;
+            joint.minDistance = dist_from_point * .25f;
+
+            joint.spring = 15f;
+            joint.damper = 20f;
+            joint.massScale = 4.5f;
+
+            tongue.positionCount = 2;
+
+            return true;
         } else {
             return false;
         }
