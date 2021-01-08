@@ -16,8 +16,6 @@ public class Character : MonoBehaviour
     public State idle_state;
     public LineRenderer jump_arc;
     [SerializeField]
-    private float gravity = -9.81f;
-    [SerializeField]
     private float speed = 1f;
     [SerializeField]
     private float max_speed = 5f;
@@ -31,13 +29,24 @@ public class Character : MonoBehaviour
     public float max_jump_force = 15f;
     [SerializeField]
     public float jump_charge_speed = 10f;
+
+    [SerializeField]
+    private float min_gravity = -5f;
+    [SerializeField]
+    private float max_gravity = -15f;
+    [SerializeField]
+    private float default_gravity = -9.81f;
+    [SerializeField]
+    private float gravity_acc = .1f;
+    private float cur_gravity;
+
     public Collision collision;
     [SerializeField]
     private LineRenderer tongue;
    [SerializeField]
     private LayerMask is_grappleable;
 
-    private Rigidbody rigid_body;
+    public Rigidbody rigid_body { get; private set; }
     private SpringJoint joint;
     [SerializeField]
     private float max_tongue_distance = 100000f;
@@ -55,6 +64,9 @@ public class Character : MonoBehaviour
     [SerializeField]
     private GameObject crosshair;
 
+    private RaycastHit camera_hit;
+    private RaycastHit player_hit;
+
     public void Move(float speed_modifier, Vector3 direction){
         if(Mathf.Abs(rigid_body.velocity.magnitude) > max_speed) {
             rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, direction * speed * speed_modifier, dec_speed * Time.deltaTime);
@@ -71,33 +83,11 @@ public class Character : MonoBehaviour
         rigid_body.AddForce(force, ForceMode.Impulse);
     }
     public bool StartGrapple(){
-        RaycastHit camera_hit;
-        RaycastHit player_hit;
         if(Physics.Raycast(main_camera.position, main_camera.forward, out camera_hit, max_tongue_distance, is_grappleable) &&
           Physics.Raycast(mouth.position, (camera_hit.point- mouth.position).normalized, out player_hit, max_tongue_distance, is_grappleable)) {
             hit_location = new GameObject();
             hit_location.transform.position = player_hit.point;
             hit_location.transform.parent = player_hit.transform;
-            if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("MoveableObject")){
-                joint = player_hit.transform.gameObject.AddComponent<SpringJoint>();
-                joint.autoConfigureConnectedAnchor = false;
-                joint.connectedAnchor = player.position;
-            } else if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground")){
-                joint = player.gameObject.AddComponent<SpringJoint>();
-                joint.autoConfigureConnectedAnchor = false;
-                joint.connectedAnchor = hit_location.transform.position;
-            }
-            print(Vector3.Distance(player.position, camera_hit.transform.position));
-            float dist_from_point = Vector3.Distance(player.position, camera_hit.transform.position);
-            joint.maxDistance = dist_from_point * .6f;
-            joint.minDistance = dist_from_point * .25f;
-
-            joint.spring = 15f;
-            joint.damper = 20f;
-            joint.massScale = 4.5f;
-
-            tongue.positionCount = 2;
-
             return true;
         } else {
             return false;
@@ -105,9 +95,35 @@ public class Character : MonoBehaviour
 
     }
 
-    public void StopGrapple(){
+    public void enable_tongue(){
+        if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("MoveableObject")){
+            joint = player_hit.transform.gameObject.AddComponent<SpringJoint>();
+            joint.autoConfigureConnectedAnchor = false;
+            joint.connectedAnchor = player.position;
+        } else if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground")){
+            joint = player.gameObject.AddComponent<SpringJoint>();
+            joint.autoConfigureConnectedAnchor = false;
+            joint.connectedAnchor = hit_location.transform.position;
+        } else {
+            return;
+        }
+
+        print(Vector3.Distance(player.position, player_hit.transform.position));
+        float dist_from_point = Vector3.Distance(player.position, player_hit.transform.position);
+        joint.maxDistance = dist_from_point * .6f;
+        joint.minDistance = dist_from_point * .25f;
+
+        joint.spring = 3f;
+        joint.damper = 20f;
+        joint.massScale = 4.5f;
+
+        tongue.positionCount = 2;
+    }
+    public void StopGrapple(bool grapple_engaged){
         tongue.positionCount = 0;
-        Destroy(joint);
+        if(grapple_engaged){
+            Destroy(joint);
+        }
         Destroy(hit_location);
     }
 
@@ -128,12 +144,26 @@ public class Character : MonoBehaviour
         zoom_cam.enabled = true;
         crosshair.SetActive(true);
     }
+
+    public void increase_gravity(){
+        cur_gravity = Mathf.Lerp(cur_gravity, max_gravity, gravity_acc);
+    }
+
+    public void decrease_gravity(){
+        cur_gravity = Mathf.Lerp(cur_gravity, min_gravity, gravity_acc);
+    }
+
+    public void reset_gravity(){
+        cur_gravity = default_gravity;
+    }
+
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         rigid_body = GetComponent<Rigidbody>();
         collision = GetComponent<Collision>();
         jump_arc.enabled = false;
+        cur_gravity = default_gravity;
 
         movement_machine = new StateMachine();
         standing_state = new  StandingState(this,movement_machine);
@@ -170,6 +200,6 @@ public class Character : MonoBehaviour
 
         action_machine.cur_state.PhysicsUpdate();
 
-        rigid_body.AddForce(Vector3.up * gravity,ForceMode.Acceleration);
+        rigid_body.AddForce(Vector3.up * cur_gravity,ForceMode.Acceleration);
     }
 }

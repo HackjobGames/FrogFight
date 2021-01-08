@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class GrappleState : State
 {
+
+    private bool grapple_engaged = false;
+    
     public GrappleState(Character character, StateMachine stateMachine) : base(character, stateMachine){
 
     }
@@ -13,13 +16,19 @@ public class GrappleState : State
         base.Enter();
         if(!character.StartGrapple()){
             state_machine.ChangeState(character.idle_state);
+        } else {
+            if(character.collision.on_ground){
+                grapple_engaged = true;
+                character.enable_tongue();
+            }
         }
     }
     public override void Exit()
     {
         base.Exit();
-        Debug.Log("exit grapple");
-        character.StopGrapple();
+        character.reset_gravity();
+        character.StopGrapple(grapple_engaged);
+        grapple_engaged = false;
     }
 
     public override void HandleInput()
@@ -33,6 +42,18 @@ public class GrappleState : State
     {
         base.LogicUpdate();
         character.UpdateTonguePositions();
+        if(grapple_engaged){
+            if(character.rigid_body.velocity.y < 0){
+                character.increase_gravity();
+            } else if(character.rigid_body.velocity.y >= 0){
+                character.decrease_gravity();
+            }
+        } else {
+            if(character.rigid_body.velocity.y <= 0){
+                grapple_engaged = true;
+                character.enable_tongue();
+            }
+        }
 
     }
     public override void PhysicsUpdate()
