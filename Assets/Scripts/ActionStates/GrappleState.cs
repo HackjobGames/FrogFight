@@ -26,7 +26,7 @@ public class GrappleState : State
     public override void Exit()
     {
         base.Exit();
-        character.reset_gravity();
+        character.ResetGravity();
         character.StopGrapple(grapple_engaged);
         grapple_engaged = false;
     }
@@ -49,9 +49,9 @@ public class GrappleState : State
             }
 
             if(character.rigid_body.velocity.y < 0){
-                character.increase_gravity();
+                character.IncreaseGravity();
             } else if(character.rigid_body.velocity.y >= 0){
-                character.decrease_gravity();
+                character.DecreaseGravity();
             }
         } else {
             if(character.rigid_body.velocity.y <= 0 || character.cur_tongue_distance > character.initial_tongue_distance){

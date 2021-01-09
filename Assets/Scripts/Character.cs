@@ -157,27 +157,27 @@ public class Character : MonoBehaviour
         head.rotation = Quaternion.Slerp(head.rotation, rotation, Time.deltaTime * 2f);
     }
 
-    public void activate_main_camera(){
+    public void ActivateMainCamera(){
         cam.enabled = true;
         zoom_cam.enabled = false;
         crosshair.SetActive(false);
     }
 
-    public void activate_zoom_camera(){
+    public void ActivateZoomCamera(){
         cam.enabled = false;
         zoom_cam.enabled = true;
         crosshair.SetActive(true);
     }
 
-    public void increase_gravity(){
+    public void IncreaseGravity(){
         cur_gravity = Mathf.Lerp(cur_gravity, max_gravity, gravity_acc);
     }
 
-    public void decrease_gravity(){
+    public void DecreaseGravity(){
         cur_gravity = Mathf.Lerp(cur_gravity, min_gravity, gravity_acc);
     }
 
-    public void reset_gravity(){
+    public void ResetGravity(){
         cur_gravity = default_gravity;
     }
 
