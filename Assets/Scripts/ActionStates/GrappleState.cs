@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class GrappleState : State
 {
+
+    private bool grapple_engaged = false;
+    
     public GrappleState(Character character, StateMachine stateMachine) : base(character, stateMachine){
 
     }
@@ -13,13 +16,19 @@ public class GrappleState : State
         base.Enter();
         if(!character.StartGrapple()){
             state_machine.ChangeState(character.idle_state);
+        } else {
+            if(character.collision.on_ground){
+                grapple_engaged = true;
+                character.EnableTongue();
+            }
         }
     }
     public override void Exit()
     {
         base.Exit();
-        Debug.Log("exit grapple");
-        character.StopGrapple();
+        character.ResetGravity();
+        character.StopGrapple(grapple_engaged);
+        grapple_engaged = false;
     }
 
     public override void HandleInput()
@@ -33,6 +42,27 @@ public class GrappleState : State
     {
         base.LogicUpdate();
         character.UpdateTonguePositions();
+        if(grapple_engaged){
+            if(character.collision.on_ground){
+                character.DisableTongue(grapple_engaged);
+                grapple_engaged = false;
+            }
+
+            if(character.rigid_body.velocity.y < 0){
+                character.IncreaseGravity();
+            } else if(character.rigid_body.velocity.y >= 0){
+                character.DecreaseGravity();
+            }
+        } else {
+            if(character.rigid_body.velocity.y <= 0 || character.cur_tongue_distance > character.initial_tongue_distance){
+                grapple_engaged = true;
+                character.EnableTongue();
+            }
+        }
+
+        if(character.collision.on_ceiling){
+            state_machine.ChangeState(character.idle_state);
+        }
 
     }
     public override void PhysicsUpdate()

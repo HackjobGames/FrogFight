@@ -11,12 +11,12 @@ public class AimingState : State
     public override void Enter()
     {
         base.Enter();
-        character.activate_zoom_camera();
+        character.ActivateZoomCamera();
     }
     public override void Exit()
     {
         base.Exit();
-        character.activate_main_camera();
+        character.ActivateMainCamera();
     }
 
     public override void HandleInput()

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Collision : MonoBehaviour
 {
     public bool on_ground;
+    public bool on_ceiling;
     public LayerMask ground_layer;
     private float distance_to_ground;
 
@@ -20,9 +21,16 @@ public class Collision : MonoBehaviour
         } else {
             on_ground = false;
         }
+
+        if(Physics.Raycast(transform.position,Vector3.up,distance_to_ground + .1f)){
+            on_ceiling = true;
+        } else {
+            on_ceiling = false;
+        }
     }
     void OnDrawGizmos()
     {
         Debug.DrawRay((Vector3)transform.position, Vector3.down * distance_to_ground);
+        Debug.DrawRay((Vector3)transform.position, Vector3.up * distance_to_ground);
     }
 }

@@ -11,13 +11,10 @@ public class SwingingState : State
     public override void Enter()
     {
         base.Enter();
-        character.StartGrapple();
     }
     public override void Exit()
     {
         base.Exit();
-        Debug.Log("exit grapple");
-        character.StopGrapple();
     }
 
     public override void HandleInput()
