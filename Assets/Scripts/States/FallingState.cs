@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class FallingState : State
 {
-    public string name = "Falling";
+    private float horizontal_input;
+    private float vertical_input;
+    private float turnSpeed = .1f;
+    private Transform cam;
     public FallingState(Character character, StateMachine stateMachine) : base(character, stateMachine){
 
     }
@@ -12,6 +15,8 @@ public class FallingState : State
     public override void Enter()
     {
         base.Enter();
+        horizontal_input = vertical_input = 0.0f;
+        cam = Camera.main.gameObject.transform;
     }
     public override void Exit()
     {
@@ -21,6 +26,8 @@ public class FallingState : State
     public override void HandleInput()
     {
         base.HandleInput();
+        horizontal_input = Input.GetAxis("Horizontal");
+        vertical_input = Input.GetAxis("Vertical");
     }
     public override void LogicUpdate()
     {
@@ -32,6 +39,19 @@ public class FallingState : State
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
+        Vector3 input_vector = new Vector3(horizontal_input,0,vertical_input);
+        float speed_modifier = input_vector.magnitude;
+        Vector3 dir = input_vector.normalized;
+        print(input_vector);
+        if(input_vector.magnitude >= 0.1f){
+          float targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
+          float angle = Mathf.SmoothDampAngle(character.transform.eulerAngles.y, targetAngle, ref turnSpeed, .1f);
+          character.transform.rotation = Quaternion.Euler(0f, angle, 0f); 
+          Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+          character.Vector(speed_modifier, moveDir.normalized);
+        } else {
+            character.Vector(1f, Vector3.zero);
+        }
     }
 }
 

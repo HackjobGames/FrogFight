@@ -89,6 +89,11 @@ public class Character : MonoBehaviour
         rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, Vector3.zero, stop_speed * Time.deltaTime);
     }
 
+    public void Vector(float speed_modifier, Vector3 direction){
+        var vector = direction * speed * speed_modifier;
+        rigid_body.AddForce(Vector3.up * cur_gravity + vector,ForceMode.Acceleration);
+    }
+
     public void ApplyImpulse(Vector3 force){
         rigid_body.AddForce(force, ForceMode.Impulse);
     }
@@ -231,7 +236,5 @@ public class Character : MonoBehaviour
         movement_machine.cur_state.PhysicsUpdate();
 
         action_machine.cur_state.PhysicsUpdate();
-
-        rigid_body.AddForce(Vector3.up * cur_gravity,ForceMode.Acceleration);
     }
 }
