@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class Character : MonoBehaviour
+
+public class Character : NetworkBehaviour
 {
     public StateMachine movement_machine;
     public State standing_state;
@@ -55,7 +57,7 @@ public class Character : MonoBehaviour
     [SerializeField]
     private Transform mouth;
     [SerializeField]
-    private Transform main_camera;
+    private Camera main_camera;
     [SerializeField]
     private Transform player;
     private GameObject hit_location;
@@ -77,11 +79,11 @@ public class Character : MonoBehaviour
 
 
     public void Move(float speed_modifier, Vector3 direction){
-        if(Mathf.Abs(rigid_body.velocity.magnitude) > max_speed) {
-            rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, direction * speed * speed_modifier, dec_speed * Time.deltaTime);
-        } else {
-            rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, direction * speed * speed_modifier, acc_speed * Time.deltaTime);
-        }
+          if(Mathf.Abs(rigid_body.velocity.magnitude) > max_speed) {
+              rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, direction * speed * speed_modifier, dec_speed * Time.deltaTime);
+          } else {
+              rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, direction * speed * speed_modifier, acc_speed * Time.deltaTime);
+          }
     }
 
     public void Stop(){
@@ -92,7 +94,7 @@ public class Character : MonoBehaviour
         rigid_body.AddForce(force, ForceMode.Impulse);
     }
     public bool StartGrapple(){
-        if(Physics.Raycast(main_camera.position, main_camera.forward, out camera_hit, max_tongue_distance, is_grappleable) &&
+        if(Physics.Raycast(main_camera.transform.position, main_camera.transform.forward, out camera_hit, max_tongue_distance, is_grappleable) &&
           Physics.Raycast(mouth.position, (camera_hit.point- mouth.position).normalized, out player_hit, max_tongue_distance, is_grappleable)) {
             hit_location = new GameObject();
             hit_location.transform.position = player_hit.point;
@@ -103,7 +105,6 @@ public class Character : MonoBehaviour
         } else {
             return false;
         }
-
     }
 
     public void EnableTongue(){
@@ -183,6 +184,10 @@ public class Character : MonoBehaviour
 
     private void Start()
     {
+      if(this.isLocalPlayer) {
+        main_camera.gameObject.SetActive(true);
+        cam.gameObject.SetActive(true);
+        zoom_cam.gameObject.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;
         rigid_body = GetComponent<Rigidbody>();
         collision = GetComponent<Collision>();
@@ -206,11 +211,13 @@ public class Character : MonoBehaviour
         grappling_state = new GrappleState(this, action_machine);
 
         action_machine.Initialize(idle_state);
+      }
     }
 
 
     private void Update()
     {
+      if(this.isLocalPlayer) {
         movement_machine.cur_state.HandleInput();
 
         movement_machine.cur_state.LogicUpdate();
@@ -218,14 +225,17 @@ public class Character : MonoBehaviour
         action_machine.cur_state.HandleInput();
 
         action_machine.cur_state.LogicUpdate();
+      }
     }
 
     private void FixedUpdate() 
     {
+      if(this.isLocalPlayer) {
         movement_machine.cur_state.PhysicsUpdate();
 
         action_machine.cur_state.PhysicsUpdate();
 
         rigid_body.AddForce(Vector3.up * cur_gravity,ForceMode.Acceleration);
+      }
     }
 }
