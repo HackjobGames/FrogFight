@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-
 public class Character : NetworkBehaviour
 {
     public StateMachine movement_machine;
@@ -57,7 +56,7 @@ public class Character : NetworkBehaviour
     [SerializeField]
     private Transform mouth;
     [SerializeField]
-    private Camera main_camera;
+    private Transform main_camera;
     [SerializeField]
     private Transform player;
     private GameObject hit_location;
@@ -79,11 +78,11 @@ public class Character : NetworkBehaviour
 
 
     public void Move(float speed_modifier, Vector3 direction){
-          if(Mathf.Abs(rigid_body.velocity.magnitude) > max_speed) {
-              rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, direction * speed * speed_modifier, dec_speed * Time.deltaTime);
-          } else {
-              rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, direction * speed * speed_modifier, acc_speed * Time.deltaTime);
-          }
+        if(Mathf.Abs(rigid_body.velocity.magnitude) > max_speed) {
+            rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, direction * speed * speed_modifier, dec_speed * Time.deltaTime);
+        } else {
+            rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, direction * speed * speed_modifier, acc_speed * Time.deltaTime);
+        }
     }
 
     public void Stop(){
@@ -94,7 +93,7 @@ public class Character : NetworkBehaviour
         rigid_body.AddForce(force, ForceMode.Impulse);
     }
     public bool StartGrapple(){
-        if(Physics.Raycast(main_camera.transform.position, main_camera.transform.forward, out camera_hit, max_tongue_distance, is_grappleable) &&
+        if(Physics.Raycast(main_camera.position, main_camera.forward, out camera_hit, max_tongue_distance, is_grappleable) &&
           Physics.Raycast(mouth.position, (camera_hit.point- mouth.position).normalized, out player_hit, max_tongue_distance, is_grappleable)) {
             hit_location = new GameObject();
             hit_location.transform.position = player_hit.point;
