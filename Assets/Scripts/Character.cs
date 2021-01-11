@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class Character : MonoBehaviour
+public class Character : NetworkBehaviour
 {
     public StateMachine movement_machine;
     public State standing_state;
@@ -103,7 +104,6 @@ public class Character : MonoBehaviour
         } else {
             return false;
         }
-
     }
 
     public void EnableTongue(){
@@ -183,6 +183,10 @@ public class Character : MonoBehaviour
 
     private void Start()
     {
+      if(this.isLocalPlayer) {
+        main_camera.gameObject.SetActive(true);
+        cam.gameObject.SetActive(true);
+        zoom_cam.gameObject.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;
         rigid_body = GetComponent<Rigidbody>();
         collision = GetComponent<Collision>();
@@ -206,11 +210,13 @@ public class Character : MonoBehaviour
         grappling_state = new GrappleState(this, action_machine);
 
         action_machine.Initialize(idle_state);
+      }
     }
 
 
     private void Update()
     {
+      if(this.isLocalPlayer) {
         movement_machine.cur_state.HandleInput();
 
         movement_machine.cur_state.LogicUpdate();
@@ -218,14 +224,17 @@ public class Character : MonoBehaviour
         action_machine.cur_state.HandleInput();
 
         action_machine.cur_state.LogicUpdate();
+      }
     }
 
     private void FixedUpdate() 
     {
+      if(this.isLocalPlayer) {
         movement_machine.cur_state.PhysicsUpdate();
 
         action_machine.cur_state.PhysicsUpdate();
 
         rigid_body.AddForce(Vector3.up * cur_gravity,ForceMode.Acceleration);
+      }
     }
 }

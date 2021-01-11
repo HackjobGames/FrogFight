@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class Collision : MonoBehaviour
+using Mirror;
+public class Collision : NetworkBehaviour
 {
     public bool on_ground;
     public bool on_ceiling;
@@ -16,6 +16,7 @@ public class Collision : MonoBehaviour
 
     void Update()
     {
+      if (this.isLocalPlayer) {
         if(Physics.Raycast(transform.position,Vector3.down,distance_to_ground + .1f)){
             on_ground = true;
         } else {
@@ -27,6 +28,7 @@ public class Collision : MonoBehaviour
         } else {
             on_ceiling = false;
         }
+      }
     }
     void OnDrawGizmos()
     {
