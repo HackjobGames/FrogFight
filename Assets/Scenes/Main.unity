@@ -925,8 +925,10 @@ GameObject:
   m_Component:
   - component: {fileID: 732387240}
   - component: {fileID: 732387239}
-  - component: {fileID: 732387238}
+  - component: {fileID: 732387242}
   - component: {fileID: 732387237}
+  - component: {fileID: 732387241}
+  - component: {fileID: 732387238}
   m_Layer: 0
   m_Name: Network
   m_TagString: Untagged
@@ -958,18 +960,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 732387236}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
+  m_Script: {fileID: 11500000, guid: 2c080dc3450b727418b7ddb4e0fc10f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Port: 7777
-  NoDelay: 1
-  Interval: 10
-  FastResend: 2
-  CongestionWindow: 0
-  SendWindowSize: 128
-  ReceiveWindowSize: 128
-  debugLog: 0
-  debugGUI: 0
+  connectToRelayOnAwake: 1
+  relayIP: 66.41.159.125
+  relayPort: 4296
+  forceRelayTraffic: 0
+  relayPassword: test
+  maxServerPlayers: 10
+  serverName: My awesome server!
+  extraServerData: Cool Map 1
+  showOnServerList: 1
+  showDebugLogs: 0
+  serverListUpdated:
+    m_PersistentCalls:
+      m_Calls: []
+  isAuthenticated: 0
+  useWebsockets: 0
+  serverID: 0
+  directConnectTimeout: 5
 --- !u!114 &732387239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1013,6 +1023,57 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &732387241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 732387236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d2b44c570cb28644b8762e0b13e7c23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  host: localhost
+  port: 4296
+  noDelay: 0
+  autoConnect: 0
+  invokeFromDispatcher: 1
+  sniffData: 0
+  objectCacheSettings:
+    maxWriters: 2
+    maxReaders: 2
+    maxMessages: 4
+    maxMessageBuffers: 4
+    maxSocketAsyncEventArgs: 32
+    maxActionDispatcherTasks: 16
+    maxAutoRecyclingArrays: 4
+    extraSmallMemoryBlockSize: 16
+    maxExtraSmallMemoryBlocks: 2
+    smallMemoryBlockSize: 64
+    maxSmallMemoryBlocks: 2
+    mediumMemoryBlockSize: 256
+    maxMediumMemoryBlocks: 2
+    largeMemoryBlockSize: 1024
+    maxLargeMemoryBlocks: 2
+    extraLargeMemoryBlockSize: 4096
+    maxExtraLargeMemoryBlocks: 2
+    maxMessageReceivedEventArgs: 4
+--- !u!114 &732387242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 732387236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97011b1e40ebddc478a81a61645a6b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  transport: {fileID: 732387238}
+  manager: {fileID: 732387239}
 --- !u!1001 &749740813
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2541,7 +2602,7 @@ GameObject:
   - component: {fileID: 1944474218}
   - component: {fileID: 1944474217}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: SpawnPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
