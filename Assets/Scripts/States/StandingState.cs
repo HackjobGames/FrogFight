@@ -33,5 +33,8 @@ public class StandingState : State
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
+        if(character.rigid_body.velocity.x > .1f || character.rigid_body.velocity.z > .1f){
+            character.Stop();
+        }
     }
 }

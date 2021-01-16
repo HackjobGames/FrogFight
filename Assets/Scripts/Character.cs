@@ -42,8 +42,6 @@ public class Character : NetworkBehaviour
     private float cur_gravity;
 
     public Collision collision;
-    [SerializeField]
-    private LineRenderer tongue;
    [SerializeField]
     private LayerMask is_grappleable;
 
@@ -75,6 +73,9 @@ public class Character : NetworkBehaviour
     [SerializeField]
     private Transform focal_point;
     private Quaternion head_initial_pos;
+    private CableComponent cable_component;
+    [SerializeField]
+    private Material tongue_material;
 
 
     public void Move(float speed_modifier, Vector3 direction){
@@ -83,6 +84,11 @@ public class Character : NetworkBehaviour
         } else {
             rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, direction * speed * speed_modifier, acc_speed * Time.deltaTime);
         }
+    }
+
+    public void Vector(float speed_modifier, Vector3 direction){
+        var vector = direction * speed * speed_modifier;
+        rigid_body.AddForce(Vector3.up * cur_gravity + vector,ForceMode.Acceleration);
     }
 
     public void Stop(){
@@ -100,6 +106,12 @@ public class Character : NetworkBehaviour
             hit_location.transform.parent = player_hit.transform;
             initial_tongue_distance = Vector3.Distance(player.position, player_hit.transform.position);
             cur_tongue_distance = initial_tongue_distance;
+
+            hit_location.AddComponent<CableComponent>();
+            cable_component = hit_location.GetComponent<CableComponent>();
+            cable_component.endPoint = mouth;
+            cable_component.cableMaterial = tongue_material;
+            cable_component.cableLength = initial_tongue_distance;
             return true;
         } else {
             return false;
@@ -126,8 +138,6 @@ public class Character : NetworkBehaviour
         joint.spring = 0f;
         joint.damper = 20f;
         joint.massScale = 4.5f;
-
-        tongue.positionCount = 2;
     }
 
     public void DisableTongue(bool grapple_engaged){
@@ -139,7 +149,6 @@ public class Character : NetworkBehaviour
     public void StopGrapple(bool grapple_engaged){
         var dir = (focal_point.position - head.position).normalized;
         head.rotation = Quaternion.LookRotation(dir);
-        tongue.positionCount = 0;
         if(grapple_engaged){
             Destroy(joint);
         }
@@ -147,14 +156,15 @@ public class Character : NetworkBehaviour
     }
 
     public void UpdateTonguePositions(){
-        tongue.positionCount = 2;
-        tongue.SetPosition(0,mouth.position);
-        tongue.SetPosition(1,hit_location.transform.position);
         cur_tongue_distance = Vector3.Distance(mouth.position, hit_location.transform.position);
 
         var dir = (hit_location.transform.position - head.position).normalized;
         var rotation = Quaternion.LookRotation(dir);
         head.rotation = Quaternion.Slerp(head.rotation, rotation, Time.deltaTime * 2f);
+        if(cable_component.line != null){
+            cable_component.line.SetPosition(cable_component.segments, mouth.position);
+            cable_component.cableLength = cur_tongue_distance;
+        }
     }
 
     public void ActivateMainCamera(){
@@ -233,8 +243,6 @@ public class Character : NetworkBehaviour
         movement_machine.cur_state.PhysicsUpdate();
 
         action_machine.cur_state.PhysicsUpdate();
-
-        rigid_body.AddForce(Vector3.up * cur_gravity,ForceMode.Acceleration);
       }
     }
 }
