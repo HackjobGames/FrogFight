@@ -46,7 +46,8 @@ public class Character : NetworkBehaviour
     private LayerMask is_grappleable;
 
     public Rigidbody rigid_body { get; private set; }
-    private SpringJoint joint;
+    private HingeJoint joint;
+    private HingeJoint player_joint;
     [SerializeField]
     private float max_tongue_distance = 100000f;
     public float initial_tongue_distance { get; private set; }
@@ -58,6 +59,7 @@ public class Character : NetworkBehaviour
     [SerializeField]
     private Transform player;
     private GameObject hit_location;
+    private GameObject player_pivot_location;
     [SerializeField]
     private Cinemachine.CinemachineFreeLook cam;
     [SerializeField]
@@ -120,29 +122,42 @@ public class Character : NetworkBehaviour
 
     public void EnableTongue(){
         if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("MoveableObject")){
-            joint = player_hit.transform.gameObject.AddComponent<SpringJoint>();
+            joint = player_hit.transform.gameObject.AddComponent<HingeJoint>();
             joint.autoConfigureConnectedAnchor = false;
             joint.connectedAnchor = player.position;
         } else if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground")){
-            joint = player.gameObject.AddComponent<SpringJoint>();
-            joint.autoConfigureConnectedAnchor = false;
+            joint = hit_location.gameObject.AddComponent<HingeJoint>();
+            hit_location.GetComponent<Rigidbody>().isKinematic = true;
+
+            player_pivot_location = new GameObject();
+            player_pivot_location.transform.position = mouth.position;
+            player_joint = player_pivot_location.AddComponent<HingeJoint>();
+            player_joint.connectedBody = rigid_body;
+            //player_joint.autoConfigureConnectedAnchor = false;
+            player_joint.anchor = new Vector3(0, 1, 0);
+
+            joint.connectedBody = player_pivot_location.GetComponent<Rigidbody>();
+            joint.axis = new Vector3(1, 1, 1);
+            //joint.autoConfigureConnectedAnchor = false;
             joint.connectedAnchor = hit_location.transform.position;
+            joint.anchor = new Vector3(0, -1, 0);
         } else {
             return;
         }
 
         float dist_from_point = Vector3.Distance(mouth.position, player_hit.transform.position);
-        joint.maxDistance = dist_from_point * .6f;
-        joint.minDistance = dist_from_point * .25f;
+        //joint.maxDistance = dist_from_point * .6f;
+        //joint.minDistance = dist_from_point * .25f;
 
-        joint.spring = 0f;
-        joint.damper = 20f;
-        joint.massScale = 4.5f;
+        //joint.spring = 0f;
+        //joint.damper = 20f;
+        //joint.massScale = 4.5f;
     }
 
     public void DisableTongue(bool grapple_engaged){
         if(grapple_engaged){
             Destroy(joint);
+            Destroy(player_pivot_location);
         }
     }
 
@@ -151,6 +166,7 @@ public class Character : NetworkBehaviour
         head.rotation = Quaternion.LookRotation(dir);
         if(grapple_engaged){
             Destroy(joint);
+            Destroy(player_pivot_location);
         }
         Destroy(hit_location);
     }
