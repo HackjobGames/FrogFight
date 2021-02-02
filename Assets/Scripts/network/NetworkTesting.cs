@@ -14,6 +14,6 @@ public class NetworkTesting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        print(transport.serverID);
+        //print(transport.serverID);
     }
 }

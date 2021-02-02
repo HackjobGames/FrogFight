@@ -51,6 +51,7 @@ public class Character : NetworkBehaviour
     private float max_tongue_distance = 100000f;
     public float initial_tongue_distance { get; private set; }
     public float cur_tongue_distance { get; private set; }
+    public float set_tongue_distance { get; private set; }
     [SerializeField]
     private Transform mouth;
     [SerializeField]
@@ -118,26 +119,53 @@ public class Character : NetworkBehaviour
         }
     }
 
+    public void GrapplePhysics(){
+        //vector direction of rope
+        Vector3 rope_dir =  hit_location.transform.position - transform.position;
+
+        // angle direction to rope
+        var angle_to_rope = Vector3.Angle(transform.position, hit_location.transform.position);
+
+        var angle = Mathf.Acos( Vector3.Dot(rope_dir, rigid_body.velocity) / (rope_dir.magnitude * rigid_body.velocity.magnitude) );
+
+        var rad_vel = Mathf.Cos(angle) * rigid_body.velocity.magnitude;
+        // var angle = acos(rope_move.dot(velocity) / (rope_move.length() * velocity.length()))
+	    // var rad_vel = cos(angle) * velocity.length()
+        // velocity += rope_move.normalized() * -rad_vel
+        
+        // if((rope_arrow.tip - position).length() > rope_len.length() ):
+        //     position =  position + position.direction_to(rope_arrow.tip) * ((rope_arrow.tip - position).length() - rope_len.length())
+        Debug.DrawRay(transform.position,(rope_dir.normalized * -rad_vel).normalized * - cur_gravity, Color.yellow);
+        //print(((rope_dir.normalized * -rad_vel).normalized * - cur_gravity).magnitude + " | " + cur_gravity);
+        print(cur_tongue_distance);
+        rigid_body.AddForce((rope_dir.normalized * -rad_vel));
+        // calculate a vector the set ropes distance under the hook point, update the gravity vector direction to always point towards this spot instead of just down. use positive gravity values and just do add force(dir * gravity modifier, acceleration)
+        
+    }
+    public void SwingCircularArc(){
+        Vector3 rope_dir =  hit_location.transform.position - transform.position;
+
+        if(rope_dir.magnitude > set_tongue_distance){
+            transform.position = transform.position + rope_dir.normalized * (rope_dir.magnitude - set_tongue_distance);
+        }
+    }
+    public void SwingGravity(){
+        var gravity_point = new Vector3(hit_location.transform.position.x, hit_location.transform.position.y - set_tongue_distance, hit_location.transform.position.z);
+        var gravity_dir = (gravity_point - transform.position).normalized; 
+        print(gravity_point + " | " + hit_location.transform.position);
+        Debug.DrawRay(transform.position,gravity_dir * -cur_gravity * 100,Color.green);
+        rigid_body.AddForce(gravity_dir * -cur_gravity,ForceMode.Acceleration);
+    }
+
     public void EnableTongue(){
         if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("MoveableObject")){
-            joint = player_hit.transform.gameObject.AddComponent<SpringJoint>();
-            joint.autoConfigureConnectedAnchor = false;
-            joint.connectedAnchor = player.position;
+            set_tongue_distance = Vector3.Distance(transform.position, hit_location.transform.position);
         } else if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground")){
-            joint = player.gameObject.AddComponent<SpringJoint>();
-            joint.autoConfigureConnectedAnchor = false;
-            joint.connectedAnchor = hit_location.transform.position;
+            set_tongue_distance = Vector3.Distance(transform.position, hit_location.transform.position);
         } else {
             return;
         }
 
-        float dist_from_point = Vector3.Distance(mouth.position, player_hit.transform.position);
-        joint.maxDistance = dist_from_point * .6f;
-        joint.minDistance = dist_from_point * .25f;
-
-        joint.spring = 0f;
-        joint.damper = 20f;
-        joint.massScale = 4.5f;
     }
 
     public void DisableTongue(bool grapple_engaged){
@@ -191,6 +219,10 @@ public class Character : NetworkBehaviour
         cur_gravity = default_gravity;
     }
 
+    public State CurActionState(){
+        print(action_machine + " | " + movement_machine);
+        return action_machine.cur_state;
+    }
     private void Start()
     {
       if(this.isLocalPlayer) {
