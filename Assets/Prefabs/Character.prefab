@@ -3917,7 +3917,14 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   movement_machine: {fileID: 0}
+  standing_state: {fileID: 0}
+  jumping_state: {fileID: 0}
+  falling_state: {fileID: 0}
+  swinging_state: {fileID: 0}
   action_machine: {fileID: 0}
+  aiming_state: {fileID: 0}
+  grappling_state: {fileID: 0}
+  idle_state: {fileID: 0}
   jump_arc: {fileID: 7923664875190098037}
   speed: 8
   max_speed: 20
@@ -4108,7 +4115,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0
+  syncInterval: 0.1
   name: 
 --- !u!114 &1643243720677071046
 MonoBehaviour:
@@ -4123,7 +4130,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0
+  syncInterval: 0.1
   target: {fileID: 7923664875190098035}
   clientAuthority: 0
   syncVelocity: 1
