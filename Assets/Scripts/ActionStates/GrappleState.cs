@@ -43,7 +43,6 @@ public class GrappleState : State
         base.LogicUpdate();
         character.UpdateTonguePositions();
         if(grapple_engaged){
-            character.SwingCircularArc();
             if(character.collision.on_ground){
                 //character.DisableTongue(grapple_engaged);
                 grapple_engaged = false;
@@ -72,6 +71,7 @@ public class GrappleState : State
         if(grapple_engaged){
             //character.GrapplePhysics();
             //character.SwingGravity();
+            character.SwingCircularArc();
         }
         base.PhysicsUpdate();
     }

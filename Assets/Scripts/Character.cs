@@ -144,10 +144,12 @@ public class Character : NetworkBehaviour
     }
     public void SwingCircularArc(){
         Vector3 rope_dir =  hit_location.transform.position - transform.position;
-
-        if(rope_dir.magnitude > set_tongue_distance){
-            transform.position = transform.position + rope_dir.normalized * (rope_dir.magnitude - set_tongue_distance);
+        Vector3 player_pos = transform.position + rigid_body.velocity * Time.deltaTime;
+        if((player_pos - hit_location.transform.position).magnitude > set_tongue_distance){
+           player_pos = (player_pos - hit_location.transform.position).normalized * set_tongue_distance;
         }
+        rigid_body.velocity = (player_pos - transform.position) / Time.deltaTime;
+        transform.position = player_pos;
     }
     public void SwingGravity(){
         var gravity_point = new Vector3(hit_location.transform.position.x, hit_location.transform.position.y - set_tongue_distance, hit_location.transform.position.z);
