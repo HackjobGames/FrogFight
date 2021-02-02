@@ -42,7 +42,6 @@ public class FallingState : State
         Vector3 input_vector = new Vector3(horizontal_input,0,vertical_input);
         float speed_modifier = input_vector.magnitude;
         Vector3 dir = input_vector.normalized;
-        print(input_vector);
         if(input_vector.magnitude >= 0.1f){
           float targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
           float angle = Mathf.SmoothDampAngle(character.transform.eulerAngles.y, targetAngle, ref turnSpeed, .1f);
