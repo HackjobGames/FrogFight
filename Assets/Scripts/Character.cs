@@ -32,11 +32,11 @@ public class Character : NetworkBehaviour
     public float jump_charge_speed = 10f;
 
     [SerializeField]
-    private float min_gravity = -5f;
+    private float min_gravity = -8f;
     [SerializeField]
-    private float max_gravity = -15f;
+    private float max_gravity = -14f;
     [SerializeField]
-    private float default_gravity = -9.81f;
+    private float default_gravity = -10f;
     [SerializeField]
     private float gravity_acc = .1f;
     private float cur_gravity;
@@ -78,6 +78,11 @@ public class Character : NetworkBehaviour
     [SerializeField]
     private Material tongue_material;
 
+    private Vector3 velocity;
+    
+    private Vector3 pos;
+    private Vector3 prev_pos;
+    private Vector3 grav_dir = new Vector3(0, 1, 0);
 
     public void Move(float speed_modifier, Vector3 direction){
         if(Mathf.Abs(rigid_body.velocity.magnitude) > max_speed) {
@@ -126,7 +131,7 @@ public class Character : NetworkBehaviour
         // angle direction to rope
         var angle_to_rope = Vector3.Angle(transform.position, hit_location.transform.position);
 
-        var angle = Mathf.Acos( Vector3.Dot(rope_dir, rigid_body.velocity) / (rope_dir.magnitude * rigid_body.velocity.magnitude) );
+        var angle = Mathf.Acos( Vector3.Dot(rope_dir, rigid_body.velocity * - cur_gravity) / (rope_dir.magnitude * (rigid_body.velocity* - cur_gravity).magnitude) );
 
         var rad_vel = Mathf.Cos(angle) * rigid_body.velocity.magnitude;
         // var angle = acos(rope_move.dot(velocity) / (rope_move.length() * velocity.length()))
@@ -135,12 +140,40 @@ public class Character : NetworkBehaviour
         
         // if((rope_arrow.tip - position).length() > rope_len.length() ):
         //     position =  position + position.direction_to(rope_arrow.tip) * ((rope_arrow.tip - position).length() - rope_len.length())
-        Debug.DrawRay(transform.position,(rope_dir.normalized * -rad_vel).normalized * - cur_gravity, Color.yellow);
+        Debug.DrawRay(transform.position,(rope_dir.normalized * -rad_vel).normalized , Color.yellow);
         //print(((rope_dir.normalized * -rad_vel).normalized * - cur_gravity).magnitude + " | " + cur_gravity);
         print(cur_tongue_distance);
         rigid_body.AddForce((rope_dir.normalized * -rad_vel));
         // calculate a vector the set ropes distance under the hook point, update the gravity vector direction to always point towards this spot instead of just down. use positive gravity values and just do add force(dir * gravity modifier, acceleration)
+    }
+
+    public void SpiderMan(float time){
+        // tether = hit_location 
+        // bob = self 
+        // tongue = set_tongue_distance / cur_tongue_distance 
+        velocity += GetConstrainedVelocity(pos, prev_pos, time);
+        velocity += grav_dir * cur_gravity / time;
         
+        pos += velocity / time;
+        print(pos + " | " + prev_pos);
+        prev_pos = pos;
+        
+        transform.localPosition = pos;
+    }
+
+    public Vector3 GetConstrainedVelocity(Vector3 cur_pos, Vector3 prev_pos, float time){
+        float dist_to_tether;
+        Vector3 constrained_pos;
+        Vector3 predicted_pos;
+
+        dist_to_tether = Vector3.Distance(cur_pos , hit_location.transform.position);
+        
+        if( dist_to_tether> set_tongue_distance){
+            constrained_pos = Vector3.Normalize(cur_pos - hit_location.transform.position) * set_tongue_distance;
+            predicted_pos =  constrained_pos - prev_pos / time;
+            return predicted_pos;
+        }
+        return Vector3.zero;
     }
     public void SwingCircularArc(){
         Vector3 rope_dir =  hit_location.transform.position - transform.position;
@@ -160,6 +193,10 @@ public class Character : NetworkBehaviour
     }
 
     public void EnableTongue(){
+        //rigid_body.isKinematic = true;
+        velocity = rigid_body.velocity;
+        pos = transform.localPosition;
+        prev_pos = transform.localPosition;
         if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("MoveableObject")){
             set_tongue_distance = Vector3.Distance(transform.position, hit_location.transform.position);
         } else if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground")){
@@ -171,6 +208,7 @@ public class Character : NetworkBehaviour
     }
 
     public void DisableTongue(bool grapple_engaged){
+        rigid_body.isKinematic = false;
         if(grapple_engaged){
             Destroy(joint);
         }
@@ -222,7 +260,6 @@ public class Character : NetworkBehaviour
     }
 
     public State CurActionState(){
-        print(action_machine + " | " + movement_machine);
         return action_machine.cur_state;
     }
     private void Start()

@@ -19,8 +19,9 @@ public class GrappleState : State
         } else {
             if(character.collision.on_ground){
                 grapple_engaged = true;
-                character.EnableTongue();
+                //character.EnableTongue();
             }
+            character.EnableTongue();
         }
     }
     public override void Exit()
@@ -54,10 +55,10 @@ public class GrappleState : State
                 character.DecreaseGravity();
             }
         } else {
-            if(character.rigid_body.velocity.y <= 0 || character.cur_tongue_distance > character.initial_tongue_distance && !grapple_engaged){
+            if((character.rigid_body.velocity.y <= 0 || character.cur_tongue_distance > character.initial_tongue_distance) && !grapple_engaged){
                 MonoBehaviour.print("engage");
                 grapple_engaged = true;
-                character.EnableTongue();
+                //character.EnableTongue();
             }
         }
 
@@ -68,10 +69,15 @@ public class GrappleState : State
     }
     public override void PhysicsUpdate()
     {
+        character.GrapplePhysics();
+        //character.SwingCircularArc();
+        //character.SwingGravity();
+        //character.SpiderMan(Time.deltaTime);
         if(grapple_engaged){
             //character.GrapplePhysics();
             //character.SwingGravity();
-            character.SwingCircularArc();
+            //character.SwingCircularArc();
+            
         }
         base.PhysicsUpdate();
     }

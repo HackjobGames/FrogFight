@@ -53,7 +53,7 @@ public class FallingState : State
                 character.Vector(1f, Vector3.zero);
             }
         } else {
-            character.Vector(1f, Vector3.zero);
+            //character.Vector(1f, Vector3.zero);
         }
     }
 }
