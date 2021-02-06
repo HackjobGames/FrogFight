@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class StateMachine : MonoBehaviour
+public class StateMachine
 {
     public State cur_state { get; private set; }
     public State prev_state { get; private set; }

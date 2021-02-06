@@ -222,29 +222,30 @@ public class Character : NetworkBehaviour
         cam.gameObject.SetActive(true);
         zoom_cam.gameObject.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;
-        rigid_body = GetComponent<Rigidbody>();
-        collision = GetComponent<Collision>();
-        jump_arc.enabled = false;
-        cur_gravity = default_gravity;
-        head_initial_pos = head.rotation;
-        head.rotation = head_initial_pos;
 
-        movement_machine = new StateMachine();
-        standing_state = new  StandingState(this,movement_machine);
-        jumping_state = new JumpingState(this,movement_machine);
-        falling_state = new FallingState(this,movement_machine);
-        swinging_state = new SwingingState(this,movement_machine);
-
-        movement_machine.Initialize(standing_state);
-
-        action_machine = new StateMachine();
-
-        idle_state = new IdleState(this, action_machine);
-        aiming_state = new AimingState(this, action_machine);
-        grappling_state = new GrappleState(this, action_machine);
-
-        action_machine.Initialize(idle_state);
       }
+      rigid_body = GetComponent<Rigidbody>();
+      collision = GetComponent<Collision>();
+      jump_arc.enabled = false;
+      cur_gravity = default_gravity;
+      head_initial_pos = head.rotation;
+      head.rotation = head_initial_pos;
+
+      movement_machine = new StateMachine();
+      standing_state = new  StandingState(this,movement_machine);
+      jumping_state = new JumpingState(this,movement_machine);
+      falling_state = new FallingState(this,movement_machine);
+      swinging_state = new SwingingState(this,movement_machine);
+
+      movement_machine.Initialize(standing_state);
+
+      action_machine = new StateMachine();
+
+      idle_state = new IdleState(this, action_machine);
+      aiming_state = new AimingState(this, action_machine);
+      grappling_state = new GrappleState(this, action_machine);
+
+      action_machine.Initialize(idle_state);
     }
 
 
@@ -253,20 +254,19 @@ public class Character : NetworkBehaviour
       if(this.isLocalPlayer) {
         movement_machine.cur_state.HandleInput();
 
-        movement_machine.cur_state.LogicUpdate();
+
 
         action_machine.cur_state.HandleInput();
 
-        action_machine.cur_state.LogicUpdate();
+
       }
+      action_machine.cur_state.LogicUpdate();
+      movement_machine.cur_state.LogicUpdate();
     }
 
     private void FixedUpdate() 
     {
-      if(this.isLocalPlayer) {
-        movement_machine.cur_state.PhysicsUpdate();
-
-        action_machine.cur_state.PhysicsUpdate();
-      }
+      movement_machine.cur_state.PhysicsUpdate();
+      action_machine.cur_state.PhysicsUpdate();
     }
 }
