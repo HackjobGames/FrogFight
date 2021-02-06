@@ -46,8 +46,8 @@ public class Character : NetworkBehaviour
     private LayerMask is_grappleable;
 
     public Rigidbody rigid_body { get; private set; }
-    private HingeJoint joint;
-    private HingeJoint player_joint;
+    private ConfigurableJoint joint;
+    private ConfigurableJoint player_joint;
     [SerializeField]
     private float max_tongue_distance = 100000f;
     public float initial_tongue_distance { get; private set; }
@@ -122,25 +122,33 @@ public class Character : NetworkBehaviour
 
     public void EnableTongue(){
         if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("MoveableObject")){
-            joint = player_hit.transform.gameObject.AddComponent<HingeJoint>();
+            joint = player_hit.transform.gameObject.AddComponent<ConfigurableJoint>();
             joint.autoConfigureConnectedAnchor = false;
             joint.connectedAnchor = player.position;
         } else if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground")){
-            joint = hit_location.gameObject.AddComponent<HingeJoint>();
+            joint = hit_location.gameObject.AddComponent<ConfigurableJoint>();
             hit_location.GetComponent<Rigidbody>().isKinematic = true;
 
             player_pivot_location = new GameObject();
             player_pivot_location.transform.position = mouth.position;
-            player_joint = player_pivot_location.AddComponent<HingeJoint>();
+            player_joint = player_pivot_location.AddComponent<ConfigurableJoint>();
             player_joint.connectedBody = rigid_body;
             //player_joint.autoConfigureConnectedAnchor = false;
             player_joint.anchor = new Vector3(0, 1, 0);
+            player_joint.xMotion = ConfigurableJointMotion.Locked;
+            player_joint.yMotion = ConfigurableJointMotion.Locked;
+            player_joint.zMotion = ConfigurableJointMotion.Locked;
 
             joint.connectedBody = player_pivot_location.GetComponent<Rigidbody>();
             joint.axis = new Vector3(1, 1, 1);
             //joint.autoConfigureConnectedAnchor = false;
             joint.connectedAnchor = hit_location.transform.position;
             joint.anchor = new Vector3(0, -1, 0);
+            joint.xMotion = ConfigurableJointMotion.Locked;
+            joint.yMotion = ConfigurableJointMotion.Locked;
+            joint.zMotion = ConfigurableJointMotion.Locked;
+
+            
         } else {
             return;
         }
