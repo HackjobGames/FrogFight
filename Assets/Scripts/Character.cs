@@ -94,7 +94,7 @@ public class Character : NetworkBehaviour
 
     public void Vector(float speed_modifier, Vector3 direction){
         var vector = direction * speed * speed_modifier;
-        rigid_body.AddForce(Vector3.up * cur_gravity + vector,ForceMode.Acceleration);
+        rigid_body.AddForce(Vector3.up * cur_gravity * Time.deltaTime, ForceMode.VelocityChange);
     }
 
     public void Stop(){
@@ -152,9 +152,9 @@ public class Character : NetworkBehaviour
         // bob = self 
         // tongue = set_tongue_distance / cur_tongue_distance 
         velocity += GetConstrainedVelocity(pos, prev_pos, time);
-        velocity += grav_dir * cur_gravity / time;
+        velocity += grav_dir * cur_gravity * time;
         
-        pos += velocity / time;
+        pos += velocity * time;
         print(pos + " | " + prev_pos);
         prev_pos = pos;
         
@@ -175,6 +175,7 @@ public class Character : NetworkBehaviour
         }
         return Vector3.zero;
     }
+
     public void SwingCircularArc(){
         Vector3 rope_dir =  hit_location.transform.position - transform.position;
         Vector3 player_pos = transform.position + rigid_body.velocity * Time.deltaTime;
@@ -182,7 +183,9 @@ public class Character : NetworkBehaviour
            player_pos = (player_pos - hit_location.transform.position).normalized * set_tongue_distance;
         }
         rigid_body.velocity = (player_pos - transform.position) / Time.deltaTime;
-        transform.position = player_pos;
+        print(((player_pos - transform.position) / Time.deltaTime).magnitude + " | " + ((player_pos - transform.position) / Time.deltaTime) );
+        //print(transform.position + " | " + player_pos);
+        //transform.position = player_pos;
     }
     public void SwingGravity(){
         var gravity_point = new Vector3(hit_location.transform.position.x, hit_location.transform.position.y - set_tongue_distance, hit_location.transform.position.z);

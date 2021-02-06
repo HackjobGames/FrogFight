@@ -69,8 +69,8 @@ public class GrappleState : State
     }
     public override void PhysicsUpdate()
     {
-        character.GrapplePhysics();
-        //character.SwingCircularArc();
+        //character.GrapplePhysics();
+        character.SwingCircularArc();
         //character.SwingGravity();
         //character.SpiderMan(Time.deltaTime);
         if(grapple_engaged){
