@@ -20,7 +20,7 @@ public class StandingState : State
     public override void HandleInput()
     {
         base.HandleInput();
-        if(Input.GetButtonDown("Jump")&&character.collision.on_ground){
+        if(Input.GetButton("Jump")&&character.collision.on_ground){
             state_machine.ChangeState(character.jumping_state);
         } else if(!character.collision.on_ground){
             state_machine.ChangeState(character.falling_state);
@@ -33,8 +33,12 @@ public class StandingState : State
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
-        if(character.rigid_body.velocity.x > .1f || character.rigid_body.velocity.z > .1f){
+        if((!Mathf.Approximately(character.rigid_body.velocity.x , 0) 
+        || !Mathf.Approximately(character.rigid_body.velocity.z , 0)) 
+        && character.collision.on_ground){
             character.Stop();
+        } else if(!character.collision.on_ground){
+             character.Vector(1f, Vector3.zero);
         }
     }
 }

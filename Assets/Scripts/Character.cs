@@ -32,13 +32,13 @@ public class Character : NetworkBehaviour
     public float jump_charge_speed = 10f;
 
     [SerializeField]
-    private float min_gravity = -5f;
+    private float min_gravity = -7f;
     [SerializeField]
-    private float max_gravity = -15f;
+    private float max_gravity = -20f;
     [SerializeField]
     private float default_gravity = -9.81f;
     [SerializeField]
-    private float gravity_acc = .1f;
+    private float gravity_acc = .05f;
     private float cur_gravity;
 
     public Collision collision;
@@ -78,6 +78,8 @@ public class Character : NetworkBehaviour
     private CableComponent cable_component;
     [SerializeField]
     private Material tongue_material;
+    private Vector3 previous_velocity;
+
 
 
     public void Move(float speed_modifier, Vector3 direction){
@@ -133,7 +135,6 @@ public class Character : NetworkBehaviour
             player_pivot_location.transform.position = mouth.position;
             player_joint = player_pivot_location.AddComponent<ConfigurableJoint>();
             player_joint.connectedBody = rigid_body;
-            //player_joint.autoConfigureConnectedAnchor = false;
             player_joint.anchor = new Vector3(0, 1, 0);
             player_joint.xMotion = ConfigurableJointMotion.Locked;
             player_joint.yMotion = ConfigurableJointMotion.Locked;
@@ -141,7 +142,6 @@ public class Character : NetworkBehaviour
 
             joint.connectedBody = player_pivot_location.GetComponent<Rigidbody>();
             joint.axis = new Vector3(1, 1, 1);
-            //joint.autoConfigureConnectedAnchor = false;
             joint.connectedAnchor = hit_location.transform.position;
             joint.anchor = new Vector3(0, -1, 0);
             joint.xMotion = ConfigurableJointMotion.Locked;
@@ -154,12 +154,24 @@ public class Character : NetworkBehaviour
         }
 
         float dist_from_point = Vector3.Distance(mouth.position, player_hit.transform.position);
-        //joint.maxDistance = dist_from_point * .6f;
-        //joint.minDistance = dist_from_point * .25f;
+    }
 
-        //joint.spring = 0f;
-        //joint.damper = 20f;
-        //joint.massScale = 4.5f;
+    public float GroundSlideStart(Vector3 prev_vel){
+        previous_velocity = prev_vel;
+        return cur_tongue_distance;
+    }
+
+    public float GroundSlide(){
+        Vector3 ground_velocity = previous_velocity.magnitude * new Vector3(previous_velocity.x, 0f, previous_velocity.z).normalized;
+        rigid_body.velocity = ground_velocity;
+        print(rigid_body.velocity);
+        return cur_tongue_distance;
+    }
+
+    public void GroundSlideEnd(){
+        joint.xMotion = ConfigurableJointMotion.Locked;
+        joint.yMotion = ConfigurableJointMotion.Locked;
+        joint.zMotion = ConfigurableJointMotion.Locked;
     }
 
     public void DisableTongue(bool grapple_engaged){
