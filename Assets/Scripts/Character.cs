@@ -227,6 +227,10 @@ public class Character : NetworkBehaviour
         cur_gravity = default_gravity;
     }
 
+    public float getGravity() {
+        return cur_gravity;
+    }
+
     private void Start()
     {
       if(this.isLocalPlayer) {

@@ -46,7 +46,7 @@ public class JumpingState : State
     }
     Vector3[] CalculateArcArray()
     {
-        float grav = Mathf.Abs(Physics.gravity.y);
+        float grav = Mathf.Abs(character.getGravity());
         Vector3[] arcArray = new Vector3[ticks];
         float launchAngle = Mathf.Atan(angle.y/Mathf.Sqrt((angle.x * angle.x) + (angle.z * angle.z)));
         float velocity = charge * angle.magnitude;
