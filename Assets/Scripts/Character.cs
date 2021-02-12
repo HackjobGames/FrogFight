@@ -10,6 +10,7 @@ public class Character : NetworkBehaviour
     public State jumping_state;
     public State falling_state;
     public State swinging_state;
+    public State ragdoll_state;
 
     public StateMachine action_machine;    
     public State aiming_state;
@@ -41,7 +42,7 @@ public class Character : NetworkBehaviour
     private float gravity_acc = .1f;
     private float cur_gravity;
 
-    public Collision collision;
+    public PlayerCollision collision;
    [SerializeField]
     private LayerMask is_grappleable;
 
@@ -201,7 +202,7 @@ public class Character : NetworkBehaviour
 
       }
       rigid_body = GetComponent<Rigidbody>();
-      collision = GetComponent<Collision>();
+      collision = GetComponent<PlayerCollision>();
       jump_arc.enabled = false;
       cur_gravity = default_gravity;
       head_initial_pos = head.rotation;
@@ -212,6 +213,7 @@ public class Character : NetworkBehaviour
       jumping_state = new JumpingState(this,movement_machine);
       falling_state = new FallingState(this,movement_machine);
       swinging_state = new SwingingState(this,movement_machine);
+      ragdoll_state =  new RagdollState(this, movement_machine);
 
       movement_machine.Initialize(standing_state);
 
