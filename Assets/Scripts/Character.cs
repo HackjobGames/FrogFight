@@ -10,6 +10,7 @@ public class Character : NetworkBehaviour
     public State jumping_state;
     public State falling_state;
     public State swinging_state;
+    public State ground_sliding_state;
 
     public StateMachine action_machine;    
     public State aiming_state;
@@ -79,6 +80,11 @@ public class Character : NetworkBehaviour
     [SerializeField]
     private Material tongue_material;
     private Vector3 previous_velocity;
+    [SerializeField]
+    private float slide_speed = 25f;
+    private Vector3 slide_direction;
+    private float turnSpeed = .1f;
+    public Timer ground_slide_timer; 
 
 
 
@@ -95,6 +101,22 @@ public class Character : NetworkBehaviour
         rigid_body.AddForce(Vector3.up * cur_gravity + vector,ForceMode.Acceleration);
     }
 
+    public void Fall(){
+        float horizontal_input = Input.GetAxis("Horizontal");
+        float vertical_input = Input.GetAxis("Vertical");
+        Vector3 input_vector = new Vector3(horizontal_input,0,vertical_input);
+        float speed_modifier = input_vector.magnitude;
+        Vector3 dir = input_vector.normalized;
+        if(input_vector.magnitude >= 0.1f){
+            float targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg + Camera.main.gameObject.transform.eulerAngles.y;
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSpeed, .1f);
+            transform.rotation = Quaternion.Euler(0f, angle, 0f); 
+            Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+            Vector(speed_modifier, moveDir.normalized);
+        } else {
+            Vector(1f, Vector3.zero);
+        }
+    }
     public void Stop(){
         rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, Vector3.zero, stop_speed * Time.deltaTime);
     }
@@ -155,39 +177,50 @@ public class Character : NetworkBehaviour
 
         float dist_from_point = Vector3.Distance(mouth.position, player_hit.transform.position);
     }
-
-    public float GroundSlideStart(Vector3 prev_vel){
-        previous_velocity = prev_vel;
+    public void SetGroundVelocity(){
+        previous_velocity = rigid_body.velocity;
+    }
+    public float GroundSlideStart(){
+        rigid_body.velocity = new Vector3(rigid_body.velocity.x, 0f, rigid_body.velocity.z);
+        slide_direction = new Vector3(previous_velocity.x, 0f, previous_velocity.z);
+        if(slide_direction.magnitude < .5){
+            Vector3 dir_to_rope = hit_location.transform.position - mouth.position;
+            slide_direction = new Vector3(dir_to_rope.x, 0f, dir_to_rope.z).normalized;
+        } else {
+             slide_direction = slide_direction.normalized;
+        }
         return cur_tongue_distance;
     }
 
     public float GroundSlide(){
-        Vector3 ground_velocity = previous_velocity.magnitude * new Vector3(previous_velocity.x, 0f, previous_velocity.z).normalized;
+        Vector3 ground_velocity;
+        if(previous_velocity.magnitude < slide_speed){
+            ground_velocity = Vector3.Lerp(rigid_body.velocity, slide_direction * slide_speed,.05f);
+        } else {
+           ground_velocity = previous_velocity.magnitude * slide_direction;
+        }
         rigid_body.velocity = ground_velocity;
-        print(rigid_body.velocity);
+
         return cur_tongue_distance;
     }
 
     public void GroundSlideEnd(){
-        joint.xMotion = ConfigurableJointMotion.Locked;
-        joint.yMotion = ConfigurableJointMotion.Locked;
-        joint.zMotion = ConfigurableJointMotion.Locked;
+        rigid_body.velocity = new Vector3(rigid_body.velocity.x, rigid_body.velocity.magnitude, rigid_body.velocity.z);
     }
 
-    public void DisableTongue(bool grapple_engaged){
-        if(grapple_engaged){
-            Destroy(joint);
-            Destroy(player_pivot_location);
-        }
+    public void DisableTongue(){
+        Destroy(joint);
+        Destroy(player_joint);
+        Destroy(player_pivot_location);
     }
 
-    public void StopGrapple(bool grapple_engaged){
+    public void StopGrapple(){
         var dir = (focal_point.position - head.position).normalized;
         head.rotation = Quaternion.LookRotation(dir);
-        if(grapple_engaged){
-            Destroy(joint);
-            Destroy(player_pivot_location);
-        }
+
+        Destroy(joint);
+        Destroy(player_joint);
+        Destroy(player_pivot_location);
         Destroy(hit_location);
     }
 
@@ -252,6 +285,7 @@ public class Character : NetworkBehaviour
       jumping_state = new JumpingState(this,movement_machine);
       falling_state = new FallingState(this,movement_machine);
       swinging_state = new SwingingState(this,movement_machine);
+      ground_sliding_state = new GroundSlidingState(this,movement_machine);
 
       movement_machine.Initialize(standing_state);
 
@@ -262,6 +296,10 @@ public class Character : NetworkBehaviour
       grappling_state = new GrappleState(this, action_machine);
 
       action_machine.Initialize(idle_state);
+
+      GameObject ground_timer_object = new GameObject();
+      ground_slide_timer = ground_timer_object.AddComponent<Timer>();
+      ground_slide_timer.SetTimer(1f);
     }
 
 
