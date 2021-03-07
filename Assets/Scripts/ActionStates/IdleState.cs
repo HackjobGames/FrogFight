@@ -23,7 +23,17 @@ public class IdleState : State
         if(Input.GetMouseButtonDown(1)){
             state_machine.ChangeState(character.aiming_state);
         } else if(Input.GetMouseButtonDown(0)){
-            state_machine.ChangeState(character.grappling_state);
+            if(character.StartGrapple()){
+                state_machine.ChangeState(character.grappling_state);
+                if(character.collision.on_ground){
+                    character.SetGroundVelocity();
+                    character.movement_machine.ChangeState(character.ground_sliding_state);
+                } else {
+                    character.movement_machine.ChangeState(character.swinging_state);
+                }
+            } else {
+                character.StopGrapple();
+            }
         }
     }
     public override void LogicUpdate()

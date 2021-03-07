@@ -6,7 +6,18 @@ public class GrappleState : State
 {
 
     private bool grapple_engaged = false;
+    private bool ground_sliding = false;
     
+
+    private float horizontal_input;
+    private float vertical_input;
+    private float turnSpeed = .1f;
+
+    private Vector3 prev_vel;
+    private float tongue_length;
+    private float set_tongue_length;
+    private Transform cam;
+
     public GrappleState(Character character, StateMachine stateMachine) : base(character, stateMachine){
 
     }
@@ -14,21 +25,12 @@ public class GrappleState : State
     public override void Enter()
     {
         base.Enter();
-        if(!character.StartGrapple()){
-            state_machine.ChangeState(character.idle_state);
-        } else {
-            if(character.collision.on_ground){
-                grapple_engaged = true;
-                character.EnableTongue();
-            }
-        }
     }
     public override void Exit()
     {
         base.Exit();
         character.ResetGravity();
-        character.StopGrapple(grapple_engaged);
-        grapple_engaged = false;
+        character.StopGrapple();
     }
 
     public override void HandleInput()
@@ -36,34 +38,13 @@ public class GrappleState : State
         base.HandleInput();
         if(Input.GetMouseButtonUp(0)){
             state_machine.ChangeState(character.idle_state);
+            character.movement_machine.ChangeState(character.falling_state);
         }
     }
     public override void LogicUpdate()
     {
         base.LogicUpdate();
         character.UpdateTonguePositions();
-        if(grapple_engaged){
-            if(character.collision.on_ground){
-                character.DisableTongue(grapple_engaged);
-                grapple_engaged = false;
-            }
-
-            if(character.rigid_body.velocity.y < 0){
-                character.IncreaseGravity();
-            } else if(character.rigid_body.velocity.y >= 0){
-                character.DecreaseGravity();
-            }
-        } else {
-            if(character.rigid_body.velocity.y <= 0 || character.cur_tongue_distance > character.initial_tongue_distance){
-                grapple_engaged = true;
-                character.EnableTongue();
-            }
-        }
-
-        if(character.collision.on_ceiling){
-            state_machine.ChangeState(character.idle_state);
-        }
-
     }
     public override void PhysicsUpdate()
     {

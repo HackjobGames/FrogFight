@@ -10,6 +10,7 @@ public class Character : NetworkBehaviour
     public State jumping_state;
     public State falling_state;
     public State swinging_state;
+    public State ground_sliding_state;
 
     public StateMachine action_machine;    
     public State aiming_state;
@@ -32,13 +33,13 @@ public class Character : NetworkBehaviour
     public float jump_charge_speed = 10f;
 
     [SerializeField]
-    private float min_gravity = -5f;
+    private float min_gravity = -7f;
     [SerializeField]
-    private float max_gravity = -15f;
+    private float max_gravity = -20f;
     [SerializeField]
     private float default_gravity = -9.81f;
     [SerializeField]
-    private float gravity_acc = .1f;
+    private float gravity_acc = .05f;
     private float cur_gravity;
 
     public Collision collision;
@@ -46,7 +47,8 @@ public class Character : NetworkBehaviour
     private LayerMask is_grappleable;
 
     public Rigidbody rigid_body { get; private set; }
-    private SpringJoint joint;
+    private ConfigurableJoint joint;
+    private ConfigurableJoint player_joint;
     [SerializeField]
     private float max_tongue_distance = 100000f;
     public float initial_tongue_distance { get; private set; }
@@ -58,6 +60,7 @@ public class Character : NetworkBehaviour
     [SerializeField]
     private Transform player;
     private GameObject hit_location;
+    private GameObject player_pivot_location;
     [SerializeField]
     private Cinemachine.CinemachineFreeLook cam;
     [SerializeField]
@@ -76,6 +79,13 @@ public class Character : NetworkBehaviour
     private CableComponent cable_component;
     [SerializeField]
     private Material tongue_material;
+    private Vector3 previous_velocity;
+    [SerializeField]
+    private float slide_speed = 25f;
+    private Vector3 slide_direction;
+    private float turnSpeed = .1f;
+    public Timer ground_slide_timer; 
+
 
 
     public void Move(float speed_modifier, Vector3 direction){
@@ -91,6 +101,22 @@ public class Character : NetworkBehaviour
         rigid_body.AddForce(Vector3.up * cur_gravity + vector,ForceMode.Acceleration);
     }
 
+    public void Fall(){
+        float horizontal_input = Input.GetAxis("Horizontal");
+        float vertical_input = Input.GetAxis("Vertical");
+        Vector3 input_vector = new Vector3(horizontal_input,0,vertical_input);
+        float speed_modifier = input_vector.magnitude;
+        Vector3 dir = input_vector.normalized;
+        if(input_vector.magnitude >= 0.1f){
+            float targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg + Camera.main.gameObject.transform.eulerAngles.y;
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSpeed, .1f);
+            transform.rotation = Quaternion.Euler(0f, angle, 0f); 
+            Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+            Vector(speed_modifier, moveDir.normalized);
+        } else {
+            Vector(1f, Vector3.zero);
+        }
+    }
     public void Stop(){
         rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, Vector3.zero, stop_speed * Time.deltaTime);
     }
@@ -120,38 +146,81 @@ public class Character : NetworkBehaviour
 
     public void EnableTongue(){
         if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("MoveableObject")){
-            joint = player_hit.transform.gameObject.AddComponent<SpringJoint>();
+            joint = player_hit.transform.gameObject.AddComponent<ConfigurableJoint>();
             joint.autoConfigureConnectedAnchor = false;
             joint.connectedAnchor = player.position;
         } else if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground")){
-            joint = player.gameObject.AddComponent<SpringJoint>();
-            joint.autoConfigureConnectedAnchor = false;
+            joint = hit_location.gameObject.AddComponent<ConfigurableJoint>();
+            hit_location.GetComponent<Rigidbody>().isKinematic = true;
+
+            player_pivot_location = new GameObject();
+            player_pivot_location.transform.position = mouth.position;
+            player_joint = player_pivot_location.AddComponent<ConfigurableJoint>();
+            player_joint.connectedBody = rigid_body;
+            player_joint.anchor = new Vector3(0, 1, 0);
+            player_joint.xMotion = ConfigurableJointMotion.Locked;
+            player_joint.yMotion = ConfigurableJointMotion.Locked;
+            player_joint.zMotion = ConfigurableJointMotion.Locked;
+
+            joint.connectedBody = player_pivot_location.GetComponent<Rigidbody>();
+            joint.axis = new Vector3(1, 1, 1);
             joint.connectedAnchor = hit_location.transform.position;
+            joint.anchor = new Vector3(0, -1, 0);
+            joint.xMotion = ConfigurableJointMotion.Locked;
+            joint.yMotion = ConfigurableJointMotion.Locked;
+            joint.zMotion = ConfigurableJointMotion.Locked;
+
+            
         } else {
             return;
         }
 
         float dist_from_point = Vector3.Distance(mouth.position, player_hit.transform.position);
-        joint.maxDistance = dist_from_point * .6f;
-        joint.minDistance = dist_from_point * .25f;
-
-        joint.spring = 0f;
-        joint.damper = 20f;
-        joint.massScale = 4.5f;
     }
-
-    public void DisableTongue(bool grapple_engaged){
-        if(grapple_engaged){
-            Destroy(joint);
+    public void SetGroundVelocity(){
+        previous_velocity = rigid_body.velocity;
+    }
+    public float GroundSlideStart(){
+        rigid_body.velocity = new Vector3(rigid_body.velocity.x, 0f, rigid_body.velocity.z);
+        slide_direction = new Vector3(previous_velocity.x, 0f, previous_velocity.z);
+        if(slide_direction.magnitude < .5){
+            Vector3 dir_to_rope = hit_location.transform.position - mouth.position;
+            slide_direction = new Vector3(dir_to_rope.x, 0f, dir_to_rope.z).normalized;
+        } else {
+             slide_direction = slide_direction.normalized;
         }
+        return cur_tongue_distance;
     }
 
-    public void StopGrapple(bool grapple_engaged){
+    public float GroundSlide(){
+        Vector3 ground_velocity;
+        if(previous_velocity.magnitude < slide_speed){
+            ground_velocity = Vector3.Lerp(rigid_body.velocity, slide_direction * slide_speed,.05f);
+        } else {
+           ground_velocity = previous_velocity.magnitude * slide_direction;
+        }
+        rigid_body.velocity = ground_velocity;
+
+        return cur_tongue_distance;
+    }
+
+    public void GroundSlideEnd(){
+        rigid_body.velocity = new Vector3(rigid_body.velocity.x, rigid_body.velocity.magnitude, rigid_body.velocity.z);
+    }
+
+    public void DisableTongue(){
+        Destroy(joint);
+        Destroy(player_joint);
+        Destroy(player_pivot_location);
+    }
+
+    public void StopGrapple(){
         var dir = (focal_point.position - head.position).normalized;
         head.rotation = Quaternion.LookRotation(dir);
-        if(grapple_engaged){
-            Destroy(joint);
-        }
+
+        Destroy(joint);
+        Destroy(player_joint);
+        Destroy(player_pivot_location);
         Destroy(hit_location);
     }
 
@@ -191,6 +260,10 @@ public class Character : NetworkBehaviour
         cur_gravity = default_gravity;
     }
 
+    public float getGravity() {
+        return cur_gravity;
+    }
+
     private void Start()
     {
       if(this.isLocalPlayer) {
@@ -212,6 +285,7 @@ public class Character : NetworkBehaviour
       jumping_state = new JumpingState(this,movement_machine);
       falling_state = new FallingState(this,movement_machine);
       swinging_state = new SwingingState(this,movement_machine);
+      ground_sliding_state = new GroundSlidingState(this,movement_machine);
 
       movement_machine.Initialize(standing_state);
 
@@ -222,6 +296,10 @@ public class Character : NetworkBehaviour
       grappling_state = new GrappleState(this, action_machine);
 
       action_machine.Initialize(idle_state);
+
+      GameObject ground_timer_object = new GameObject();
+      ground_slide_timer = ground_timer_object.AddComponent<Timer>();
+      ground_slide_timer.SetTimer(1f);
     }
 
 

@@ -43,10 +43,17 @@ public class JumpingState : State
     {
       base.PhysicsUpdate();
       character.jump_arc.SetPositions(CalculateArcArray());
+      if((!Mathf.Approximately(character.rigid_body.velocity.x , 0) 
+      || !Mathf.Approximately(character.rigid_body.velocity.z , 0)) 
+      && character.collision.on_ground){
+          character.Stop();
+      } else if(!character.collision.on_ground){
+          character.Vector(1f, Vector3.zero);
+      }
     }
     Vector3[] CalculateArcArray()
     {
-        float grav = Mathf.Abs(Physics.gravity.y);
+        float grav = Mathf.Abs(character.getGravity());
         Vector3[] arcArray = new Vector3[ticks];
         float launchAngle = Mathf.Atan(angle.y/Mathf.Sqrt((angle.x * angle.x) + (angle.z * angle.z)));
         float velocity = charge * angle.magnitude;
