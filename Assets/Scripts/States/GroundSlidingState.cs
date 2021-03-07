@@ -30,7 +30,6 @@ public class GroundSlidingState : State
     public override void LogicUpdate()
     {
         base.LogicUpdate();
-        MonoBehaviour.print(set_tongue_length + " ||| " + tongue_length);
         if(!character.collision.on_ground || tongue_length > set_tongue_length + 1){
             state_machine.ChangeState(character.swinging_state);
         }

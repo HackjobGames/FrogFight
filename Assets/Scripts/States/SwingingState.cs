@@ -12,13 +12,11 @@ public class SwingingState : State
     public override void Enter()
     {
         base.Enter();
-        MonoBehaviour.print("enter");
         character.EnableTongue();
     }
     public override void Exit()
     {
         base.Exit(); 
-        MonoBehaviour.print("leave");
         character.DisableTongue();
     }
 
