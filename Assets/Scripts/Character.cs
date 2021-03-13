@@ -69,7 +69,7 @@ public class Character : NetworkBehaviour
     private GameObject crosshair;
 
     private RaycastHit camera_hit;
-    private RaycastHit player_hit;
+    private RaycastHit tongue_hit;
 
     [SerializeField]
     private Transform head;
@@ -84,7 +84,9 @@ public class Character : NetworkBehaviour
     private float slide_speed = 25f;
     private Vector3 slide_direction;
     private float turnSpeed = .1f;
-    public Timer ground_slide_timer; 
+
+    private float max_tongue_strength = 1f;
+    private float max_air_speed = 5f;
 
 
 
@@ -126,11 +128,11 @@ public class Character : NetworkBehaviour
     }
     public bool StartGrapple(){
         if(Physics.Raycast(main_camera.position, main_camera.forward, out camera_hit, max_tongue_distance, is_grappleable) &&
-          Physics.Raycast(mouth.position, (camera_hit.point- mouth.position).normalized, out player_hit, max_tongue_distance, is_grappleable)) {
+          Physics.Raycast(mouth.position, (camera_hit.point- mouth.position).normalized, out tongue_hit, max_tongue_distance, is_grappleable)) {
             hit_location = new GameObject();
-            hit_location.transform.position = player_hit.point;
-            hit_location.transform.parent = player_hit.transform;
-            initial_tongue_distance = Vector3.Distance(player.position, player_hit.transform.position);
+            hit_location.transform.position = tongue_hit.point;
+            hit_location.transform.parent = tongue_hit.transform;
+            initial_tongue_distance = Vector3.Distance(player.position, tongue_hit.transform.position);
             cur_tongue_distance = initial_tongue_distance;
 
             hit_location.AddComponent<CableComponent>();
@@ -142,70 +144,6 @@ public class Character : NetworkBehaviour
         } else {
             return false;
         }
-    }
-
-    public void EnableTongue(){
-        if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("MoveableObject")){
-            joint = player_hit.transform.gameObject.AddComponent<ConfigurableJoint>();
-            joint.autoConfigureConnectedAnchor = false;
-            joint.connectedAnchor = player.position;
-        } else if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground")){
-            joint = hit_location.gameObject.AddComponent<ConfigurableJoint>();
-            hit_location.GetComponent<Rigidbody>().isKinematic = true;
-
-            player_pivot_location = new GameObject();
-            player_pivot_location.transform.position = mouth.position;
-            player_joint = player_pivot_location.AddComponent<ConfigurableJoint>();
-            player_joint.connectedBody = rigid_body;
-            player_joint.anchor = new Vector3(0, 1, 0);
-            player_joint.xMotion = ConfigurableJointMotion.Locked;
-            player_joint.yMotion = ConfigurableJointMotion.Locked;
-            player_joint.zMotion = ConfigurableJointMotion.Locked;
-
-            joint.connectedBody = player_pivot_location.GetComponent<Rigidbody>();
-            joint.axis = new Vector3(1, 1, 1);
-            joint.connectedAnchor = hit_location.transform.position;
-            joint.anchor = new Vector3(0, -1, 0);
-            joint.xMotion = ConfigurableJointMotion.Locked;
-            joint.yMotion = ConfigurableJointMotion.Locked;
-            joint.zMotion = ConfigurableJointMotion.Locked;
-
-            
-        } else {
-            return;
-        }
-
-        float dist_from_point = Vector3.Distance(mouth.position, player_hit.transform.position);
-    }
-    public void SetGroundVelocity(){
-        previous_velocity = rigid_body.velocity;
-    }
-    public float GroundSlideStart(){
-        rigid_body.velocity = new Vector3(rigid_body.velocity.x, 0f, rigid_body.velocity.z);
-        slide_direction = new Vector3(previous_velocity.x, 0f, previous_velocity.z);
-        if(slide_direction.magnitude < .5){
-            Vector3 dir_to_rope = hit_location.transform.position - mouth.position;
-            slide_direction = new Vector3(dir_to_rope.x, 0f, dir_to_rope.z).normalized;
-        } else {
-             slide_direction = slide_direction.normalized;
-        }
-        return cur_tongue_distance;
-    }
-
-    public float GroundSlide(){
-        Vector3 ground_velocity;
-        if(previous_velocity.magnitude < slide_speed){
-            ground_velocity = Vector3.Lerp(rigid_body.velocity, slide_direction * slide_speed,.05f);
-        } else {
-           ground_velocity = previous_velocity.magnitude * slide_direction;
-        }
-        rigid_body.velocity = ground_velocity;
-
-        return cur_tongue_distance;
-    }
-
-    public void GroundSlideEnd(){
-        rigid_body.velocity = new Vector3(rigid_body.velocity.x, rigid_body.velocity.magnitude, rigid_body.velocity.z);
     }
 
     public void DisableTongue(){
@@ -235,6 +173,13 @@ public class Character : NetworkBehaviour
             cable_component.cableLength = cur_tongue_distance;
         }
     }
+
+    public void ApplyTongueForce() {
+      Vector3 dist = hit_location.transform.position - head.position;
+      Vector3 force = (dist.magnitude > max_tongue_strength) ? dist * max_tongue_strength/dist.magnitude : dist;
+      print(force);
+      rigid_body.AddForce(force, ForceMode.Impulse);
+  }
 
     public void ActivateMainCamera(){
         cam.enabled = true;
@@ -285,7 +230,6 @@ public class Character : NetworkBehaviour
       jumping_state = new JumpingState(this,movement_machine);
       falling_state = new FallingState(this,movement_machine);
       swinging_state = new SwingingState(this,movement_machine);
-      ground_sliding_state = new GroundSlidingState(this,movement_machine);
 
       movement_machine.Initialize(standing_state);
 
@@ -298,8 +242,6 @@ public class Character : NetworkBehaviour
       action_machine.Initialize(idle_state);
 
       GameObject ground_timer_object = new GameObject();
-      ground_slide_timer = ground_timer_object.AddComponent<Timer>();
-      ground_slide_timer.SetTimer(1f);
     }
 
 
