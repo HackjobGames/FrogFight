@@ -43,13 +43,6 @@ public class JumpingState : State
     {
       base.PhysicsUpdate();
       character.jump_arc.SetPositions(CalculateArcArray());
-      if((!Mathf.Approximately(character.rigid_body.velocity.x , 0) 
-      || !Mathf.Approximately(character.rigid_body.velocity.z , 0)) 
-      && character.collision.on_ground){
-          character.Stop();
-      } else if(!character.collision.on_ground){
-          character.Vector(1f, Vector3.zero);
-      }
     }
     Vector3[] CalculateArcArray()
     {

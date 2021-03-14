@@ -29,7 +29,6 @@ public class GrappleState : State
     public override void Exit()
     {
         base.Exit();
-        character.ResetGravity();
         character.StopGrapple();
     }
 

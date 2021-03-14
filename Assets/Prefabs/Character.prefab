@@ -3922,12 +3922,8 @@ MonoBehaviour:
   acc_speed: 80
   dec_speed: 30
   stop_speed: 90
-  max_jump_force: 20.1
-  jump_charge_speed: 5
-  min_gravity: -18.8
-  max_gravity: -34.04
-  default_gravity: -24.7
-  gravity_acc: 0.1
+  max_jump_force: 20
+  jump_charge_speed: 100
   collision: {fileID: 0}
   is_grappleable:
     serializedVersion: 2
@@ -3942,6 +3938,7 @@ MonoBehaviour:
   head: {fileID: 7924504002968967371}
   focal_point: {fileID: 7923664874011485025}
   tongue_material: {fileID: 2100000, guid: a5eaa5d949946fe42b49da914693a8bc, type: 2}
+  slide_speed: 25
 --- !u!114 &7923664875190098034
 MonoBehaviour:
   m_ObjectHideFlags: 0

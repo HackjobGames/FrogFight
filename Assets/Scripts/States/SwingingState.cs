@@ -25,17 +25,11 @@ public class SwingingState : State
     public override void LogicUpdate()
     {
         base.LogicUpdate();
-
-        if(character.rigid_body.velocity.y < 0){
-            character.IncreaseGravity();
-        } else{
-            character.DecreaseGravity();
-        }
-
     }
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
         character.ApplyTongueForce();
+        character.Fall();
     }
 }

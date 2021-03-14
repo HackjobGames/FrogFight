@@ -28,19 +28,11 @@ public class Character : NetworkBehaviour
     [SerializeField]
     private float stop_speed = 11f;
     [SerializeField]
-    public float max_jump_force = 15f;
+    public float max_jump_force = 30f;
     [SerializeField]
-    public float jump_charge_speed = 10f;
+    public float jump_charge_speed = 1000f;
 
-    [SerializeField]
-    private float min_gravity = -7f;
-    [SerializeField]
-    private float max_gravity = -20f;
-    [SerializeField]
-    private float default_gravity = -9.81f;
-    [SerializeField]
-    private float gravity_acc = .05f;
-    private float cur_gravity;
+    private float gravity = -9.81f;
 
     public Collision collision;
    [SerializeField]
@@ -87,6 +79,7 @@ public class Character : NetworkBehaviour
 
     private float max_tongue_strength = 1f;
     private float max_air_speed = 5f;
+    private float tongue_dampen = .9f;
 
 
 
@@ -100,7 +93,7 @@ public class Character : NetworkBehaviour
 
     public void Vector(float speed_modifier, Vector3 direction){
         var vector = direction * speed * speed_modifier;
-        rigid_body.AddForce(Vector3.up * cur_gravity + vector,ForceMode.Acceleration);
+        rigid_body.AddForce(Vector3.up * gravity + vector,ForceMode.Acceleration);
     }
 
     public void Fall(){
@@ -177,6 +170,7 @@ public class Character : NetworkBehaviour
     public void ApplyTongueForce() {
       Vector3 dist = hit_location.transform.position - head.position;
       Vector3 force = (dist.magnitude > max_tongue_strength) ? dist * max_tongue_strength/dist.magnitude : dist;
+      force *= tongue_dampen;
       print(force);
       rigid_body.AddForce(force, ForceMode.Impulse);
   }
@@ -193,20 +187,8 @@ public class Character : NetworkBehaviour
         crosshair.SetActive(true);
     }
 
-    public void IncreaseGravity(){
-        cur_gravity = Mathf.Lerp(cur_gravity, max_gravity, gravity_acc);
-    }
-
-    public void DecreaseGravity(){
-        cur_gravity = Mathf.Lerp(cur_gravity, min_gravity, gravity_acc);
-    }
-
-    public void ResetGravity(){
-        cur_gravity = default_gravity;
-    }
-
     public float getGravity() {
-        return cur_gravity;
+        return gravity;
     }
 
     private void Start()
@@ -221,7 +203,6 @@ public class Character : NetworkBehaviour
       rigid_body = GetComponent<Rigidbody>();
       collision = GetComponent<Collision>();
       jump_arc.enabled = false;
-      cur_gravity = default_gravity;
       head_initial_pos = head.rotation;
       head.rotation = head_initial_pos;
 
