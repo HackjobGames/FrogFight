@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
-public class Collision : NetworkBehaviour
+public class PlayerCollision : NetworkBehaviour
 {
     public bool on_ground;
     public bool on_ceiling;

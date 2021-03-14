@@ -34,7 +34,7 @@ public class Character : NetworkBehaviour
 
     private float gravity = -9.81f;
 
-    public Collision collision;
+    public PlayerCollision collision;
    [SerializeField]
     private LayerMask is_grappleable;
 
@@ -119,7 +119,6 @@ public class Character : NetworkBehaviour
         && collision.on_ground){
           rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, Vector3.zero, stop_speed * Time.deltaTime);
       }
-
     }
 
     public void ApplyImpulse(Vector3 force){
@@ -204,52 +203,48 @@ public class Character : NetworkBehaviour
         cam.gameObject.SetActive(true);
         zoom_cam.gameObject.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;
+        movement_machine = new StateMachine();
+        standing_state = new  StandingState(this,movement_machine);
+        jumping_state = new JumpingState(this,movement_machine);
+        falling_state = new FallingState(this,movement_machine);
+        swinging_state = new SwingingState(this,movement_machine);
 
+        movement_machine.Initialize(standing_state);
+
+        action_machine = new StateMachine();
+
+        idle_state = new IdleState(this, action_machine);
+        aiming_state = new AimingState(this, action_machine);
+        grappling_state = new GrappleState(this, action_machine);
+
+        action_machine.Initialize(idle_state);
+      } else {
+        rigid_body.isKinematic = true;
       }
       rigid_body = GetComponent<Rigidbody>();
-      collision = GetComponent<Collision>();
+      collision = GetComponent<PlayerCollision>();
       jump_arc.enabled = false;
       head_initial_pos = head.rotation;
       head.rotation = head_initial_pos;
 
-      movement_machine = new StateMachine();
-      standing_state = new  StandingState(this,movement_machine);
-      jumping_state = new JumpingState(this,movement_machine);
-      falling_state = new FallingState(this,movement_machine);
-      swinging_state = new SwingingState(this,movement_machine);
 
-      movement_machine.Initialize(standing_state);
-
-      action_machine = new StateMachine();
-
-      idle_state = new IdleState(this, action_machine);
-      aiming_state = new AimingState(this, action_machine);
-      grappling_state = new GrappleState(this, action_machine);
-
-      action_machine.Initialize(idle_state);
-
-      GameObject ground_timer_object = new GameObject();
     }
-
 
     private void Update()
     {
       if(this.isLocalPlayer) {
         movement_machine.cur_state.HandleInput();
-
-
-
         action_machine.cur_state.HandleInput();
-
-
+        action_machine.cur_state.LogicUpdate();
+        movement_machine.cur_state.LogicUpdate();
       }
-      action_machine.cur_state.LogicUpdate();
-      movement_machine.cur_state.LogicUpdate();
     }
 
     private void FixedUpdate() 
     {
-      movement_machine.cur_state.PhysicsUpdate();
-      action_machine.cur_state.PhysicsUpdate();
+      if (this.isLocalPlayer) {
+        movement_machine.cur_state.PhysicsUpdate();
+        action_machine.cur_state.PhysicsUpdate();
+      }
     }
 }

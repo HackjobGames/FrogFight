@@ -6,11 +6,11 @@ using Mirror;
 public class Player : NetworkBehaviour
 {
   [SyncVar]
-  public string name;
+  public string playerName;
   
   private void Start() {
     if (this.isLocalPlayer) {
-      this.name = MainMenu.playerName;
+      this.playerName = MainMenu.playerName;
     }
   }
   public override void OnStartLocalPlayer() {
@@ -20,7 +20,7 @@ public class Player : NetworkBehaviour
   [Command]
   public void SetName(string name)
   {
-      this.name = name;
+      this.playerName = name;
   }
 
   
