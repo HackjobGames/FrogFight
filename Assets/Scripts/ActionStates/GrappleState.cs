@@ -35,15 +35,14 @@ public class GrappleState : State
     public override void HandleInput()
     {
         base.HandleInput();
-        if(Input.GetMouseButtonUp(0)){
-            state_machine.ChangeState(character.idle_state);
-            character.movement_machine.ChangeState(character.falling_state);
-        }
     }
     public override void LogicUpdate()
     {
         base.LogicUpdate();
         character.UpdateTonguePositions();
+        if(character.movement_machine.cur_state != character.swinging_state){
+            state_machine.ChangeState(character.idle_state);
+        }
     }
     public override void PhysicsUpdate()
     {

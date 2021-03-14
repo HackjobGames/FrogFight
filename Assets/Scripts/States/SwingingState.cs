@@ -21,6 +21,9 @@ public class SwingingState : State
     public override void HandleInput()
     {
         base.HandleInput();
+        if(Input.GetMouseButtonUp(0)){
+            state_machine.ChangeState(character.falling_state);
+        }
     }
     public override void LogicUpdate()
     {
@@ -29,7 +32,9 @@ public class SwingingState : State
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
-        character.ApplyTongueForce();
         character.Fall();
+        if(!character.ApplyTongueForce()) {
+          state_machine.ChangeState(character.falling_state);
+        };
     }
 }

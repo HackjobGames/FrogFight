@@ -113,7 +113,13 @@ public class Character : NetworkBehaviour
         }
     }
     public void Stop(){
-        rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, Vector3.zero, stop_speed * Time.deltaTime);
+      if(action_machine.cur_state != grappling_state
+        && !Mathf.Approximately(rigid_body.velocity.x , 0) 
+        || !Mathf.Approximately(rigid_body.velocity.z , 0)
+        && collision.on_ground){
+          rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, Vector3.zero, stop_speed * Time.deltaTime);
+      }
+
     }
 
     public void ApplyImpulse(Vector3 force){
@@ -167,12 +173,12 @@ public class Character : NetworkBehaviour
         }
     }
 
-    public void ApplyTongueForce() {
+    public bool ApplyTongueForce() {
       Vector3 dist = hit_location.transform.position - head.position;
       Vector3 force = (dist.magnitude > max_tongue_strength) ? dist * max_tongue_strength/dist.magnitude : dist;
       force *= tongue_dampen;
-      print(force);
       rigid_body.AddForce(force, ForceMode.Impulse);
+      return(max_tongue_distance >= dist.magnitude);
   }
 
     public void ActivateMainCamera(){

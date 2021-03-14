@@ -43,6 +43,7 @@ public class JumpingState : State
     {
       base.PhysicsUpdate();
       character.jump_arc.SetPositions(CalculateArcArray());
+      character.Stop();
     }
     Vector3[] CalculateArcArray()
     {

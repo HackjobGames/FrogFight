@@ -33,11 +33,6 @@ public class StandingState : State
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
-        if(character.action_machine.cur_state != character.grappling_state
-          && !Mathf.Approximately(character.rigid_body.velocity.x , 0) 
-          || !Mathf.Approximately(character.rigid_body.velocity.z , 0)
-          && character.collision.on_ground){
-            character.Stop();
-        }
+        character.Stop();
     }
 }
