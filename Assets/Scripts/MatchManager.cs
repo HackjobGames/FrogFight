@@ -39,7 +39,6 @@ public class MatchManager : NetworkBehaviour
     yield return new WaitUntil(() => GameGlobals.levelLoaded);
     Player[] players = GameGlobals.GetPlayers();
     GameObject[] spawns = GameObject.FindGameObjectsWithTag("SpawnPosition");
-    print(spawns);
     for (int i = 0; i < players.Length; i++) {
       players[i].GetComponent<Character>().enabled = true;
       players[i].transform.position = spawns[i].transform.position;
