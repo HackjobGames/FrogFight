@@ -28,21 +28,13 @@ public class Character : NetworkBehaviour
     [SerializeField]
     private float stop_speed = 11f;
     [SerializeField]
-    public float max_jump_force = 15f;
+    public float max_jump_force = 30f;
     [SerializeField]
-    public float jump_charge_speed = 10f;
+    public float jump_charge_speed = 1000f;
 
-    [SerializeField]
-    private float min_gravity = -7f;
-    [SerializeField]
-    private float max_gravity = -20f;
-    [SerializeField]
-    private float default_gravity = -9.81f;
-    [SerializeField]
-    private float gravity_acc = .05f;
-    private float cur_gravity;
+    private float gravity = -9.81f;
 
-    public Collision collision;
+    public PlayerCollision collision;
    [SerializeField]
     private LayerMask is_grappleable;
 
@@ -69,7 +61,7 @@ public class Character : NetworkBehaviour
     private GameObject crosshair;
 
     private RaycastHit camera_hit;
-    private RaycastHit player_hit;
+    private RaycastHit tongue_hit;
 
     [SerializeField]
     private Transform head;
@@ -84,7 +76,10 @@ public class Character : NetworkBehaviour
     private float slide_speed = 25f;
     private Vector3 slide_direction;
     private float turnSpeed = .1f;
-    public Timer ground_slide_timer; 
+
+    private float max_tongue_strength = 1f;
+    private float max_air_speed = 5f;
+    private float tongue_dampen = .9f;
 
 
 
@@ -98,7 +93,7 @@ public class Character : NetworkBehaviour
 
     public void Vector(float speed_modifier, Vector3 direction){
         var vector = direction * speed * speed_modifier;
-        rigid_body.AddForce(Vector3.up * cur_gravity + vector,ForceMode.Acceleration);
+        rigid_body.AddForce(Vector3.up * gravity + vector,ForceMode.Acceleration);
     }
 
     public void Fall(){
@@ -118,7 +113,12 @@ public class Character : NetworkBehaviour
         }
     }
     public void Stop(){
-        rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, Vector3.zero, stop_speed * Time.deltaTime);
+      if(action_machine.cur_state != grappling_state
+        && (!Mathf.Approximately(rigid_body.velocity.x , 0) 
+        || !Mathf.Approximately(rigid_body.velocity.z , 0))
+        && collision.on_ground){
+          rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, Vector3.zero, stop_speed * Time.deltaTime);
+      }
     }
 
     public void ApplyImpulse(Vector3 force){
@@ -126,11 +126,11 @@ public class Character : NetworkBehaviour
     }
     public bool StartGrapple(){
         if(Physics.Raycast(main_camera.position, main_camera.forward, out camera_hit, max_tongue_distance, is_grappleable) &&
-          Physics.Raycast(mouth.position, (camera_hit.point- mouth.position).normalized, out player_hit, max_tongue_distance, is_grappleable)) {
+          Physics.Raycast(mouth.position, (camera_hit.point- mouth.position).normalized, out tongue_hit, max_tongue_distance, is_grappleable)) {
             hit_location = new GameObject();
-            hit_location.transform.position = player_hit.point;
-            hit_location.transform.parent = player_hit.transform;
-            initial_tongue_distance = Vector3.Distance(player.position, player_hit.transform.position);
+            hit_location.transform.position = tongue_hit.point;
+            hit_location.transform.parent = tongue_hit.transform;
+            initial_tongue_distance = Vector3.Distance(player.position, tongue_hit.transform.position);
             cur_tongue_distance = initial_tongue_distance;
 
             hit_location.AddComponent<CableComponent>();
@@ -142,70 +142,6 @@ public class Character : NetworkBehaviour
         } else {
             return false;
         }
-    }
-
-    public void EnableTongue(){
-        if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("MoveableObject")){
-            joint = player_hit.transform.gameObject.AddComponent<ConfigurableJoint>();
-            joint.autoConfigureConnectedAnchor = false;
-            joint.connectedAnchor = player.position;
-        } else if(player_hit.transform.gameObject.layer == LayerMask.NameToLayer("Ground")){
-            joint = hit_location.gameObject.AddComponent<ConfigurableJoint>();
-            hit_location.GetComponent<Rigidbody>().isKinematic = true;
-
-            player_pivot_location = new GameObject();
-            player_pivot_location.transform.position = mouth.position;
-            player_joint = player_pivot_location.AddComponent<ConfigurableJoint>();
-            player_joint.connectedBody = rigid_body;
-            player_joint.anchor = new Vector3(0, 1, 0);
-            player_joint.xMotion = ConfigurableJointMotion.Locked;
-            player_joint.yMotion = ConfigurableJointMotion.Locked;
-            player_joint.zMotion = ConfigurableJointMotion.Locked;
-
-            joint.connectedBody = player_pivot_location.GetComponent<Rigidbody>();
-            joint.axis = new Vector3(1, 1, 1);
-            joint.connectedAnchor = hit_location.transform.position;
-            joint.anchor = new Vector3(0, -1, 0);
-            joint.xMotion = ConfigurableJointMotion.Locked;
-            joint.yMotion = ConfigurableJointMotion.Locked;
-            joint.zMotion = ConfigurableJointMotion.Locked;
-
-            
-        } else {
-            return;
-        }
-
-        float dist_from_point = Vector3.Distance(mouth.position, player_hit.transform.position);
-    }
-    public void SetGroundVelocity(){
-        previous_velocity = rigid_body.velocity;
-    }
-    public float GroundSlideStart(){
-        rigid_body.velocity = new Vector3(rigid_body.velocity.x, 0f, rigid_body.velocity.z);
-        slide_direction = new Vector3(previous_velocity.x, 0f, previous_velocity.z);
-        if(slide_direction.magnitude < .5){
-            Vector3 dir_to_rope = hit_location.transform.position - mouth.position;
-            slide_direction = new Vector3(dir_to_rope.x, 0f, dir_to_rope.z).normalized;
-        } else {
-             slide_direction = slide_direction.normalized;
-        }
-        return cur_tongue_distance;
-    }
-
-    public float GroundSlide(){
-        Vector3 ground_velocity;
-        if(previous_velocity.magnitude < slide_speed){
-            ground_velocity = Vector3.Lerp(rigid_body.velocity, slide_direction * slide_speed,.05f);
-        } else {
-           ground_velocity = previous_velocity.magnitude * slide_direction;
-        }
-        rigid_body.velocity = ground_velocity;
-
-        return cur_tongue_distance;
-    }
-
-    public void GroundSlideEnd(){
-        rigid_body.velocity = new Vector3(rigid_body.velocity.x, rigid_body.velocity.magnitude, rigid_body.velocity.z);
     }
 
     public void DisableTongue(){
@@ -236,6 +172,14 @@ public class Character : NetworkBehaviour
         }
     }
 
+    public bool ApplyTongueForce() {
+      Vector3 dist = hit_location.transform.position - head.position;
+      Vector3 force = (dist.magnitude > max_tongue_strength) ? dist * max_tongue_strength/dist.magnitude : dist;
+      force *= tongue_dampen;
+      rigid_body.AddForce(force, ForceMode.Impulse);
+      return(max_tongue_distance >= dist.magnitude);
+  }
+
     public void ActivateMainCamera(){
         cam.enabled = true;
         zoom_cam.enabled = false;
@@ -248,20 +192,8 @@ public class Character : NetworkBehaviour
         crosshair.SetActive(true);
     }
 
-    public void IncreaseGravity(){
-        cur_gravity = Mathf.Lerp(cur_gravity, max_gravity, gravity_acc);
-    }
-
-    public void DecreaseGravity(){
-        cur_gravity = Mathf.Lerp(cur_gravity, min_gravity, gravity_acc);
-    }
-
-    public void ResetGravity(){
-        cur_gravity = default_gravity;
-    }
-
     public float getGravity() {
-        return cur_gravity;
+        return gravity;
     }
 
     private void Start()
@@ -271,56 +203,48 @@ public class Character : NetworkBehaviour
         cam.gameObject.SetActive(true);
         zoom_cam.gameObject.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;
+        movement_machine = new StateMachine();
+        standing_state = new  StandingState(this,movement_machine);
+        jumping_state = new JumpingState(this,movement_machine);
+        falling_state = new FallingState(this,movement_machine);
+        swinging_state = new SwingingState(this,movement_machine);
 
+        movement_machine.Initialize(standing_state);
+
+        action_machine = new StateMachine();
+
+        idle_state = new IdleState(this, action_machine);
+        aiming_state = new AimingState(this, action_machine);
+        grappling_state = new GrappleState(this, action_machine);
+
+        action_machine.Initialize(idle_state);
+      } else {
+        rigid_body.isKinematic = true;
       }
       rigid_body = GetComponent<Rigidbody>();
-      collision = GetComponent<Collision>();
+      collision = GetComponent<PlayerCollision>();
       jump_arc.enabled = false;
-      cur_gravity = default_gravity;
       head_initial_pos = head.rotation;
       head.rotation = head_initial_pos;
 
-      movement_machine = new StateMachine();
-      standing_state = new  StandingState(this,movement_machine);
-      jumping_state = new JumpingState(this,movement_machine);
-      falling_state = new FallingState(this,movement_machine);
-      swinging_state = new SwingingState(this,movement_machine);
-      ground_sliding_state = new GroundSlidingState(this,movement_machine);
 
-      movement_machine.Initialize(standing_state);
-
-      action_machine = new StateMachine();
-
-      idle_state = new IdleState(this, action_machine);
-      aiming_state = new AimingState(this, action_machine);
-      grappling_state = new GrappleState(this, action_machine);
-
-      action_machine.Initialize(idle_state);
-
-      GameObject ground_timer_object = new GameObject();
-      ground_slide_timer = ground_timer_object.AddComponent<Timer>();
-      ground_slide_timer.SetTimer(1f);
     }
-
 
     private void Update()
     {
       if(this.isLocalPlayer) {
         movement_machine.cur_state.HandleInput();
-
-
-
         action_machine.cur_state.HandleInput();
-
-
+        action_machine.cur_state.LogicUpdate();
+        movement_machine.cur_state.LogicUpdate();
       }
-      action_machine.cur_state.LogicUpdate();
-      movement_machine.cur_state.LogicUpdate();
     }
 
     private void FixedUpdate() 
     {
-      movement_machine.cur_state.PhysicsUpdate();
-      action_machine.cur_state.PhysicsUpdate();
+      if (this.isLocalPlayer) {
+        movement_machine.cur_state.PhysicsUpdate();
+        action_machine.cur_state.PhysicsUpdate();
+      }
     }
 }

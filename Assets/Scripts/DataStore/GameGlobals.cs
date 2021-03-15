@@ -13,10 +13,10 @@ public class GameGlobals : NetworkBehaviour
     private void Update() {
       Player[] players = GetPlayers();
       if (players.Length > 0) {
-        p1Text.text = "Player Name: " + players[0].name;
+        p1Text.text = "Player Name: " + players[0].playerName;
       }
       if (players.Length > 1) {
-        p2Text.text = "Player Name: " + players[1].name;
+        p2Text.text = "Player Name: " + players[1].playerName;
       }
     }
     public static Player[] GetPlayers() {

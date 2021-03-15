@@ -25,12 +25,7 @@ public class IdleState : State
         } else if(Input.GetMouseButtonDown(0)){
             if(character.StartGrapple()){
                 state_machine.ChangeState(character.grappling_state);
-                if(character.collision.on_ground){
-                    character.SetGroundVelocity();
-                    character.movement_machine.ChangeState(character.ground_sliding_state);
-                } else {
-                    character.movement_machine.ChangeState(character.swinging_state);
-                }
+                character.movement_machine.ChangeState(character.swinging_state);
             } else {
                 character.StopGrapple();
             }

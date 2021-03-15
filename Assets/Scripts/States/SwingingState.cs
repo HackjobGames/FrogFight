@@ -12,38 +12,29 @@ public class SwingingState : State
     public override void Enter()
     {
         base.Enter();
-        character.EnableTongue();
     }
     public override void Exit()
     {
         base.Exit(); 
-        character.DisableTongue();
     }
 
     public override void HandleInput()
     {
         base.HandleInput();
+        if(Input.GetMouseButtonUp(0)){
+            state_machine.ChangeState(character.falling_state);
+        }
     }
     public override void LogicUpdate()
     {
         base.LogicUpdate();
-        if(character.collision.on_ground && !character.ground_slide_timer.is_active){
-            character.ResetGravity();
-            state_machine.ChangeState(character.ground_sliding_state);
-        } else {
-            character.SetGroundVelocity();
-        }
-
-        if(character.rigid_body.velocity.y < 0){
-            character.IncreaseGravity();
-        } else{
-            character.DecreaseGravity();
-        }
-
     }
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
         character.Fall();
+        if(!character.ApplyTongueForce()) {
+          state_machine.ChangeState(character.falling_state);
+        };
     }
 }
