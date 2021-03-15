@@ -114,8 +114,8 @@ public class Character : NetworkBehaviour
     }
     public void Stop(){
       if(action_machine.cur_state != grappling_state
-        && !Mathf.Approximately(rigid_body.velocity.x , 0) 
-        || !Mathf.Approximately(rigid_body.velocity.z , 0)
+        && (!Mathf.Approximately(rigid_body.velocity.x , 0) 
+        || !Mathf.Approximately(rigid_body.velocity.z , 0))
         && collision.on_ground){
           rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, Vector3.zero, stop_speed * Time.deltaTime);
       }
