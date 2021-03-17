@@ -59,7 +59,10 @@ public class Character : NetworkBehaviour
     private Cinemachine.CinemachineFreeLook zoom_cam;
     [SerializeField]
     private GameObject crosshair;
-
+    [SerializeField]
+    private GameObject aim_marker_prefab;
+    private GameObject aim_marker;
+    private MeshRenderer aim_marker_mesh;
     private RaycastHit camera_hit;
     private RaycastHit tongue_hit;
 
@@ -196,6 +199,19 @@ public class Character : NetworkBehaviour
         return gravity;
     }
 
+    public void AimMarkerUpdate(){
+      if(Physics.Raycast(main_camera.position, main_camera.forward, out camera_hit, max_tongue_distance, is_grappleable) &&
+          Physics.Raycast(mouth.position, (camera_hit.point- mouth.position).normalized, out tongue_hit, max_tongue_distance, is_grappleable)) {
+          if(!aim_marker_mesh.enabled){
+            aim_marker_mesh.enabled = true;
+          }
+          
+          aim_marker.transform.position = tongue_hit.point;
+        } else if(aim_marker_mesh.enabled){
+          aim_marker_mesh.enabled = false;
+        }
+    }
+
     private void Start()
     {
       if(this.isLocalPlayer) {
@@ -223,7 +239,11 @@ public class Character : NetworkBehaviour
       }
       rigid_body = GetComponent<Rigidbody>();
       collision = GetComponent<PlayerCollision>();
+      aim_marker = Instantiate(aim_marker_prefab) as GameObject;
+      print(aim_marker.name);
+      aim_marker_mesh = aim_marker.GetComponent<MeshRenderer>();
       jump_arc.enabled = false;
+      aim_marker_mesh.enabled = false;
       head_initial_pos = head.rotation;
       head.rotation = head_initial_pos;
 
