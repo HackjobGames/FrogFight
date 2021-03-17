@@ -2043,7 +2043,7 @@ MonoBehaviour:
   m_Follow: {fileID: 7923664875190098046}
   m_CommonLens: 1
   m_Lens:
-    FieldOfView: 87.92
+    FieldOfView: 108.8
     OrthographicSize: 10
     NearClipPlane: 0.2
     FarClipPlane: 7100
@@ -2415,8 +2415,8 @@ MonoBehaviour:
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 0
   m_LookaheadIgnoreY: 0
-  m_HorizontalDamping: 0.5
-  m_VerticalDamping: 0.5
+  m_HorizontalDamping: 0
+  m_VerticalDamping: 0
   m_ScreenX: 0.526
   m_ScreenY: 0.648
   m_DeadZoneWidth: 0
@@ -2927,7 +2927,7 @@ Camera:
     height: 1
   near clip plane: 0.2
   far clip plane: 7100
-  field of view: 87.92
+  field of view: 110
   orthographic: 0
   orthographic size: 10
   m_Depth: 0.83
@@ -3458,8 +3458,8 @@ MonoBehaviour:
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 0
   m_LookaheadIgnoreY: 0
-  m_HorizontalDamping: 0.5
-  m_VerticalDamping: 0.5
+  m_HorizontalDamping: 0
+  m_VerticalDamping: 0
   m_ScreenX: 0.5
   m_ScreenY: 1.5
   m_DeadZoneWidth: 0
@@ -3710,8 +3710,8 @@ MonoBehaviour:
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 0
   m_LookaheadIgnoreY: 0
-  m_HorizontalDamping: 0.5
-  m_VerticalDamping: 0.5
+  m_HorizontalDamping: 0
+  m_VerticalDamping: 0
   m_ScreenX: 0.5
   m_ScreenY: 0.6437501
   m_DeadZoneWidth: 0
@@ -3934,6 +3934,7 @@ MonoBehaviour:
   cam: {fileID: 7923664873155408722}
   zoom_cam: {fileID: 7923664873899459703}
   crosshair: {fileID: 4565314398845697642}
+  aim_marker_prefab: {fileID: 7430119559413119944, guid: b6152ff1f2e974c4a903b7ac599fd24a, type: 3}
   head: {fileID: 7924504002968967371}
   focal_point: {fileID: 7923664874011485025}
   tongue_material: {fileID: 2100000, guid: a5eaa5d949946fe42b49da914693a8bc, type: 2}
@@ -4069,6 +4070,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneId: 0
   serverOnly: 0
+  visible: 0
   m_AssetId: 
   hasSpawned: 0
 --- !u!114 &5825117038516891238

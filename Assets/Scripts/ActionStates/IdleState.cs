@@ -34,6 +34,7 @@ public class IdleState : State
     public override void LogicUpdate()
     {
         base.LogicUpdate();
+        character.AimMarkerUpdate();
     }
     public override void PhysicsUpdate()
     {
