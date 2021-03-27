@@ -27,8 +27,7 @@ public class JumpingState : State
     {
         base.HandleInput();
         if(Input.GetButtonUp("Jump")) {
-          character.transform.rotation = Quaternion.Euler(0f, Camera.main.transform.rotation.eulerAngles.y, 0f); 
-          character.ApplyImpulse(angle * charge);
+          character.ApplyImpulse(angle * charge * 30);
           state_machine.ChangeState(character.falling_state);
         }
     }
@@ -54,7 +53,7 @@ public class JumpingState : State
         for (int t = 0; t < ticks; t++)
         {
             float val = t * Time.deltaTime;
-            arcArray[t] = new Vector3(angle.x * charge * val, (velocity * val * Mathf.Sin(launchAngle)) - (.5f * grav * val * val), angle.z * charge * val) + character.transform.position;
+            arcArray[t] = new Vector3(angle.x * charge * val, (velocity * val * Mathf.Sin(launchAngle)) - (.5f * grav * val * val), angle.z * charge * val) + character.rigid_body.transform.position;
         }
 
         return arcArray;

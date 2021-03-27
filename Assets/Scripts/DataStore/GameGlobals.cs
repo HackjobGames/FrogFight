@@ -20,7 +20,7 @@ public class GameGlobals : NetworkBehaviour
       }
     }
     public static Player[] GetPlayers() {
-      GameObject[] prefabs = GameObject.FindGameObjectsWithTag("Player");
+      GameObject[] prefabs = GameObject.FindGameObjectsWithTag("PlayerRoot");
       Player[] players = new Player[prefabs.Length];
       for (int i = 0; i < prefabs.Length; i++) {
         players[i] = prefabs[i].GetComponent<Player>();

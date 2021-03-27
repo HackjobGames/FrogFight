@@ -20,15 +20,16 @@ public class StandingState : State
     public override void HandleInput()
     {
         base.HandleInput();
-        if(Input.GetButton("Jump")&&character.collision.on_ground &&character.action_machine.cur_state != character.grappling_state){
+        if(Input.GetButton("Jump") && character.action_machine.cur_state != character.grappling_state){
             state_machine.ChangeState(character.jumping_state);
-        } else if(!character.collision.on_ground){
-            state_machine.ChangeState(character.falling_state);
         }
     }
     public override void LogicUpdate()
     {
         base.LogicUpdate();
+        if(character.rigid_body.velocity.magnitude > 0.1f){
+            state_machine.ChangeState(character.falling_state);
+        }
     }
     public override void PhysicsUpdate()
     {

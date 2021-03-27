@@ -20,9 +20,7 @@ public class IdleState : State
     public override void HandleInput()
     {
         base.HandleInput();
-        if(Input.GetMouseButtonDown(1)){
-            state_machine.ChangeState(character.aiming_state);
-        } else if(Input.GetMouseButtonDown(0)){
+        if(Input.GetMouseButtonDown(0)){
             if(character.StartGrapple()){
                 state_machine.ChangeState(character.grappling_state);
                 character.movement_machine.ChangeState(character.swinging_state);
