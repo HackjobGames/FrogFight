@@ -435,7 +435,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneId: 397201149
   serverOnly: 0
-  visible: 0
   m_AssetId: 
   hasSpawned: 0
 --- !u!4 &747685496
@@ -638,17 +637,15 @@ MonoBehaviour:
   autoStartServerBuild: 1
   showDebugMessages: 0
   serverTickRate: 30
-  serverBatching: 0
-  serverBatchInterval: 0
   offlineScene: 
   onlineScene: 
   transport: {fileID: 839442933}
-  networkAddress: localhost
+  networkAddress: 66.41.159.125
   maxConnections: 4
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 7923664875190098047, guid: 873080fce58848411817e5082c51599a, type: 3}
+  playerPrefab: {fileID: 2951925965738532597, guid: 873080fce58848411817e5082c51599a, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs: []
@@ -820,7 +817,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Test
+          m_StringArgument: Forest
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1004355031

@@ -32,7 +32,7 @@ public class FallingState : State
     public override void LogicUpdate()
     {
         base.LogicUpdate();
-        if(character.collision.on_ground){
+        if(Mathf.Abs(character.rigid_body.velocity.magnitude) < 0.1f) {
             state_machine.ChangeState(character.standing_state);
         }
     }

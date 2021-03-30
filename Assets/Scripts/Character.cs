@@ -38,7 +38,7 @@ public class Character : NetworkBehaviour
    [SerializeField]
     private LayerMask is_grappleable;
 
-    public Rigidbody rigid_body { get; private set; }
+    public Rigidbody rigid_body;
     private ConfigurableJoint joint;
     private ConfigurableJoint player_joint;
     [SerializeField]
@@ -53,10 +53,6 @@ public class Character : NetworkBehaviour
     private Transform player;
     private GameObject hit_location;
     private GameObject player_pivot_location;
-    [SerializeField]
-    private Cinemachine.CinemachineFreeLook cam;
-    [SerializeField]
-    private Cinemachine.CinemachineFreeLook zoom_cam;
     [SerializeField]
     private GameObject crosshair;
     [SerializeField]
@@ -80,9 +76,13 @@ public class Character : NetworkBehaviour
     private Vector3 slide_direction;
     private float turnSpeed = .1f;
 
+    public Transform look_at;
+
     private float max_tongue_strength = 1f;
     private float max_air_speed = 5f;
-    private float tongue_dampen = .9f;
+    private float tongue_dampen = 20f;
+    
+    public Transform frog;
 
 
 
@@ -108,7 +108,7 @@ public class Character : NetworkBehaviour
         if(input_vector.magnitude >= 0.1f){
             float targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg + Camera.main.gameObject.transform.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSpeed, .1f);
-            transform.rotation = Quaternion.Euler(0f, angle, 0f); 
+            // transform.rotation = Quaternion.Euler(0f, angle, 0f); 
             Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
             Vector(speed_modifier, moveDir.normalized);
         } else {
@@ -128,7 +128,7 @@ public class Character : NetworkBehaviour
         rigid_body.AddForce(force, ForceMode.Impulse);
     }
     public bool StartGrapple(){
-        if(Physics.Raycast(main_camera.position, main_camera.forward, out camera_hit, max_tongue_distance, is_grappleable) &&
+        if(Physics.Raycast(look_at.position, main_camera.forward, out camera_hit, max_tongue_distance, is_grappleable) &&
           Physics.Raycast(mouth.position, (camera_hit.point- mouth.position).normalized, out tongue_hit, max_tongue_distance, is_grappleable)) {
             hit_location = new GameObject();
             hit_location.transform.position = tongue_hit.point;
@@ -183,18 +183,6 @@ public class Character : NetworkBehaviour
       return(max_tongue_distance >= dist.magnitude);
   }
 
-    public void ActivateMainCamera(){
-        cam.enabled = true;
-        zoom_cam.enabled = false;
-        crosshair.SetActive(false);
-    }
-
-    public void ActivateZoomCamera(){
-        cam.enabled = false;
-        zoom_cam.enabled = true;
-        crosshair.SetActive(true);
-    }
-
     public float getGravity() {
         return gravity;
     }
@@ -216,8 +204,6 @@ public class Character : NetworkBehaviour
     {
       if(this.isLocalPlayer) {
         main_camera.gameObject.SetActive(true);
-        cam.gameObject.SetActive(true);
-        zoom_cam.gameObject.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;
         movement_machine = new StateMachine();
         standing_state = new  StandingState(this,movement_machine);
@@ -234,20 +220,17 @@ public class Character : NetworkBehaviour
         grappling_state = new GrappleState(this, action_machine);
 
         action_machine.Initialize(idle_state);
-      } else {
-        rigid_body.isKinematic = true;
+        rigid_body.isKinematic = false;
       }
-      rigid_body = GetComponent<Rigidbody>();
+
+      jump_arc = GetComponent<LineRenderer>();
       collision = GetComponent<PlayerCollision>();
       aim_marker = Instantiate(aim_marker_prefab) as GameObject;
-      print(aim_marker.name);
       aim_marker_mesh = aim_marker.GetComponent<MeshRenderer>();
       jump_arc.enabled = false;
       aim_marker_mesh.enabled = false;
       head_initial_pos = head.rotation;
       head.rotation = head_initial_pos;
-
-
     }
 
     private void Update()
