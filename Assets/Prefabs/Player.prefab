@@ -904,7 +904,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 192
   rigid_body: {fileID: 6366366598758951036}
-  max_tongue_distance: 100000
   mouth: {fileID: 8206100345863360392}
   main_camera: {fileID: 4405601068662846374}
   player: {fileID: 7248063760809020136}
@@ -916,6 +915,7 @@ MonoBehaviour:
   slide_speed: 25
   look_at: {fileID: 2436889951326474434}
   frog: {fileID: 5202256972829070215}
+  explosionEffect: {fileID: 8561788873101610777, guid: 71787958011971c4487ab849d45e7f12, type: 3}
 --- !u!114 &5223366375414201604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2221,6 +2221,7 @@ GameObject:
   - component: {fileID: 7066596951005906148}
   - component: {fileID: 733424074336039740}
   - component: {fileID: 2465809479267125231}
+  - component: {fileID: 5086121845930546723}
   m_Layer: 0
   m_Name: spine
   m_TagString: Player
@@ -2276,6 +2277,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.008513355, y: 0.0069602574, z: 0.004307676}
   m_Center: {x: -4.656613e-10, y: 0.0033731728, z: -0.0004317118}
+--- !u!114 &5086121845930546723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5051038311111182478}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa5348c701afc3444a0d136b8e195b8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5099353029391472426
 GameObject:
   m_ObjectHideFlags: 0

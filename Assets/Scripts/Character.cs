@@ -41,8 +41,7 @@ public class Character : NetworkBehaviour
     public Rigidbody rigid_body;
     private ConfigurableJoint joint;
     private ConfigurableJoint player_joint;
-    [SerializeField]
-    private float max_tongue_distance = 100000f;
+
     public float initial_tongue_distance { get; private set; }
     public float cur_tongue_distance { get; private set; }
     [SerializeField]
@@ -83,7 +82,11 @@ public class Character : NetworkBehaviour
     private float tongue_dampen = 20f;
     
     public Transform frog;
+    private float max_tongue_distance;
 
+    public ParticleSystem explosionEffect;
+
+    public Impact spine;
 
 
     public void Move(float speed_modifier, Vector3 direction){
@@ -200,8 +203,19 @@ public class Character : NetworkBehaviour
         }
     }
 
-    private void Start()
+    private void OnEnable()
     {
+      max_tongue_distance = GameObject.Find("Globals").GetComponent<GameGlobals>().max_tongue_distance;
+      jump_arc = GetComponent<LineRenderer>();
+      collision = GetComponent<PlayerCollision>();
+      aim_marker = Instantiate(aim_marker_prefab) as GameObject;
+      aim_marker_mesh = aim_marker.GetComponent<MeshRenderer>();
+      jump_arc.enabled = false;
+      aim_marker_mesh.enabled = false;
+      head_initial_pos = head.rotation;
+      head.rotation = head_initial_pos;
+      spine = GetComponentInChildren<Impact>();
+
       if(this.isLocalPlayer) {
         main_camera.gameObject.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;
@@ -221,16 +235,22 @@ public class Character : NetworkBehaviour
 
         action_machine.Initialize(idle_state);
         rigid_body.isKinematic = false;
+        GetComponentInChildren<Impact>().enabled = true;
       }
 
-      jump_arc = GetComponent<LineRenderer>();
-      collision = GetComponent<PlayerCollision>();
-      aim_marker = Instantiate(aim_marker_prefab) as GameObject;
-      aim_marker_mesh = aim_marker.GetComponent<MeshRenderer>();
-      jump_arc.enabled = false;
-      aim_marker_mesh.enabled = false;
-      head_initial_pos = head.rotation;
-      head.rotation = head_initial_pos;
+
+    }
+
+    [Command(ignoreAuthority = true)]
+    public void AddShockWave(float force, Vector3 source, float radius) {
+      AddShockWaveClient(force, source, radius);
+    }
+
+    [ClientRpc]
+    void AddShockWaveClient(float force, Vector3 source, float radius) {
+      explosionEffect.startLifetime = radius / 100;
+      Instantiate(explosionEffect, source, explosionEffect.transform.rotation);
+      rigid_body.AddExplosionForce(force, source, radius);
     }
 
     private void Update()
@@ -249,5 +269,13 @@ public class Character : NetworkBehaviour
         movement_machine.cur_state.PhysicsUpdate();
         action_machine.cur_state.PhysicsUpdate();
       }
+    }
+
+    public void ResetCharacter() {
+        main_camera.gameObject.SetActive(false);
+        rigid_body.isKinematic = true;
+        spine.enabled = false;
+        spine.transform.position = new Vector3(0, 0, 0);
+        GetComponent<Character>().enabled = false;
     }
 }

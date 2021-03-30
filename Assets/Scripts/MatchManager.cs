@@ -7,27 +7,41 @@ using UnityEngine.UI;
 
 public class MatchManager : NetworkBehaviour
 {
-  [SyncVar(hook=nameof(LoadMap))]
+  [SyncVar]
   public string map;
 
-  public GameObject canvas;
+  public GameObject lobbyUI;
   public GameObject lobbyCam;
+  public Image forest;
+  public Image checkMark;
   public Button playButton;
 
   public void ChangeMap(string map) {
-    this.map = map;
+    if (map == "") {
+      map = null;
+      playButton.interactable = false;
+      checkMark.enabled = false;
+    } else {
+      this.map = map;
+      checkMark.enabled = true;
+      playButton.interactable = true;
+      if (map == "forest") {
+        checkMark.rectTransform.position = forest.rectTransform.position;
+      }
+    }
   }
 
   private void Start() {
     if (this.isServer) {
-      playButton.interactable = true;
+      forest.GetComponent<Button>().interactable = true;
+      checkMark.GetComponent<Button>().interactable = true;
     }
   }
-
-  public void LoadMap(string oldMap, string newMap) {
-    canvas.SetActive(false);
+  [ClientRpc]
+  public void LoadMap() {
+    lobbyUI.SetActive(false);
     lobbyCam.SetActive(false);
-    SceneManager.LoadScene(newMap, LoadSceneMode.Additive);
+    SceneManager.LoadScene(map, LoadSceneMode.Additive);
     StartCoroutine(AfterLoad());
   }
 
@@ -41,7 +55,7 @@ public class MatchManager : NetworkBehaviour
     GameObject[] spawns = GameObject.FindGameObjectsWithTag("SpawnPosition");
     for (int i = 0; i < players.Length; i++) {
       players[i].GetComponent<Character>().enabled = true;
-      players[i].transform.position = spawns[i].transform.position;
+      players[i].GetComponentInChildren<Impact>().transform.position = spawns[i].transform.position;
     }
   }
 }
