@@ -15,8 +15,8 @@ public class MainMenu : MonoBehaviour
     }
 
     public void Join() {
-       Lobby.roomNumber = roomInput.text;
-       playerName = nameEntry.text;
-       SceneManager.LoadScene("Lobby");
+      ServerManager.roomNumber = roomInput.text;
+      playerName = nameEntry.text;
+      SceneManager.LoadScene("Lobby");
     }
 }

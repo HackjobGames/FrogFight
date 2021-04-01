@@ -4,22 +4,23 @@ using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
 
-public class Lobby : MonoBehaviour
+public class Lobby : NetworkBehaviour
 {
-    public static string roomNumber = null;
+    public Image menu;
+    public Button menuButton;
     public Text codeDisplay;
-    public DarkReflectiveMirrorTransport transport;
-    public NetworkManager network;
 
     private void Start() {
-      if (roomNumber == null) {
-        network.StartHost();
-        roomNumber = "" + transport.serverID;
-        codeDisplay.text = "Code: " + roomNumber;
-      } else {
-        network.networkAddress = roomNumber;
-        codeDisplay.text = "Code: " + roomNumber;
-        network.StartClient();
+      menu.gameObject.SetActive(false);
+      if (this.isServer) {
+        menuButton.interactable = true;
       }
+      codeDisplay.text = "Code: " + ServerManager.roomNumber;
     }
+
+    public void toggleMenu(bool enable) {
+      menu.gameObject.SetActive(enable);
+    }
+
+    
 }
