@@ -260,7 +260,7 @@ public class Character : NetworkBehaviour
 
     }
 
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = true)]
     public void AddShockWave(float force, Vector3 source, float radius) {
       AddShockWaveClient(force, source, radius);
     }
