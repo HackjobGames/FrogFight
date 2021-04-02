@@ -88,6 +88,8 @@ public class Character : NetworkBehaviour
 
     public Impact spine;
 
+    public float mass = 30;
+
 
     public void Move(float speed_modifier, Vector3 direction){
         if(Mathf.Abs(rigid_body.velocity.magnitude) > max_speed) {
@@ -178,11 +180,25 @@ public class Character : NetworkBehaviour
         }
     }
 
+    
     public bool ApplyTongueForce() {
+      Rigidbody hitBody = tongue_hit.collider.GetComponent<Rigidbody>();
+      Character character = tongue_hit.collider.GetComponentInParent<Character>();
       Vector3 dist = hit_location.transform.position - head.position;
       Vector3 force = (dist.magnitude > max_tongue_strength) ? dist * max_tongue_strength/dist.magnitude : dist;
       force *= tongue_dampen;
-      rigid_body.AddForce(force, ForceMode.Impulse);
+      if (character != null) {
+        float ratio = mass / (character.mass + mass);
+        print(ratio);
+        hitBody.AddForce(-force * ratio, ForceMode.Impulse);
+        rigid_body.AddForce(force * (1 - ratio), ForceMode.Impulse);
+      } else if (hitBody != null) {
+        float ratio = mass / (hitBody.mass + mass);
+        hitBody.AddForce(-force * ratio, ForceMode.Impulse);
+        rigid_body.AddForce(force * (1 - ratio), ForceMode.Impulse);
+      } else {
+        rigid_body.AddForce(force, ForceMode.Impulse);
+      }
       return(max_tongue_distance >= dist.magnitude);
   }
 
@@ -236,6 +252,9 @@ public class Character : NetworkBehaviour
         action_machine.Initialize(idle_state);
         rigid_body.isKinematic = false;
         GetComponentInChildren<Impact>().enabled = true;
+        foreach(Transform transform in GetComponentsInChildren<Transform>()) { // this is so the player can't grapple to themselves
+          transform.gameObject.layer = 9;
+        }
       }
 
 

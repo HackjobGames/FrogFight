@@ -11,7 +11,7 @@ public class Impact : MonoBehaviour
   }
 
   void OnCollisionEnter(Collision other) {
-    if (other.gameObject.tag == "Terrain" && other.relativeVelocity.magnitude > 15) {
+    if (other.gameObject.tag == "Terrain" && other.relativeVelocity.magnitude > 20) {
       Collider[] colliders = Physics.OverlapSphere(transform.position, other.relativeVelocity.magnitude);
       foreach (Collider nearbyObject in colliders) {
         Character player = nearbyObject.GetComponentInParent<Character>();
