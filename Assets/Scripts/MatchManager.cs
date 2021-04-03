@@ -13,6 +13,7 @@ public class MatchManager : NetworkBehaviour
   public GameObject lobbyUI;
   public GameObject lobbyCam;
   public Image forest;
+  public Image destructibleTest;
   public Image checkMark;
   public Button playButton;
 
@@ -25,8 +26,10 @@ public class MatchManager : NetworkBehaviour
       this.map = map;
       checkMark.enabled = true;
       playButton.interactable = true;
-      if (map == "forest") {
+      if (map == "Forest") {
         checkMark.rectTransform.position = forest.rectTransform.position;
+      } else if (map == "DestructibleTest") {
+        checkMark.rectTransform.position = destructibleTest.rectTransform.position;
       }
     }
   }
