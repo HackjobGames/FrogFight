@@ -90,6 +90,7 @@ public class Character : NetworkBehaviour
 
     public float mass = 30;
 
+    public float aerial_influence = 4000;
 
     public void Move(float speed_modifier, Vector3 direction){
         if(Mathf.Abs(rigid_body.velocity.magnitude) > max_speed) {
@@ -108,7 +109,7 @@ public class Character : NetworkBehaviour
         float horizontal_input = Input.GetAxis("Horizontal");
         float vertical_input = Input.GetAxis("Vertical");
         Vector3 input_vector = new Vector3(horizontal_input,0,vertical_input);
-        float speed_modifier = input_vector.magnitude;
+        float speed_modifier = input_vector.magnitude * aerial_influence;
         Vector3 dir = input_vector.normalized;
         if(input_vector.magnitude >= 0.1f){
             float targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg + Camera.main.gameObject.transform.eulerAngles.y;
