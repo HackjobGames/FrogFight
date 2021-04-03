@@ -52,6 +52,15 @@ public class MatchManager : NetworkBehaviour
     SceneManager.LoadScene("MainMenu");
   }
 
+  [Command (requiresAuthority = false)]
+  public void DestroyObject (GameObject gObject) {
+    DestroyObjectClient(gObject);
+  }
+  [ClientRpc]
+  public void DestroyObjectClient(GameObject gObject) {
+    Destroy(gObject);
+  }
+
   IEnumerator AfterLoad() {
     yield return new WaitUntil(() => GameGlobals.levelLoaded);
     Player[] players = GameGlobals.GetPlayers();
