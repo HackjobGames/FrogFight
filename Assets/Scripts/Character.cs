@@ -90,7 +90,7 @@ public class Character : NetworkBehaviour
 
     public float mass = 30;
 
-    public float aerial_influence = 4000;
+    public float aerial_influence = 500;
 
     public void Move(float speed_modifier, Vector3 direction){
         if(Mathf.Abs(rigid_body.velocity.magnitude) > max_speed) {
