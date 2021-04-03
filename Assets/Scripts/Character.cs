@@ -192,8 +192,7 @@ public class Character : NetworkBehaviour
       force *= tongue_dampen;
       if (character != null) {
         float ratio = mass / (character.mass + mass);
-        print(ratio);
-        hitBody.AddForce(-force * ratio, ForceMode.Impulse);
+        PullPlayer(character, -force * ratio);
         rigid_body.AddForce(force * (1 - ratio), ForceMode.Impulse);
       } else if (hitBody != null) {
         float ratio = mass / (hitBody.mass + mass);
@@ -203,7 +202,16 @@ public class Character : NetworkBehaviour
         rigid_body.AddForce(force, ForceMode.Impulse);
       }
       return(max_tongue_distance >= dist.magnitude);
-  }
+    }
+
+    [Command (requiresAuthority = false)]
+    void PullPlayer(Character character, Vector3 force) {
+      PullPlayerClient(character, force);
+    }
+    [ClientRpc]
+    void PullPlayerClient(Character character, Vector3 force) {
+      character.spine.GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
+    }
 
     public float getGravity() {
         return gravity;
@@ -263,15 +271,14 @@ public class Character : NetworkBehaviour
 
     }
 
-    [Command(requiresAuthority = true)]
-    public void AddShockWave(float force, Vector3 source, float radius) {
-      AddShockWaveClient(force, source, radius);
+    [Command (requiresAuthority = false)]
+    public void AddShockWave(float force, Vector3 source, float radius, Quaternion rotation) {
+      AddShockWaveClient(force, source, radius, rotation);
     }
-
     [ClientRpc]
-    void AddShockWaveClient(float force, Vector3 source, float radius) {
+    public void AddShockWaveClient(float force, Vector3 source, float radius, Quaternion rotation) {
       explosionEffect.startLifetime = radius / 100;
-      Instantiate(explosionEffect, source, explosionEffect.transform.rotation);
+      Instantiate(explosionEffect, source, rotation);
       rigid_body.AddExplosionForce(force, source, radius);
     }
 
