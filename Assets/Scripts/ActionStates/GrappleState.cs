@@ -39,10 +39,10 @@ public class GrappleState : State
     public override void LogicUpdate()
     {
         base.LogicUpdate();
-        character.UpdateTonguePositions();
         if(character.movement_machine.cur_state != character.swinging_state){
             state_machine.ChangeState(character.idle_state);
         }
+        character.UpdateTonguePositions();
     }
     public override void PhysicsUpdate()
     {

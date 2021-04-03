@@ -18,7 +18,6 @@ public class StateMachine
         cur_state.Exit();
         prev_state = cur_state;
         cur_state = new_state;
-        Debug.Log(new_state);
         cur_state.Enter();
     }
 }
