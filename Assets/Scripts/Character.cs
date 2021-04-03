@@ -181,8 +181,10 @@ public class Character : NetworkBehaviour
         }
     }
 
-    
     public bool ApplyTongueForce() {
+      if (!hit_location) {
+        return false;
+      }
       Rigidbody hitBody = tongue_hit.collider.GetComponent<Rigidbody>();
       Character character = tongue_hit.collider.GetComponentInParent<Character>();
       Vector3 dist = hit_location.transform.position - head.position;
