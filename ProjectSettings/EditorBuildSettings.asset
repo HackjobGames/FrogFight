@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Forest.unity
     guid: 1f992d5616c8bb6459b6d03271d674e4
+  - enabled: 1
+    path: Assets/Scenes/DestructibleTest.unity
+    guid: cab4e2ea446ec7646bea559c0596e2ee
   m_configObjects: {}
