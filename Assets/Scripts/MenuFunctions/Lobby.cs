@@ -15,12 +15,16 @@ public class Lobby : NetworkBehaviour
       if (this.isServer) {
         menuButton.interactable = true;
       }
-      codeDisplay.text = "Code: " + ServerManager.roomNumber;
+      StartCoroutine(WaitForID());
     }
 
     public void toggleMenu(bool enable) {
       menu.gameObject.SetActive(enable);
     }
-
+    IEnumerator WaitForID()
+    {
+      yield return new WaitUntil(() => ServerManager.matchID != null);
+      codeDisplay.text = "Code: " + ServerManager.matchID;
+    }
     
 }

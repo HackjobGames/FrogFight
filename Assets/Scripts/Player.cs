@@ -7,10 +7,16 @@ public class Player : NetworkBehaviour
 {
   [SyncVar]
   public string playerName;
+
+  [SyncVar]
+  public bool loaded;
+
+  public static Player localPlayer;
   
   private void Start() {
     if (this.isLocalPlayer) {
       this.playerName = MainMenu.playerName;
+      localPlayer = this;
     }
   }
   public override void OnStartLocalPlayer() {
