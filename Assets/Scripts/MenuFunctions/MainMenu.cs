@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 public class MainMenu : MonoBehaviour
 {
@@ -15,8 +16,8 @@ public class MainMenu : MonoBehaviour
     }
 
     public void Join() {
-      ServerManager.roomNumber = roomInput.text;
       playerName = nameEntry.text;
+      ServerManager.matchID = roomInput.text;
       SceneManager.LoadScene("Lobby");
     }
 }

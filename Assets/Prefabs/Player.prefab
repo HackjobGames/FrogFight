@@ -875,6 +875,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneId: 0
   serverOnly: 0
+  visible: 0
   m_AssetId: 
   hasSpawned: 0
 --- !u!114 &2017410132370448294
@@ -918,6 +919,7 @@ MonoBehaviour:
   explosionEffect: {fileID: 8561788873101610777, guid: 71787958011971c4487ab849d45e7f12, type: 3}
   spine: {fileID: 0}
   mass: 30
+  aerial_influence: 500
 --- !u!114 &5223366375414201604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -951,8 +953,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.1
+  syncInterval: 0
   playerName: 
+  loaded: 0
 --- !u!120 &2217306112544508318
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -1091,6 +1094,9 @@ MonoBehaviour:
   localPositionSensitivity: 0.01
   localRotationSensitivity: 0.01
   localScaleSensitivity: 0.01
+  compressRotation: 0
+  interpolateScale: 1
+  syncScale: 1
   target: {fileID: 7066596951005906148}
 --- !u!1 &3121085754559735982
 GameObject:

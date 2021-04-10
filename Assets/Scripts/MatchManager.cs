@@ -42,10 +42,19 @@ public class MatchManager : NetworkBehaviour
   }
   [ClientRpc]
   public void LoadMap() {
-    lobbyUI.SetActive(false);
-    lobbyCam.SetActive(false);
     SceneManager.LoadScene(map, LoadSceneMode.Additive);
     StartCoroutine(AfterLoad());
+  }
+
+  [Command (requiresAuthority = false)]
+  void CmdSetLoadedFlag(string playerName, Player[] players) {
+    foreach(Player player in players) {
+      print(player.playerName);
+      print(playerName);
+      if (player.playerName == playerName) {
+        player.loaded = true;
+      }
+    }
   }
 
   public static void EndMatch() {
@@ -62,8 +71,18 @@ public class MatchManager : NetworkBehaviour
   }
 
   IEnumerator AfterLoad() {
-    yield return new WaitUntil(() => GameGlobals.levelLoaded);
     Player[] players = GameGlobals.GetPlayers();
+    CmdSetLoadedFlag(Player.localPlayer.playerName, players);
+    yield return new WaitUntil(() => {
+      foreach(Player player in players) {
+        if (!player.loaded) {
+          return false;
+        }
+      }
+      return true;
+    });
+    lobbyUI.SetActive(false);
+    lobbyCam.SetActive(false);
     GameObject[] spawns = GameObject.FindGameObjectsWithTag("SpawnPosition");
     for (int i = 0; i < players.Length; i++) {
       players[i].GetComponent<Character>().enabled = true;
