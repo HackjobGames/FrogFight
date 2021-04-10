@@ -12,7 +12,6 @@ public class DestructableObject : NetworkBehaviour
     }
 
     void OnCollisionEnter(Collision other) {
-      print("collide");
       if (other.gameObject.tag == "Player") {
         this.destroyed = true;
         Character character = other.gameObject.GetComponent<Character>();

@@ -8,7 +8,6 @@ public class GameGlobals : NetworkBehaviour
 {
     public Text p1Text;
     public Text p2Text;
-    public static bool levelLoaded = false;
     [SyncVar]
     public float max_tongue_distance = 150f;
     [SyncVar]

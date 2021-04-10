@@ -13,6 +13,7 @@ public class MatchManager : NetworkBehaviour
   public GameObject lobbyUI;
   public GameObject lobbyCam;
   public Image forest;
+  public Image destructibleTest;
   public Image checkMark;
   public Button playButton;
 
@@ -25,8 +26,10 @@ public class MatchManager : NetworkBehaviour
       this.map = map;
       checkMark.enabled = true;
       playButton.interactable = true;
-      if (map == "forest") {
+      if (map == "Forest") {
         checkMark.rectTransform.position = forest.rectTransform.position;
+      } else if (map == "DestructibleTest") {
+        checkMark.rectTransform.position = destructibleTest.rectTransform.position;
       }
     }
   }
@@ -39,19 +42,47 @@ public class MatchManager : NetworkBehaviour
   }
   [ClientRpc]
   public void LoadMap() {
-    lobbyUI.SetActive(false);
-    lobbyCam.SetActive(false);
     SceneManager.LoadScene(map, LoadSceneMode.Additive);
     StartCoroutine(AfterLoad());
+  }
+
+  [Command (requiresAuthority = false)]
+  void CmdSetLoadedFlag(string playerName, Player[] players) {
+    foreach(Player player in players) {
+      print(player.playerName);
+      print(playerName);
+      if (player.playerName == playerName) {
+        player.loaded = true;
+      }
+    }
   }
 
   public static void EndMatch() {
     SceneManager.LoadScene("MainMenu");
   }
 
+  [Command (requiresAuthority = false)]
+  public void DestroyObject (GameObject gObject) {
+    DestroyObjectClient(gObject);
+  }
+  [ClientRpc]
+  public void DestroyObjectClient(GameObject gObject) {
+    Destroy(gObject);
+  }
+
   IEnumerator AfterLoad() {
-    yield return new WaitUntil(() => GameGlobals.levelLoaded);
     Player[] players = GameGlobals.GetPlayers();
+    CmdSetLoadedFlag(Player.localPlayer.playerName, players);
+    yield return new WaitUntil(() => {
+      foreach(Player player in players) {
+        if (!player.loaded) {
+          return false;
+        }
+      }
+      return true;
+    });
+    lobbyUI.SetActive(false);
+    lobbyCam.SetActive(false);
     GameObject[] spawns = GameObject.FindGameObjectsWithTag("SpawnPosition");
     for (int i = 0; i < players.Length; i++) {
       players[i].GetComponent<Character>().enabled = true;

@@ -11,7 +11,6 @@ public class Death : MonoBehaviour
       if (other.gameObject.tag == "Player" && !finished) {
         finished = true;
         foreach(Player player in GameGlobals.GetPlayers()) {
-          print(other.gameObject.GetComponentInParent<Player>().playerName);
           if (player.playerName != other.gameObject.GetComponentInParent<Player>().playerName) {
             winner.GetComponent<Text>().enabled = true;
             winner.text = player.playerName + " Wins :)";
@@ -23,14 +22,14 @@ public class Death : MonoBehaviour
 
     IEnumerator EndGame() {
       yield return new WaitForSeconds(3);
-      SceneManager.UnloadScene("Forest");
+      MatchManager match = GameObject.FindObjectOfType<MatchManager>();
       Player[] players = GameGlobals.GetPlayers();
       foreach(Player player in players) {
         player.GetComponent<Character>().ResetCharacter();
       }
-      MatchManager match = GameObject.FindObjectOfType<MatchManager>();
       match.lobbyCam.SetActive(true);
       match.lobbyUI.SetActive(true);
+      SceneManager.UnloadScene(match.map);
       match.ChangeMap("");
       Cursor.lockState = CursorLockMode.None;
     }
