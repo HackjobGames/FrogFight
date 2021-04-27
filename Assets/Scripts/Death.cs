@@ -27,8 +27,9 @@ public class Death : MonoBehaviour
       foreach(Player player in players) {
         player.GetComponent<Character>().ResetCharacter();
       }
-      match.lobbyCam.SetActive(true);
-      match.lobbyUI.SetActive(true);
+      ServerManager.lobbyUI.SetActive(true);
+      ServerManager.lobbyCamera.SetActive(true);
+      GameObject.Find("MainMenuUI").SetActive(true);
       SceneManager.UnloadScene(match.map);
       match.ChangeMap("");
       Cursor.lockState = CursorLockMode.None;

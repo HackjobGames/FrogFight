@@ -9,8 +9,6 @@ public class MatchManager : NetworkBehaviour
 {
   [SyncVar]
   public string map;
-
-  public GameObject lobbyUI;
   public GameObject lobbyCam;
   public Image forest;
   public Image destructibleTest;
@@ -81,8 +79,9 @@ public class MatchManager : NetworkBehaviour
       }
       return true;
     });
-    lobbyUI.SetActive(false);
-    lobbyCam.SetActive(false);
+    ServerManager.lobbyUI.SetActive(false);
+    ServerManager.lobbyCamera.SetActive(false);
+    GameObject.Find("MainMenuUI").SetActive(true);
     GameObject[] spawns = GameObject.FindGameObjectsWithTag("SpawnPosition");
     for (int i = 0; i < players.Length; i++) {
       players[i].GetComponent<Character>().enabled = true;

@@ -11,6 +11,10 @@ import (
 type Match struct {
 	matchID string
 	relayID int
+	private bool
+	password string
+	maxPlayers int
+	currentPlayers int
 }
 
 func generateMatchID() string {
@@ -27,27 +31,41 @@ func main() {
 	
 	http.HandleFunc("/host", func(res http.ResponseWriter, req *http.Request) {
 		fmt.Println(req.FormValue("relayID"))
-		i, e := strconv.Atoi(req.FormValue("relayID"))
-		if(e != nil) {
-			fmt.Println(e.Error())
-		} else {
-			fmt.Println(i)
-			newMatch := Match{
-				matchID: generateMatchID(),
-				relayID: i,
-			}
-			matches = append(matches, newMatch)
-			io.WriteString(res, newMatch.matchID)
+		relayID, rE := strconv.Atoi(req.FormValue("relayID"))
+		maxPlayers, mE := strconv.Atoi(req.FormValue("maxPlayers"))
+		isPrivate := req.FormValue("isPrivate")
+		password := req.FormValue("password")
+		if (rE != nil) {
+			fmt.Println(rE.Error())
+			return
 		}
+		if (mE != nil) {
+			fmt.Println(mE.Error())
+			return
+		}
+		fmt.Println(relayID)
+		newMatch := Match{
+			matchID: generateMatchID(),
+			relayID: relayID,
+			private: isPrivate == "true",
+			password: password,
+			maxPlayers: maxPlayers,
+			currentPlayers: 1,
+		}
+		matches = append(matches, newMatch)
+		io.WriteString(res, newMatch.matchID)
 	})
 
 	http.HandleFunc("/join", func(res http.ResponseWriter, req *http.Request) {
-		req.FormValue("matchID")
+		matchID := req.FormValue("matchID")
+		password := req.FormValue("password")
 		for i := range matches {
-			if (matches[i].matchID == req.FormValue("matchID")) {
-				print(matches[i].relayID)
-				s := strconv.Itoa(matches[i].relayID)
-				io.WriteString(res, s)
+			if (matches[i].matchID == matchID) {
+				if (!matches[i].private || matches[i].password == password) {
+					io.WriteString(res, strconv.Itoa(matches[i].relayID))
+				} else {
+					io.WriteString(res, "private");
+				}
 			}
 		}
 	})
