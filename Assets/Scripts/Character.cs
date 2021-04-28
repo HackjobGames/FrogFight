@@ -18,6 +18,8 @@ public class Character : NetworkBehaviour
     public State idle_state;
     public LineRenderer jump_arc;
     [SerializeField]
+    private float jump_speed = 40f;
+    [SerializeField]
     private float speed = 1f;
     [SerializeField]
     private float max_speed = 5f;
@@ -128,6 +130,10 @@ public class Character : NetworkBehaviour
         && collision.on_ground){
           rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, Vector3.zero, stop_speed * Time.deltaTime);
       }
+    }
+    
+    public void Jump(Vector3 angle){
+        ApplyImpulse(angle * jump_speed);
     }
 
     public void ApplyImpulse(Vector3 force){
