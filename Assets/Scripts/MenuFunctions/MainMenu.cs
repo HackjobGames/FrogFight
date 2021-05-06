@@ -16,6 +16,8 @@ public class MainMenu : MonoBehaviour
     public Toggle isPrivate;
     public Dropdown maxPlayers;
     public GameObject passwordDialog;
+    public GameObject menuCamera;
+    public GameObject mainMenuUi;
     public static string playerName;
     public static MainMenu menu;
 

@@ -15,6 +15,12 @@ public class GameGlobals : NetworkBehaviour
 
     public InputField tongue_input;
     public InputField slam_input;
+
+    public static GameGlobals globals;
+
+    private void Start() {
+      globals = this;
+    }
   
     private void Update() {
       Player[] players = GetPlayers();

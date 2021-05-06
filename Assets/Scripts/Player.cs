@@ -29,5 +29,11 @@ public class Player : NetworkBehaviour
       this.playerName = name;
   }
 
+  private void OnDestroy() {
+    if (GameGlobals.GetPlayers().Length == 1) {
+      MatchManager.manager.EndGame();
+    }
+  }
+
   
 }

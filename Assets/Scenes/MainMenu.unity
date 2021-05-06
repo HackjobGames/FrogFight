@@ -1003,7 +1003,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &299118156
 GameObject:
@@ -2550,7 +2550,6 @@ GameObject:
   - component: {fileID: 1207018273}
   - component: {fileID: 1207018279}
   - component: {fileID: 1207018276}
-  - component: {fileID: 1207018280}
   - component: {fileID: 1207018278}
   - component: {fileID: 1207018277}
   m_Layer: 0
@@ -2606,7 +2605,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1207018276
 MonoBehaviour:
@@ -2628,6 +2627,8 @@ MonoBehaviour:
   isPrivate: {fileID: 1391834315}
   maxPlayers: {fileID: 427003137}
   passwordDialog: {fileID: 1772587878}
+  menuCamera: {fileID: 288100279}
+  mainMenuUi: {fileID: 372857950}
 --- !u!114 &1207018277
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2706,25 +2707,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44fa052cc3c1c734fbc5757d454e8bef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  matchID: 
-  isPrivate: 0
-  password: 
-  maxPlayers: 0
-  transport: {fileID: 1207018277}
-  network: {fileID: 1207018280}
-  lobbyUIPrefab: {fileID: 5388269991125239161, guid: 7f508005daac96d4f97da194ac2de2db, type: 3}
---- !u!114 &1207018280
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1207018272}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8aab4c8111b7c411b9b92cf3dbc5bd4e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   dontDestroyOnLoad: 1
   PersistNetworkManagerToOfflineScene: 0
   runInBackground: 1
@@ -2743,7 +2725,15 @@ MonoBehaviour:
   playerPrefab: {fileID: 2951925965738532597, guid: 873080fce58848411817e5082c51599a, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 6631824366866260547, guid: fdd9b8c2731a44f4f889c7f6281560bc, type: 3}
+  matchID: 
+  isPrivate: 0
+  password: 
+  maxPlayers: 0
+  network: {fileID: 0}
+  lobbyUIPrefab: {fileID: 6631824366866260547, guid: fdd9b8c2731a44f4f889c7f6281560bc, type: 3}
+  lobbyUI: {fileID: 0}
 --- !u!1 &1282687195
 GameObject:
   m_ObjectHideFlags: 0
@@ -3886,7 +3876,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1612783094}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1207018276}
+        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+        m_MethodName: Join
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1612783094
 MonoBehaviour:
   m_ObjectHideFlags: 0

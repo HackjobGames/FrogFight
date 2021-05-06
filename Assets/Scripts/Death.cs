@@ -14,24 +14,9 @@ public class Death : MonoBehaviour
           if (player.playerName != other.gameObject.GetComponentInParent<Player>().playerName) {
             winner.GetComponent<Text>().enabled = true;
             winner.text = player.playerName + " Wins :)";
-            StartCoroutine(EndGame());
+            MatchManager.manager.EndGame();
           }
         }
       }
-    }
-
-    IEnumerator EndGame() {
-      yield return new WaitForSeconds(3);
-      MatchManager match = GameObject.FindObjectOfType<MatchManager>();
-      Player[] players = GameGlobals.GetPlayers();
-      foreach(Player player in players) {
-        player.GetComponent<Character>().ResetCharacter();
-      }
-      ServerManager.lobbyUI.SetActive(true);
-      ServerManager.lobbyCamera.SetActive(true);
-      GameObject.Find("MainMenuUI").SetActive(true);
-      SceneManager.UnloadScene(match.map);
-      match.ChangeMap("");
-      Cursor.lockState = CursorLockMode.None;
     }
 }

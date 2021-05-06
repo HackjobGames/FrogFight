@@ -35,6 +35,7 @@ func main() {
 		maxPlayers, mE := strconv.Atoi(req.FormValue("maxPlayers"))
 		isPrivate := req.FormValue("isPrivate")
 		password := req.FormValue("password")
+		fmt.Println("Password: " + password)
 		if (rE != nil) {
 			fmt.Println(rE.Error())
 			return
@@ -52,6 +53,7 @@ func main() {
 			maxPlayers: maxPlayers,
 			currentPlayers: 1,
 		}
+		fmt.Println(newMatch.private)
 		matches = append(matches, newMatch)
 		io.WriteString(res, newMatch.matchID)
 	})
