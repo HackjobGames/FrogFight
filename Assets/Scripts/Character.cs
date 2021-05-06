@@ -238,7 +238,7 @@ public class Character : NetworkBehaviour
 
     private void OnEnable()
     {
-      max_tongue_distance = GameObject.Find("Globals").GetComponent<GameGlobals>().max_tongue_distance;
+      max_tongue_distance = GameGlobals.globals.max_tongue_distance;
       jump_arc = GetComponent<LineRenderer>();
       collision = GetComponent<PlayerCollision>();
       aim_marker = Instantiate(aim_marker_prefab) as GameObject;

@@ -10,8 +10,8 @@ public class Impact : MonoBehaviour
   MatchManager manager;
 
   void Start() {
-    force = GameObject.Find("Globals").GetComponent<GameGlobals>().slam_power;
-    manager = GameObject.Find("Globals").GetComponent<MatchManager>();
+    force = GameGlobals.globals.slam_power;
+    manager = MatchManager.manager;
   }
 
   void OnCollisionEnter(Collision other) {

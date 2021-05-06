@@ -9,13 +9,11 @@ public class MatchManager : NetworkBehaviour
 {
   [SyncVar]
   public string map;
-
-  public GameObject lobbyUI;
-  public GameObject lobbyCam;
   public Image forest;
   public Image destructibleTest;
   public Image checkMark;
   public Button playButton;
+  public static MatchManager manager;
 
   public void ChangeMap(string map) {
     if (map == "") {
@@ -35,6 +33,7 @@ public class MatchManager : NetworkBehaviour
   }
 
   private void Start() {
+    manager = this;
     if (this.isServer) {
       forest.GetComponent<Button>().interactable = true;
       checkMark.GetComponent<Button>().interactable = true;
@@ -81,12 +80,38 @@ public class MatchManager : NetworkBehaviour
       }
       return true;
     });
-    lobbyUI.SetActive(false);
-    lobbyCam.SetActive(false);
+    ServerManager.server.lobbyUI.GetComponent<Canvas>().enabled = false;
+    MainMenu.menu.mainMenuUi.SetActive(false);
+    MainMenu.menu.menuCamera.SetActive(false);
     GameObject[] spawns = GameObject.FindGameObjectsWithTag("SpawnPosition");
     for (int i = 0; i < players.Length; i++) {
       players[i].GetComponent<Character>().enabled = true;
       players[i].GetComponentInChildren<Impact>().transform.position = spawns[i].transform.position;
     }
+  }
+
+  public void EndGame() {
+    StartCoroutine(DelayEndGame());
+  }
+
+  public IEnumerator DelayEndGame() {
+    yield return new WaitForSeconds(3);
+    MatchManager match = GameObject.FindObjectOfType<MatchManager>();
+    Player[] players = GameGlobals.GetPlayers();
+    foreach(Player player in players) {
+      player.GetComponent<Character>().ResetCharacter();
+    }
+    ServerManager.server.lobbyUI.GetComponent<Canvas>().enabled = true;
+    MainMenu.menu.menuCamera.SetActive(true);
+    SceneManager.UnloadScene(match.map);
+    match.ChangeMap("");
+    Cursor.lockState = CursorLockMode.None;
+  }
+
+  override public void OnStopClient() {
+    Destroy(ServerManager.server.lobbyUI);
+    MainMenu.menu.mainMenuUi.SetActive(true);
+    MainMenu.menu.menuCamera.SetActive(true);
+    Cursor.lockState = CursorLockMode.None;
   }
 }
