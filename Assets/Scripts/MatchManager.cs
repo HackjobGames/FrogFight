@@ -13,6 +13,7 @@ public class MatchManager : NetworkBehaviour
   public Image destructibleTest;
   public Image checkMark;
   public Button playButton;
+  public bool inGame = false;
   public static MatchManager manager;
 
   public void ChangeMap(string map) {
@@ -42,6 +43,7 @@ public class MatchManager : NetworkBehaviour
   [ClientRpc]
   public void LoadMap() {
     SceneManager.LoadScene(map, LoadSceneMode.Additive);
+    inGame = true;
     StartCoroutine(AfterLoad());
   }
 
@@ -70,7 +72,7 @@ public class MatchManager : NetworkBehaviour
   }
 
   IEnumerator AfterLoad() {
-    Player[] players = GameGlobals.GetPlayers();
+    Player[] players = GameGlobals.globals.GetPlayers();
     CmdSetLoadedFlag(Player.localPlayer.playerName, players);
     yield return new WaitUntil(() => {
       foreach(Player player in players) {
@@ -97,7 +99,7 @@ public class MatchManager : NetworkBehaviour
   public IEnumerator DelayEndGame() {
     yield return new WaitForSeconds(3);
     MatchManager match = GameObject.FindObjectOfType<MatchManager>();
-    Player[] players = GameGlobals.GetPlayers();
+    Player[] players = GameGlobals.globals.GetPlayers();
     foreach(Player player in players) {
       player.GetComponent<Character>().ResetCharacter();
     }
@@ -106,6 +108,7 @@ public class MatchManager : NetworkBehaviour
     SceneManager.UnloadScene(match.map);
     match.ChangeMap("");
     Cursor.lockState = CursorLockMode.None;
+    inGame = false;
   }
 
   override public void OnStopClient() {

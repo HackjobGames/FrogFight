@@ -10,7 +10,7 @@ public class Death : MonoBehaviour
     void OnCollisionEnter(Collision other) {
       if (other.gameObject.tag == "Player" && !finished) {
         finished = true;
-        foreach(Player player in GameGlobals.GetPlayers()) {
+        foreach(Player player in GameGlobals.globals.GetPlayers()) {
           if (player.playerName != other.gameObject.GetComponentInParent<Player>().playerName) {
             winner.GetComponent<Text>().enabled = true;
             winner.text = player.playerName + " Wins :)";

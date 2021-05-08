@@ -6,8 +6,6 @@ using Mirror;
 
 public class GameGlobals : NetworkBehaviour
 {
-    public Text p1Text;
-    public Text p2Text;
     [SyncVar]
     public float max_tongue_distance = 150f;
     [SyncVar]
@@ -16,29 +14,31 @@ public class GameGlobals : NetworkBehaviour
     public InputField tongue_input;
     public InputField slam_input;
 
+    public Text[] playerNames;
+
     public static GameGlobals globals;
 
     private void Start() {
       globals = this;
     }
-  
-    private void Update() {
-      Player[] players = GetPlayers();
-      if (players.Length > 0) {
-        p1Text.text = "Player Name: " + players[0].playerName;
-      }
-      if (players.Length > 1) {
-        p2Text.text = "Player Name: " + players[1].playerName;
-      }
-    }
-    public static Player[] GetPlayers() {
+
+    public Player[] GetPlayers() {
       GameObject[] prefabs = GameObject.FindGameObjectsWithTag("PlayerRoot");
+      print(prefabs.Length);
       Player[] players = new Player[prefabs.Length];
-      for (int i = 0; i < prefabs.Length; i++) {
-        players[i] = prefabs[i].GetComponent<Player>();
+      for (int i = 0; i < playerNames.Length; i++) {
+        if (i < players.Length) {
+          players[i] = prefabs[i].GetComponent<Player>();
+          playerNames[i].text = players[i].playerName;
+        } else {
+          playerNames[i].text = "";
+        }
+        
       }
       return players;
     }
+
+
 
     public void UpdateTongueDistance (string value) {
       max_tongue_distance = float.Parse(tongue_input.text);

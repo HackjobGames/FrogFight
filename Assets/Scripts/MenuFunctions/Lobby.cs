@@ -10,7 +10,10 @@ public class Lobby : NetworkBehaviour
     public Button menuButton;
     public Text codeDisplay;
 
+    public static Lobby lobby;
+
     private void Start() {
+      lobby = this;
       menu.gameObject.SetActive(false);
       if (this.isServer) {
         menuButton.interactable = true;

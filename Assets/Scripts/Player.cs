@@ -1,39 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Mirror;
 
 public class Player : NetworkBehaviour
 {
   [SyncVar]
-  public string playerName;
+  public string playerName = null;
 
   [SyncVar]
   public bool loaded;
 
   public static Player localPlayer;
   
-  private void Start() {
+  public void Start() {
+    StartCoroutine(WaitForGlobals());
     if (this.isLocalPlayer) {
-      this.playerName = MainMenu.playerName;
+      SetName(MainMenu.playerName);
       localPlayer = this;
     }
-  }
-  public override void OnStartLocalPlayer() {
-    SetName(MainMenu.playerName);
   }
 
   [Command]
   public void SetName(string name)
   {
-      this.playerName = name;
+    this.playerName = name;
   }
 
   private void OnDestroy() {
-    if (GameGlobals.GetPlayers().Length == 1) {
+    if (GameGlobals.globals.GetPlayers().Length == 1) {
       MatchManager.manager.EndGame();
     }
   }
 
-  
+  IEnumerator WaitForGlobals() {
+    yield return new WaitUntil(() => GameGlobals.globals != null && this.playerName != null && this.playerName != "");
+    print(this.playerName);
+    GameGlobals.globals.GetPlayers();
+  }
+
 }

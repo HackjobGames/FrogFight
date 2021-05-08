@@ -167,7 +167,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -443.25, y: -89.574}
+  m_AnchoredPosition: {x: -336.89, y: -89.574}
   m_SizeDelta: {x: 692.2148, y: 121.5743}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6631824365111104286
@@ -1097,7 +1097,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Player Name: '
+  m_Text: 
 --- !u!1 &6631824365735300764
 GameObject:
   m_ObjectHideFlags: 0
@@ -2083,7 +2083,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -443.25, y: 127.26}
+  m_AnchoredPosition: {x: -346.11, y: 127.26}
   m_SizeDelta: {x: 692.2148, y: 121.5743}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6631824366598931256
@@ -2202,7 +2202,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Player Name: '
+  m_Text: 
 --- !u!1 &6631824366752644188
 GameObject:
   m_ObjectHideFlags: 0
@@ -2503,12 +2503,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  p1Text: {fileID: 6631824366623243171}
-  p2Text: {fileID: 6631824365716801092}
   max_tongue_distance: 150
   slam_power: 1000
   tongue_input: {fileID: 6631824365541397117}
   slam_input: {fileID: 6631824366752644186}
+  playerNames:
+  - {fileID: 6631824366623243171}
+  - {fileID: 6631824365716801092}
 --- !u!114 &3092186720448188287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2528,6 +2529,7 @@ MonoBehaviour:
   destructibleTest: {fileID: 6631824366187472220}
   checkMark: {fileID: 6631824365697304991}
   playButton: {fileID: 6631824366450806200}
+  inGame: 0
 --- !u!114 &6062781409008242948
 MonoBehaviour:
   m_ObjectHideFlags: 0
