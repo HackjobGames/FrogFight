@@ -11,6 +11,7 @@ public class StandingState : State
     public override void Enter()
     {
         base.Enter();
+        character.TransitionAnimations(Character.Anim.Idle);
     }
     public override void Exit()
     {
@@ -27,7 +28,7 @@ public class StandingState : State
     public override void LogicUpdate()
     {
         base.LogicUpdate();
-        if(character.rigid_body.velocity.magnitude > 0.1f){
+        if(!character.collision.on_ground) {
             state_machine.ChangeState(character.falling_state);
         }
     }

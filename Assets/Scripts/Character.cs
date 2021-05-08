@@ -17,6 +17,7 @@ public class Character : NetworkBehaviour
     public State grappling_state;
     public State idle_state;
     public LineRenderer jump_arc;
+    public Animator animations;
     [SerializeField]
     private float jump_speed = 40f;
     [SerializeField]
@@ -93,6 +94,10 @@ public class Character : NetworkBehaviour
     public float mass = 30;
 
     public float aerial_influence = 500;
+
+    public enum Anim {Idle, Jump, Air};
+
+    private Anim current_animation;
 
     public void Move(float speed_modifier, Vector3 direction){
         if(Mathf.Abs(rigid_body.velocity.magnitude) > max_speed) {
@@ -173,6 +178,22 @@ public class Character : NetworkBehaviour
         Destroy(player_joint);
         Destroy(player_pivot_location);
         Destroy(hit_location);
+    }
+
+    public void TransitionAnimations(Anim animation_switch){
+      switch(animation_switch){
+        case Anim.Idle:
+          animations.SetInteger("animation_value", 0);
+          break;
+        case Anim.Jump:
+          animations.SetInteger("animation_value", 1);
+          break;
+        case Anim.Air:
+          animations.SetInteger("animation_value", 2);
+          break;
+      }
+      print(animation_switch + " " + animations.GetInteger("animation_value"));
+      current_animation = animation_switch;
     }
 
     public void UpdateTonguePositions(){
@@ -314,3 +335,5 @@ public class Character : NetworkBehaviour
         GetComponent<Character>().enabled = false;
     }
 }
+
+

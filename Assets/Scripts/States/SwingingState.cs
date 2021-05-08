@@ -12,6 +12,7 @@ public class SwingingState : State
     public override void Enter()
     {
         base.Enter();
+        character.TransitionAnimations(Character.Anim.Air);
     }
     public override void Exit()
     {
