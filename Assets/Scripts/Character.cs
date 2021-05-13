@@ -67,6 +67,8 @@ public class Character : NetworkBehaviour
     [SerializeField]
     private Transform head;
     [SerializeField]
+    private ConfigurableJoint head_joint;
+    [SerializeField]
     private Transform focal_point;
     private Quaternion head_initial_pos;
     private CableComponent cable_component;
@@ -172,7 +174,8 @@ public class Character : NetworkBehaviour
 
     public void StopGrapple(){
         var dir = (focal_point.position - head.position).normalized;
-        head.rotation = Quaternion.LookRotation(dir);
+        //head_joint.targetRotation = Quaternion.LookRotation(dir);
+        ConfigurableJointExtensions.SetTargetRotationLocal(head_joint,head_initial_pos, head_initial_pos);
 
         Destroy(joint);
         Destroy(player_joint);
@@ -201,7 +204,8 @@ public class Character : NetworkBehaviour
 
         var dir = (hit_location.transform.position - head.position).normalized;
         var rotation = Quaternion.LookRotation(dir);
-        head.rotation = Quaternion.Slerp(head.rotation, rotation, Time.deltaTime * 2f);
+        //head_joint.targetRotation = Quaternion.Slerp(head.rotation, rotation, Time.deltaTime * 2f);
+        ConfigurableJointExtensions.SetTargetRotationLocal(head_joint, Quaternion.LookRotation(dir), head_initial_pos);
         if(cable_component.line != null){
             cable_component.line.SetPosition(cable_component.segments, mouth.position);
             cable_component.cableLength = cur_tongue_distance;
@@ -266,9 +270,10 @@ public class Character : NetworkBehaviour
       aim_marker_mesh = aim_marker.GetComponent<MeshRenderer>();
       jump_arc.enabled = false;
       aim_marker_mesh.enabled = false;
-      head_initial_pos = head.rotation;
-      head.rotation = head_initial_pos;
+      head_initial_pos = head.localRotation;
+      //head.rotation = head_initial_pos;
       spine = GetComponentInChildren<Impact>();
+
 
       if(this.isLocalPlayer) {
         main_camera.gameObject.SetActive(true);
