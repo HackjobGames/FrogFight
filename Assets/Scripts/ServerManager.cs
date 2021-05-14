@@ -35,6 +35,11 @@ public class ServerManager : NetworkManager
     StartCoroutine(TryConnect());
   }
 
+  public void JoinFromMatch(Match match) {
+    this.matchID = match.MatchID;
+    StartCoroutine(TryConnect());
+  }
+
   IEnumerator GetHostID(int serverID) {
     string privateString = isPrivate ? "true" : "false";
     UnityWebRequest req = UnityWebRequest.Get($"http://localhost:8090/host?relayID={serverID}&isPrivate={privateString}&password={password}&maxPlayers={maxPlayers}");
@@ -53,11 +58,11 @@ public class ServerManager : NetworkManager
   IEnumerator TryConnect() {
     UnityWebRequest req = UnityWebRequest.Get($"http://localhost:8090/join?matchID={matchID}&password={password}");
     yield return req.SendWebRequest();
-    
+    string responseMessage = Encoding.UTF8.GetString(req.downloadHandler.data);
     if(req.result != UnityWebRequest.Result.Success) {
-      print(req.error);
+      MainMenu.menu.apiError.text = responseMessage;
+      MainMenu.menu.errorDialog.SetActive(true);
     } else {
-      string responseMessage = Encoding.UTF8.GetString(req.downloadHandler.data);
       if (responseMessage != "private") {
         networkAddress = responseMessage;
         StartClient();
@@ -73,4 +78,5 @@ public class ServerManager : NetworkManager
     yield return new WaitUntil(() => GameObject.FindObjectOfType<GameGlobals>());
     lobbyUI = GameObject.FindObjectOfType<GameGlobals>().gameObject;
   }
+
 }

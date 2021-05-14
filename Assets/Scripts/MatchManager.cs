@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Mirror;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 public class MatchManager : NetworkBehaviour
 {
@@ -116,5 +117,8 @@ public class MatchManager : NetworkBehaviour
     MainMenu.menu.mainMenuUi.SetActive(true);
     MainMenu.menu.menuCamera.SetActive(true);
     Cursor.lockState = CursorLockMode.None;
+    string route = this.isServer ? "Match" : "Player"; 
+    UnityWebRequest req = UnityWebRequest.Get($"http://localhost:8090/remove{route}?matchID={ServerManager.server.matchID}");
+    req.SendWebRequest();
   }
 }
