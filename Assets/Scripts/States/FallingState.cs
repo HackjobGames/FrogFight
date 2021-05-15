@@ -17,6 +17,7 @@ public class FallingState : State
         base.Enter();
         horizontal_input = vertical_input = 0.0f;
         cam = Camera.main.gameObject.transform;
+        character.TransitionAnimations(Character.Anim.Air);
     }
     public override void Exit()
     {
@@ -32,7 +33,8 @@ public class FallingState : State
     public override void LogicUpdate()
     {
         base.LogicUpdate();
-        if(Mathf.Abs(character.rigid_body.velocity.magnitude) < 0.1f) {
+        //if(Mathf.Abs(character.rigid_body.velocity.magnitude) < 0.1f) {
+        if(character.collision.on_ground) {
             state_machine.ChangeState(character.standing_state);
         }
     }
@@ -42,6 +44,7 @@ public class FallingState : State
         if(character.action_machine.cur_state != character.grappling_state){
             character.Fall();
         }
+        character.Stop();
     }
 }
 

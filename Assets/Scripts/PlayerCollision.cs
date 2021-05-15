@@ -12,13 +12,13 @@ public class PlayerCollision : NetworkBehaviour
 
     void Start()
     {
-        distance_to_ground = player_head.radius * 2;
+        distance_to_ground = player_head.radius * 12;
     }
 
     void Update()
     {
       if (this.isLocalPlayer) {
-        if(Physics.Raycast(player_head.gameObject.transform.position,Vector3.down,distance_to_ground + .1f)){
+        if(Physics.Raycast(player_head.gameObject.transform.position,Vector3.down,distance_to_ground + .1f, ground_layer)){
             on_ground = true;
         } else {
             on_ground = false;
