@@ -608,7 +608,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 204.1}
+  m_AnchoredPosition: {x: 0, y: 932}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &209660723
@@ -2306,9 +2306,9 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -64.8968, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &668083882
 MonoBehaviour:
@@ -3105,7 +3105,7 @@ MonoBehaviour:
   mainMenuUi: {fileID: 372857950}
   apiError: {fileID: 2067283923}
   errorDialog: {fileID: 1511086093}
-  matchButtonPrefab: {fileID: 1858069712126958938, guid: 62dc7e73e3c780d49960fde23a595398, type: 3}
+  matchButtonPrefab: {fileID: 8773546305331337726, guid: 62dc7e73e3c780d49960fde23a595398, type: 3}
   buttonContainer: {fileID: 1719518153}
   containerMarker: {fileID: 209660722}
   matchButtonDialog: {fileID: 1238906353}
@@ -3232,7 +3232,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1238906354
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5534,8 +5534,8 @@ RectTransform:
   m_Father: {fileID: 2077125810}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.54457027}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
