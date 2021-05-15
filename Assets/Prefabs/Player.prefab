@@ -1456,7 +1456,7 @@ MonoBehaviour:
   localPositionSensitivity: 0.01
   localRotationSensitivity: 0.01
   localScaleSensitivity: 0.01
-  target: {fileID: 0}
+  target: {fileID: 8261726030993242832}
 --- !u!54 &3908832458446535769
 Rigidbody:
   m_ObjectHideFlags: 0
