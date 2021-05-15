@@ -35,7 +35,7 @@ public class Character : NetworkBehaviour
     [SerializeField]
     public float jump_charge_speed = 1000f;
 
-    private float gravity = -9.81f;
+    private float gravity = -20f;
 
     public PlayerCollision collision;
    [SerializeField]
@@ -87,7 +87,7 @@ public class Character : NetworkBehaviour
 
     private float max_tongue_strength = 1f;
     private float max_air_speed = 5f;
-    private float tongue_dampen = 20f;
+    private float tongue_dampen = 40f;
     
     public Transform frog;
     private float max_tongue_distance;
@@ -159,9 +159,9 @@ public class Character : NetworkBehaviour
             hit_location = new GameObject();
             hit_location.transform.position = tongue_hit.point;
             hit_location.transform.parent = tongue_hit.transform;
-            initial_tongue_distance = Vector3.Distance(player.position, tongue_hit.transform.position);
+            initial_tongue_distance = Vector3.Distance(player.position, hit_location.transform.position);
             cur_tongue_distance = initial_tongue_distance;
-
+            print(initial_tongue_distance);
             hit_location.AddComponent<CableComponent>();
             cable_component = hit_location.GetComponent<CableComponent>();
             cable_component.endPoint = mouth;
@@ -236,6 +236,16 @@ public class Character : NetworkBehaviour
         rigid_body.AddForce(force * (1 - ratio), ForceMode.Impulse);
       } else {
         rigid_body.AddForce(force, ForceMode.Impulse);
+        Vector3 grapple_direction = dist.normalized;
+        float grapple_distance = Vector3.Distance(hit_location.transform.position, head.position);
+        float grapple_speed = Mathf.Round(Vector3.Dot(rigid_body.velocity, grapple_direction) * 100) / 100;
+
+        if(grapple_speed < 0){
+          if(grapple_distance > initial_tongue_distance){
+            rigid_body.velocity -= grapple_speed * grapple_direction;
+            //rigid_body.position = hit_location.transform.position - (grapple_direction * initial_tongue_distance);
+          }
+        }
       }
       return(max_tongue_distance >= dist.magnitude);
     }
