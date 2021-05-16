@@ -51,6 +51,10 @@ public class MainMenu : MonoBehaviour
       passwordDialog.SetActive(status);
     }
 
+    public void toggleMatchDialog(bool status) {
+      matchButtonDialog.SetActive(status);
+    }
+
     public void toggleIsPrivate() {
       hostPassword.interactable = isPrivate.isOn;
       hostPassword.text = isPrivate.isOn ? hostPassword.text : "";
@@ -75,6 +79,14 @@ public class MainMenu : MonoBehaviour
       ServerManager.server.Join();
     }
 
+    
+    public void JoinFromMatch(Match match) {
+      playerName = nameEntry.text;
+      ServerManager.server.matchID = match.MatchID;
+      ServerManager.server.password = joinPassword.text;
+      ServerManager.server.Join();
+    }
+
     IEnumerator GetMatches() {
       UnityWebRequest req = UnityWebRequest.Get($"http://localhost:8090/getMatches");
       yield return req.SendWebRequest();
@@ -85,6 +97,7 @@ public class MainMenu : MonoBehaviour
         GameObject button = Instantiate(matchButtonPrefab) as GameObject;
         button.transform.parent = buttonContainer.transform;
         button.GetComponent<MatchButton>().match = match.Value;
+        button.GetComponentInChildren<Text>().text = match.Value.HostName + "'s game.";
         RectTransform rect = button.GetComponent<RectTransform>();
         rect.localPosition = new Vector3(containerMarker.localPosition.x, containerMarker.localPosition.y - 70 - 127 * ix, containerMarker.localPosition.z);
         matchButtonPrefab.GetComponent<RectTransform>().localPosition += new Vector3(0, -127, 0);

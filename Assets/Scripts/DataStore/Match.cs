@@ -1,5 +1,6 @@
 public class Match
 {
+    public string HostName;
     public string MatchID;
     public int RelayID;
     public bool Private;

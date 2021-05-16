@@ -35,14 +35,9 @@ public class ServerManager : NetworkManager
     StartCoroutine(TryConnect());
   }
 
-  public void JoinFromMatch(Match match) {
-    this.matchID = match.MatchID;
-    StartCoroutine(TryConnect());
-  }
-
   IEnumerator GetHostID(int serverID) {
     string privateString = isPrivate ? "true" : "false";
-    UnityWebRequest req = UnityWebRequest.Get($"http://localhost:8090/host?relayID={serverID}&isPrivate={privateString}&password={password}&maxPlayers={maxPlayers}");
+    UnityWebRequest req = UnityWebRequest.Get($"http://localhost:8090/host?relayID={serverID}&hostName={MainMenu.playerName}&isPrivate={privateString}&password={password}&maxPlayers={maxPlayers}");
     yield return req.SendWebRequest();
 
     if(req.result != UnityWebRequest.Result.Success){

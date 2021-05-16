@@ -12,6 +12,7 @@ import (
 
 type Match struct {
 	MatchID        string
+	HostName			 string
 	RelayID        int
 	Private        bool
 	Password       string
@@ -38,6 +39,7 @@ func main() {
 		maxPlayers, mE := strconv.Atoi(req.FormValue("maxPlayers"))
 		isPrivate := req.FormValue("isPrivate")
 		password := req.FormValue("password")
+		hostName := req.FormValue("hostName")
 		fmt.Println("Password: " + password)
 		if rE != nil {
 			fmt.Println(rE.Error())
@@ -49,7 +51,7 @@ func main() {
 		}
 		fmt.Println(relayID)
 		ID := ""
-		for true {
+		for {
 			ID = generateMatchID()
 			_, found := matches[ID]
 			if !found {
@@ -59,6 +61,7 @@ func main() {
 
 		newMatch := Match{
 			MatchID:        ID,
+			HostName: 			hostName,
 			RelayID:        relayID,
 			Private:        isPrivate == "true",
 			Password:       password,
