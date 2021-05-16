@@ -7,6 +7,6 @@ public class MatchButton : MonoBehaviour
     public Match match;
 
     public void JoinMatch() {
-        ServerManager.server.JoinFromMatch(match);
+        MainMenu.menu.JoinFromMatch(match);
     }
 }
