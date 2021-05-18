@@ -9,7 +9,7 @@ public class GameGlobals : NetworkBehaviour
     [SyncVar]
     public float max_tongue_distance = 150f;
     [SyncVar]
-    public float slam_power = 1000f;
+    public float slam_power = 20000f;
 
     public InputField tongue_input;
     public InputField slam_input;
@@ -40,11 +40,11 @@ public class GameGlobals : NetworkBehaviour
 
 
 
-    public void UpdateTongueDistance (string value) {
+    public void UpdateTongueDistance () {
       max_tongue_distance = float.Parse(tongue_input.text);
     } 
     
-    public void UpdateSlamPower(string value) {
+    public void UpdateSlamPower() {
       slam_power = float.Parse(slam_input.text);
     }
 }

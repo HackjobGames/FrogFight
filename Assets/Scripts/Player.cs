@@ -10,6 +10,9 @@ public class Player : NetworkBehaviour
   public string playerName = null;
 
   [SyncVar]
+  public bool dead = false;
+
+  [SyncVar]
   public bool loaded;
 
   public static Player localPlayer;

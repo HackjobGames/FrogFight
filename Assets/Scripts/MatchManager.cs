@@ -103,6 +103,7 @@ public class MatchManager : NetworkBehaviour
     Player[] players = GameGlobals.globals.GetPlayers();
     foreach(Player player in players) {
       player.GetComponent<Character>().ResetCharacter();
+      player.dead = false;
     }
     ServerManager.server.lobbyUI.GetComponent<Canvas>().enabled = true;
     MainMenu.menu.menuCamera.SetActive(true);
