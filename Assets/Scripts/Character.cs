@@ -29,11 +29,7 @@ public class Character : NetworkBehaviour
     [SerializeField]
     private float dec_speed = 11f;
     [SerializeField]
-    private float stop_speed = 11f;
-    [SerializeField]
-    public float max_jump_force = 30f;
-    [SerializeField]
-    public float jump_charge_speed = 1000f;
+
 
     private float gravity = -20f;
 
@@ -56,8 +52,6 @@ public class Character : NetworkBehaviour
     private GameObject hit_location;
     private GameObject player_pivot_location;
     [SerializeField]
-    private GameObject crosshair;
-    [SerializeField]
     private GameObject aim_marker_prefab;
     private GameObject aim_marker;
     private MeshRenderer aim_marker_mesh;
@@ -71,25 +65,22 @@ public class Character : NetworkBehaviour
     [SerializeField]
     private ConfigurableJoint spine_joint;
     [SerializeField]
+    public Transform stabilizer_transform;
+    [SerializeField]
     private Transform focal_point;
     private Quaternion head_initial_pos;
     private Quaternion spine_initial_pos;
     private CableComponent cable_component;
     [SerializeField]
     private Material tongue_material;
-    private Vector3 previous_velocity;
-    [SerializeField]
-    private float slide_speed = 25f;
-    private Vector3 slide_direction;
     private float turnSpeed = .1f;
 
     public Transform look_at;
 
     private float max_tongue_strength = 1f;
-    private float max_air_speed = 5f;
+
     private float tongue_dampen = 40f;
-    
-    public Transform frog;
+
     private float max_tongue_distance;
 
     public ParticleSystem explosionEffect;
@@ -103,6 +94,8 @@ public class Character : NetworkBehaviour
     public enum Anim {Idle, Jump, Air};
 
     private Anim current_animation;
+
+    public Timer standing_cooldown;
 
     public void Move(float speed_modifier, Vector3 direction){
         if(Mathf.Abs(rigid_body.velocity.magnitude) > max_speed) {
@@ -126,23 +119,27 @@ public class Character : NetworkBehaviour
         if(input_vector.magnitude >= 0.1f){
             float targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg + Camera.main.gameObject.transform.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSpeed, .1f);
-            // transform.rotation = Quaternion.Euler(0f, angle, 0f); 
             Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
             Vector(speed_modifier, moveDir.normalized);
 
             var rotation = new Quaternion(0f,Quaternion.Euler(0f, targetAngle, 0f).y, 0f, 1);
-            print(spine_initial_pos);
+
             ConfigurableJointExtensions.SetTargetRotationLocal(spine_joint, rotation, spine_initial_pos);
         } else {
             Vector(1f, Vector3.zero);
         }
     }
-    public void Stop(){
-      if(action_machine.cur_state != grappling_state
-        && (!Mathf.Approximately(rigid_body.velocity.x , 0) 
-        || !Mathf.Approximately(rigid_body.velocity.z , 0))
-        && collision.on_ground){
-          rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, Vector3.zero, stop_speed * Time.deltaTime);
+    public void Stop(float y_pos){
+      if(collision.sphere_collided){
+        rigid_body.velocity = new Vector3(0, 0, 0);
+        Quaternion target_angle = Quaternion.FromToRotation(player.position,(player.position + collision.closest_hit.direction)); 
+
+        stabilizer_transform.LookAt(collision.closest_hit.direction, Vector3.up);
+        stabilizer_transform.Rotate( - 90f,0f,0f);
+   
+       if(collision.closest_hit.direction.y > -.5f){
+          stabilizer_transform.rotation = new Quaternion(stabilizer_transform.rotation.x, y_pos, stabilizer_transform.rotation.z,stabilizer_transform.rotation.w );
+       }
       }
     }
     
@@ -161,7 +158,7 @@ public class Character : NetworkBehaviour
             hit_location.transform.parent = tongue_hit.transform;
             initial_tongue_distance = Vector3.Distance(player.position, hit_location.transform.position);
             cur_tongue_distance = initial_tongue_distance;
-            print(initial_tongue_distance);
+
             hit_location.AddComponent<CableComponent>();
             cable_component = hit_location.GetComponent<CableComponent>();
             cable_component.endPoint = mouth;
@@ -202,7 +199,7 @@ public class Character : NetworkBehaviour
           animations.SetInteger("animation_value", 2);
           break;
       }
-      print(animation_switch + " " + animations.GetInteger("animation_value"));
+
       current_animation = animation_switch;
     }
 
@@ -310,6 +307,8 @@ public class Character : NetworkBehaviour
 
         action_machine.Initialize(idle_state);
         rigid_body.isKinematic = false;
+        standing_cooldown = gameObject.AddComponent<Timer>();
+        standing_cooldown.SetTimer(.5f);
         GetComponentInChildren<Impact>().enabled = true;
         foreach(Transform transform in GetComponentsInChildren<Transform>()) { // this is so the player can't grapple to themselves
           transform.gameObject.layer = 9;

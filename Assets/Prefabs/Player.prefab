@@ -714,10 +714,10 @@ ConfigurableJoint:
   m_GameObject: {fileID: 1732339213560733967}
   m_ConnectedBody: {fileID: 7439356242339820844}
   m_ConnectedArticulationBody: {fileID: 0}
-  m_Anchor: {x: 0, y: 0, z: 0}
+  m_Anchor: {x: 0, y: 0.95, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.00000004344608, y: -0.7595595, z: 0.18222626}
+  m_ConnectedAnchor: {x: 0.000000027463024, y: -0.356298, z: 0.115188345}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 2
@@ -777,12 +777,12 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 3
-    positionSpring: 10000
+    positionSpring: 100000
     positionDamper: 0
     maximumForce: 3.4028233e+38
   m_AngularYZDrive:
     serializedVersion: 3
-    positionSpring: 10000
+    positionSpring: 100000
     positionDamper: 0
     maximumForce: 3.4028233e+38
   m_SlerpDrive:
@@ -1252,14 +1252,12 @@ MonoBehaviour:
   syncInterval: 0.1
   jump_arc: {fileID: 0}
   animations: {fileID: 7641418944555372881}
-  jump_speed: 40
+  jump_speed: 72.61
   speed: 1
   max_speed: 5
   acc_speed: 11
   dec_speed: 11
-  stop_speed: 11
-  max_jump_force: 30
-  jump_charge_speed: 1000
+  gravity: -20
   collision: {fileID: 0}
   is_grappleable:
     serializedVersion: 2
@@ -1268,20 +1266,19 @@ MonoBehaviour:
   mouth: {fileID: 5809398776998711291}
   main_camera: {fileID: 4405601068662846374}
   player: {fileID: 8261726030993242832}
-  crosshair: {fileID: 1715207167888277830}
   aim_marker_prefab: {fileID: 7430119559413119944, guid: b6152ff1f2e974c4a903b7ac599fd24a, type: 3}
   head: {fileID: 5809398776998711291}
   head_joint: {fileID: 8415311455436996935}
   spine_joint: {fileID: 3469477799400638024}
+  stabilizer_transform: {fileID: 8701975808503175602}
   focal_point: {fileID: 353674943346027544}
   tongue_material: {fileID: 2100000, guid: a5eaa5d949946fe42b49da914693a8bc, type: 2}
-  slide_speed: 25
   look_at: {fileID: 2868234591317825939}
-  frog: {fileID: 8261726030993242832}
   explosionEffect: {fileID: 8561788873101610777, guid: 71787958011971c4487ab849d45e7f12, type: 3}
   spine: {fileID: 8961038548813892052}
   mass: 30
   aerial_influence: 500
+  standing_cooldown: {fileID: 0}
 --- !u!114 &5223366375414201604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1302,6 +1299,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   player_head: {fileID: 8930033131546435034}
+  player_position: {fileID: 8261726030993242832}
+  sphere_collided: 0
+  sphere_collision_angle: {x: 0, y: 0, z: 0}
+  sphere_array_size: 40
+  sphere_array_length: 1.3
 --- !u!114 &4392391948022166542
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2416,6 +2418,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!136 &4223058011403286470
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4434391413681126604}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 0
+  m_Radius: 0.5
+  m_Height: 0.5
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &4818608518885392751
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4431,11 +4447,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6177095576070154208, guid: 0ddcac4f5f8af0440a9e214e130576ec, type: 3}
   m_PrefabInstance: {fileID: 4067333609402446549}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &5997702783845927119 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7732131601650465306, guid: 0ddcac4f5f8af0440a9e214e130576ec, type: 3}
-  m_PrefabInstance: {fileID: 4067333609402446549}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3944763926615494819 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8156986795448229258, guid: 0ddcac4f5f8af0440a9e214e130576ec, type: 3}
@@ -4454,6 +4465,11 @@ GameObject:
 --- !u!1 &5443288393039625377 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8356538690890272372, guid: 0ddcac4f5f8af0440a9e214e130576ec, type: 3}
+  m_PrefabInstance: {fileID: 4067333609402446549}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5997702783845927119 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7732131601650465306, guid: 0ddcac4f5f8af0440a9e214e130576ec, type: 3}
   m_PrefabInstance: {fileID: 4067333609402446549}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &4288353872618895792 stripped
