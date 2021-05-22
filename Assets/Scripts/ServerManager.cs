@@ -34,6 +34,13 @@ public class ServerManager : NetworkManager
   public void Join() {
     StartCoroutine(TryConnect());
   }
+  public void Disconnect() {
+    if (MatchManager.manager.isServer) {
+      ServerManager.server.StopHost();
+    } else {
+      ServerManager.server.StopClient();
+    }
+  }
 
   IEnumerator GetHostID(int serverID) {
     string privateString = isPrivate ? "true" : "false";

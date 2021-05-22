@@ -26,12 +26,30 @@ public class MainMenu : MonoBehaviour
     public GameObject buttonContainer;
     public RectTransform containerMarker;
     public GameObject matchButtonDialog;
+    public GameObject inGameMenu;
     public static string playerName;
     public static MainMenu menu;
     
 
     private void Start() {
       menu = this;
+    }
+
+    void Update() {
+      if (Input.GetButtonDown("Cancel") && MatchManager.manager.inGame) {
+        Cursor.lockState = inGameMenu.active && MatchManager.manager.inGame ? CursorLockMode.Locked : CursorLockMode.None;
+        inGameMenu.SetActive(!inGameMenu.active);
+      }
+    }
+
+    public void Disconnect() {
+      ServerManager.server.Disconnect();
+      inGameMenu.SetActive(false);
+    }
+
+    public void closeInGameMenu() {
+      inGameMenu.SetActive(false);
+      Cursor.lockState = CursorLockMode.Locked;
     }
 
     public void UpdateRoomCode() {

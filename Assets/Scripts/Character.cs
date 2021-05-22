@@ -241,10 +241,8 @@ public class Character : NetworkBehaviour
       max_tongue_distance = GameGlobals.globals.max_tongue_distance;
       jump_arc = GetComponent<LineRenderer>();
       collision = GetComponent<PlayerCollision>();
-      aim_marker = Instantiate(aim_marker_prefab) as GameObject;
-      aim_marker_mesh = aim_marker.GetComponent<MeshRenderer>();
       jump_arc.enabled = false;
-      aim_marker_mesh.enabled = false;
+      
       head_initial_pos = head.rotation;
       head.rotation = head_initial_pos;
       spine = GetComponentInChildren<Impact>();
@@ -271,6 +269,11 @@ public class Character : NetworkBehaviour
         GetComponentInChildren<Impact>().enabled = true;
         foreach(Transform transform in GetComponentsInChildren<Transform>()) { // this is so the player can't grapple to themselves
           transform.gameObject.layer = 9;
+        }
+        if (!aim_marker) {
+          aim_marker = Instantiate(aim_marker_prefab) as GameObject;
+          aim_marker_mesh = aim_marker.GetComponent<MeshRenderer>();
+          aim_marker_mesh.enabled = false;
         }
       }
 

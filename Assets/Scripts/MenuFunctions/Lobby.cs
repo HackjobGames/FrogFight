@@ -6,23 +6,28 @@ using Mirror;
 
 public class Lobby : NetworkBehaviour
 {
-    public Image menu;
-    public Button menuButton;
-    public Text codeDisplay;
+  public Image menu;
+  public Button menuButton;
+  public Text codeDisplay;
+  public GameObject inGameMenu;
 
-    public static Lobby lobby;
+  public static Lobby lobby;
 
-    private void Start() {
-      lobby = this;
-      menu.gameObject.SetActive(false);
-      if (this.isServer) {
-        menuButton.interactable = true;
-      }
-      codeDisplay.text = "Code: " + ServerManager.server.matchID;
+  private void Start() {
+    lobby = this;
+    menu.gameObject.SetActive(false);
+    if (this.isServer) {
+      menuButton.interactable = true;
     }
+    codeDisplay.text = "Code: " + ServerManager.server.matchID;
+  }
 
-    public void toggleMenu(bool enable) {
-      menu.gameObject.SetActive(enable);
-    }
+  public void toggleMenu(bool enable) {
+    menu.gameObject.SetActive(enable);
+  }
+
+  public void Disconnect() {
+    ServerManager.server.Disconnect();
+  }
     
 }

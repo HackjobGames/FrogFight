@@ -41,6 +41,7 @@ func main() {
 		password := req.FormValue("password")
 		hostName := req.FormValue("hostName")
 		fmt.Println("Password: " + password)
+		fmt.Println(maxPlayers)
 		if rE != nil {
 			fmt.Println(rE.Error())
 			return
@@ -125,6 +126,8 @@ func main() {
 		if ok {
 			match.CurrentPlayers--
 		}
+		fmt.Println("Remove Player From Match: ", matchID)
+		fmt.Println("Current Players: ", match.CurrentPlayers)
 	})
 
 	http.ListenAndServe(":8090", nil)
