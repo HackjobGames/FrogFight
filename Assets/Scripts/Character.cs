@@ -17,6 +17,7 @@ public class Character : NetworkBehaviour
     public State grappling_state;
     public State idle_state;
     public LineRenderer jump_arc;
+    public Animator animations;
     [SerializeField]
     private float jump_speed = 40f;
     [SerializeField]
@@ -66,8 +67,13 @@ public class Character : NetworkBehaviour
     [SerializeField]
     private Transform head;
     [SerializeField]
+    private ConfigurableJoint head_joint;
+    [SerializeField]
+    private ConfigurableJoint spine_joint;
+    [SerializeField]
     private Transform focal_point;
     private Quaternion head_initial_pos;
+    private Quaternion spine_initial_pos;
     private CableComponent cable_component;
     [SerializeField]
     private Material tongue_material;
@@ -94,6 +100,10 @@ public class Character : NetworkBehaviour
 
     public float aerial_influence = 500;
 
+    public enum Anim {Idle, Jump, Air};
+
+    private Anim current_animation;
+
     public void Move(float speed_modifier, Vector3 direction){
         if(Mathf.Abs(rigid_body.velocity.magnitude) > max_speed) {
             rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, direction * speed * speed_modifier, dec_speed * Time.deltaTime);
@@ -119,6 +129,10 @@ public class Character : NetworkBehaviour
             // transform.rotation = Quaternion.Euler(0f, angle, 0f); 
             Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
             Vector(speed_modifier, moveDir.normalized);
+
+            var rotation = new Quaternion(0f,Quaternion.Euler(0f, targetAngle, 0f).y, 0f, 1);
+            print(spine_initial_pos);
+            ConfigurableJointExtensions.SetTargetRotationLocal(spine_joint, rotation, spine_initial_pos);
         } else {
             Vector(1f, Vector3.zero);
         }
@@ -167,7 +181,8 @@ public class Character : NetworkBehaviour
 
     public void StopGrapple(){
         var dir = (focal_point.position - head.position).normalized;
-        head.rotation = Quaternion.LookRotation(dir);
+        //head_joint.targetRotation = Quaternion.LookRotation(dir);
+        ConfigurableJointExtensions.SetTargetRotationLocal(head_joint,head_initial_pos, head_initial_pos);
 
         Destroy(joint);
         Destroy(player_joint);
@@ -175,12 +190,27 @@ public class Character : NetworkBehaviour
         Destroy(hit_location);
     }
 
+    public void TransitionAnimations(Anim animation_switch){
+      switch(animation_switch){
+        case Anim.Idle:
+          animations.SetInteger("animation_value", 0);
+          break;
+        case Anim.Jump:
+          animations.SetInteger("animation_value", 1);
+          break;
+        case Anim.Air:
+          animations.SetInteger("animation_value", 2);
+          break;
+      }
+      print(animation_switch + " " + animations.GetInteger("animation_value"));
+      current_animation = animation_switch;
+    }
+
     public void UpdateTonguePositions(){
         cur_tongue_distance = Vector3.Distance(mouth.position, hit_location.transform.position);
 
         var dir = (hit_location.transform.position - head.position).normalized;
-        var rotation = Quaternion.LookRotation(dir);
-        head.rotation = Quaternion.Slerp(head.rotation, rotation, Time.deltaTime * 2f);
+        ConfigurableJointExtensions.SetTargetRotationLocal(head_joint, Quaternion.LookRotation(dir), head_initial_pos);
         if(cable_component.line != null){
             cable_component.line.SetPosition(cable_component.segments, mouth.position);
             cable_component.cableLength = cur_tongue_distance;
@@ -225,15 +255,16 @@ public class Character : NetworkBehaviour
 
     public void AimMarkerUpdate(){
       if(Physics.Raycast(main_camera.position, main_camera.forward, out camera_hit, max_tongue_distance, is_grappleable) &&
-          Physics.Raycast(mouth.position, (camera_hit.point- mouth.position).normalized, out tongue_hit, max_tongue_distance, is_grappleable)) {
-          if(!aim_marker_mesh.enabled){
-            aim_marker_mesh.enabled = true;
-          }
-          
-          aim_marker.transform.position = tongue_hit.point;
-        } else if(aim_marker_mesh.enabled){
-          aim_marker_mesh.enabled = false;
+        Physics.Raycast(mouth.position, (camera_hit.point- mouth.position).normalized, out tongue_hit, max_tongue_distance, is_grappleable)) {
+        if(!aim_marker_mesh.enabled){
+          aim_marker_mesh.enabled = true;
         }
+        aim_marker.transform.position = tongue_hit.point;
+        var dir = (aim_marker.transform.position - head.position).normalized;
+         ConfigurableJointExtensions.SetTargetRotationLocal(head_joint, Quaternion.LookRotation(dir), head_initial_pos);
+      } else if(aim_marker_mesh.enabled){
+        aim_marker_mesh.enabled = false;
+      }
     }
 
     private void OnEnable()
@@ -242,10 +273,10 @@ public class Character : NetworkBehaviour
       jump_arc = GetComponent<LineRenderer>();
       collision = GetComponent<PlayerCollision>();
       jump_arc.enabled = false;
-      
-      head_initial_pos = head.rotation;
-      head.rotation = head_initial_pos;
+      head_initial_pos = head.localRotation;
+      spine_initial_pos = new Quaternion(0f, 0f, 0f, 1);
       spine = GetComponentInChildren<Impact>();
+
 
       if(this.isLocalPlayer) {
         main_camera.gameObject.SetActive(true);
@@ -317,3 +348,5 @@ public class Character : NetworkBehaviour
         GetComponent<Character>().enabled = false;
     }
 }
+
+
