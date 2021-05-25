@@ -17,7 +17,6 @@ public class FallingState : State
         base.Enter();
         horizontal_input = vertical_input = 0.0f;
         cam = Camera.main.gameObject.transform;
-        character.TransitionAnimations(Character.Anim.Air);
     }
     public override void Exit()
     {

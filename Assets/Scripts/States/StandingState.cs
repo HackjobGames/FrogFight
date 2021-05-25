@@ -11,7 +11,6 @@ public class StandingState : State
     public override void Enter()
     {
         base.Enter();
-        character.TransitionAnimations(Character.Anim.Idle);
     }
     public override void Exit()
     {

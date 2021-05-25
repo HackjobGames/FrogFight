@@ -13,9 +13,9 @@ import (
 type Match struct {
 	MatchID        string
 	HostName			 string
-	RelayID        int
+	relayID        int
 	Private        bool
-	Password       string
+	password       string
 	MaxPlayers     int
 	CurrentPlayers int
 }
@@ -63,9 +63,9 @@ func main() {
 		newMatch := Match{
 			MatchID:        ID,
 			HostName: 			hostName,
-			RelayID:        relayID,
+			relayID:        relayID,
 			Private:        isPrivate == "true",
-			Password:       password,
+			password:       password,
 			MaxPlayers:     maxPlayers,
 			CurrentPlayers: 1,
 		}
@@ -81,9 +81,9 @@ func main() {
 		fmt.Println(match.CurrentPlayers)
 		fmt.Println(match.MaxPlayers)
 		if exists {
-			if !match.Private || match.Password == password {
+			if !match.Private || match.password == password {
 				if match.CurrentPlayers < match.MaxPlayers {
-					io.WriteString(res, strconv.Itoa(match.RelayID))
+					io.WriteString(res, strconv.Itoa(match.relayID))
 					match.CurrentPlayers++
 				} else {
 					res.WriteHeader(http.StatusForbidden)

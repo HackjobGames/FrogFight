@@ -24,7 +24,6 @@ public class MainMenu : MonoBehaviour
     public GameObject errorDialog;
     public GameObject matchButtonPrefab;
     public GameObject buttonContainer;
-    public RectTransform containerMarker;
     public GameObject matchButtonDialog;
     public GameObject inGameMenu;
     public static string playerName;
@@ -108,17 +107,19 @@ public class MainMenu : MonoBehaviour
     IEnumerator GetMatches() {
       UnityWebRequest req = UnityWebRequest.Get($"http://localhost:8090/getMatches");
       yield return req.SendWebRequest();
-      matchButtonDialog.SetActive(true); 
+      matchButtonDialog.SetActive(true);
+      
       int ix = 0;
       IDictionary<string, Match> matches = JsonConvert.DeserializeObject<IDictionary<string, Match>>(Encoding.UTF8.GetString(req.downloadHandler.data));
+      RectTransform containerRect = buttonContainer.GetComponent<RectTransform>();
+      containerRect.sizeDelta = new Vector2(containerRect.sizeDelta.x, matchButtonPrefab.GetComponent<RectTransform>().sizeDelta.y * matches.Count + 10);
       foreach(KeyValuePair<string, Match> match in matches) {
         GameObject button = Instantiate(matchButtonPrefab) as GameObject;
-        button.transform.parent = buttonContainer.transform;
-        button.GetComponent<MatchButton>().match = match.Value;
-        button.GetComponentInChildren<Text>().text = match.Value.HostName + "'s game.";
+        button.transform.SetParent(buttonContainer.transform);
+        button.GetComponent<MatchButton>().SetMatch(match.Value);
         RectTransform rect = button.GetComponent<RectTransform>();
-        rect.localPosition = new Vector3(containerMarker.localPosition.x, containerMarker.localPosition.y - 70 - 127 * ix, containerMarker.localPosition.z);
-        matchButtonPrefab.GetComponent<RectTransform>().localPosition += new Vector3(0, -127, 0);
+        rect.localScale = new Vector3(1,1,1);
+        rect.anchoredPosition3D = new Vector3(0, -matchButtonPrefab.GetComponent<RectTransform>().rect.height * ((float)ix - (.5f * (matches.Count - 1))), 0);
         ix++;
       }
     }
