@@ -10,12 +10,19 @@ public class Death : MonoBehaviour
     void OnCollisionEnter(Collision other) {
       if (other.gameObject.tag == "Player" && !finished) {
         finished = true;
-        foreach(Player player in GameGlobals.GetPlayers()) {
-          if (player.playerName != other.gameObject.GetComponentInParent<Player>().playerName) {
-            winner.GetComponent<Text>().enabled = true;
-            winner.text = player.playerName + " Wins :)";
-            MatchManager.manager.EndGame();
+        other.gameObject.GetComponentInParent<Player>().dead = true;
+        int aliveCount = 0;
+        Player alivePlayer = new Player();
+        foreach(Player player in GameGlobals.globals.GetPlayers()) {
+          if (!player.dead) {
+            aliveCount++;
+            alivePlayer = player;
           }
+        }
+        if (aliveCount == 1) {
+          winner.GetComponent<Text>().enabled = true;
+          winner.text = alivePlayer.playerName + " Wins :)";
+          MatchManager.manager.EndGame();
         }
       }
     }

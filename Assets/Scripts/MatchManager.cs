@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Mirror;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 public class MatchManager : NetworkBehaviour
 {
@@ -13,6 +14,7 @@ public class MatchManager : NetworkBehaviour
   public Image destructibleTest;
   public Image checkMark;
   public Button playButton;
+  public bool inGame = false;
   public static MatchManager manager;
 
   public void ChangeMap(string map) {
@@ -36,12 +38,15 @@ public class MatchManager : NetworkBehaviour
     manager = this;
     if (this.isServer) {
       forest.GetComponent<Button>().interactable = true;
+      destructibleTest.GetComponent<Button>().interactable = true;
       checkMark.GetComponent<Button>().interactable = true;
     }
   }
   [ClientRpc]
   public void LoadMap() {
     SceneManager.LoadScene(map, LoadSceneMode.Additive);
+    inGame = true;
+    playButton.interactable = false;
     StartCoroutine(AfterLoad());
   }
 
@@ -70,7 +75,7 @@ public class MatchManager : NetworkBehaviour
   }
 
   IEnumerator AfterLoad() {
-    Player[] players = GameGlobals.GetPlayers();
+    Player[] players = GameGlobals.globals.GetPlayers();
     CmdSetLoadedFlag(Player.localPlayer.playerName, players);
     yield return new WaitUntil(() => {
       foreach(Player player in players) {
@@ -96,22 +101,32 @@ public class MatchManager : NetworkBehaviour
 
   public IEnumerator DelayEndGame() {
     yield return new WaitForSeconds(3);
-    MatchManager match = GameObject.FindObjectOfType<MatchManager>();
-    Player[] players = GameGlobals.GetPlayers();
+    Player[] players = GameGlobals.globals.GetPlayers();
     foreach(Player player in players) {
       player.GetComponent<Character>().ResetCharacter();
+      player.dead = false;
     }
     ServerManager.server.lobbyUI.GetComponent<Canvas>().enabled = true;
     MainMenu.menu.menuCamera.SetActive(true);
-    SceneManager.UnloadScene(match.map);
-    match.ChangeMap("");
+    SceneManager.UnloadScene(MatchManager.manager.map);
+    MatchManager.manager.ChangeMap("");
     Cursor.lockState = CursorLockMode.None;
+    inGame = false;
+    if (this.isServer) {
+      playButton.interactable = true;
+    }
   }
 
   override public void OnStopClient() {
     Destroy(ServerManager.server.lobbyUI);
     MainMenu.menu.mainMenuUi.SetActive(true);
     MainMenu.menu.menuCamera.SetActive(true);
+    if (MatchManager.manager.inGame) {
+      SceneManager.UnloadScene(MatchManager.manager.map);
+    }
     Cursor.lockState = CursorLockMode.None;
+    string route = this.isServer ? "Match" : "Player"; 
+    UnityWebRequest req = UnityWebRequest.Get($"http://localhost:8090/remove{route}?matchID={ServerManager.server.matchID}");
+    req.SendWebRequest();
   }
 }

@@ -1281,7 +1281,7 @@ MonoBehaviour:
   explosionEffect: {fileID: 8561788873101610777, guid: 71787958011971c4487ab849d45e7f12, type: 3}
   spine: {fileID: 8961038548813892052}
   mass: 30
-  aerial_influence: 500
+  aerial_influence: 100
 --- !u!114 &5223366375414201604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1317,6 +1317,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   playerName: 
+  dead: 0
   loaded: 0
 --- !u!120 &2217306112544508318
 LineRenderer:

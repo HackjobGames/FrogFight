@@ -4,13 +4,11 @@ using UnityEngine;
 
 public class Impact : MonoBehaviour
 {
-  private float force;
   private float delay = 1.0f;
   private bool canSlam = true;
   MatchManager manager;
 
   void Start() {
-    force = GameGlobals.globals.slam_power;
     manager = MatchManager.manager;
   }
 
@@ -23,9 +21,9 @@ public class Impact : MonoBehaviour
         Character player = nearbyObject.GetComponentInParent<Character>();
         Rigidbody body = nearbyObject.GetComponent<Rigidbody>();
         if (player) {
-          player.AddShockWave(force, transform.position, other.relativeVelocity.magnitude, Quaternion.FromToRotation(Vector3.forward, other.GetContact(0).normal));
+          player.AddShockWave(GameGlobals.globals.slam_power, transform.position, other.relativeVelocity.magnitude, Quaternion.FromToRotation(Vector3.forward, other.GetContact(0).normal));
         } else if (body) {
-          body.AddExplosionForce(force, transform.position, other.relativeVelocity.magnitude);
+          body.AddExplosionForce(GameGlobals.globals.slam_power, transform.position, other.relativeVelocity.magnitude);
         } else if (nearbyObject.gameObject.tag == "Terrain") {
           manager.DestroyObject(nearbyObject.gameObject);
         }
