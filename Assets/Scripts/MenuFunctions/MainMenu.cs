@@ -125,7 +125,7 @@ public class MainMenu : MonoBehaviour
       foreach (Transform obj in buttonContainer.transform) {
         Destroy(obj.gameObject);
       }
-      UnityWebRequest req = UnityWebRequest.Get($"http://localhost:8090/getMatches");
+      UnityWebRequest req = UnityWebRequest.Get($"http://3.15.215.53:8090/getMatches");
       yield return req.SendWebRequest();
       int ix = 0;
       IDictionary<string, Match> matches = JsonConvert.DeserializeObject<IDictionary<string, Match>>(Encoding.UTF8.GetString(req.downloadHandler.data));
