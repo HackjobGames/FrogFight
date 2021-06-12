@@ -24,7 +24,6 @@ public class GameGlobals : NetworkBehaviour
 
     public Player[] GetPlayers() {
       GameObject[] prefabs = GameObject.FindGameObjectsWithTag("PlayerRoot");
-      print(prefabs.Length);
       Player[] players = new Player[prefabs.Length];
       for (int i = 0; i < playerNames.Length; i++) {
         if (i < players.Length) {

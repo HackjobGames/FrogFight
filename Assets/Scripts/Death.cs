@@ -13,7 +13,8 @@ public class Death : MonoBehaviour
         other.gameObject.GetComponentInParent<Player>().dead = true;
         int aliveCount = 0;
         Player alivePlayer = new Player();
-        foreach(Player player in GameGlobals.globals.GetPlayers()) {
+        Player[] players = GameGlobals.globals.GetPlayers();
+        foreach(Player player in players) {
           if (!player.dead) {
             aliveCount++;
             alivePlayer = player;
@@ -22,6 +23,8 @@ public class Death : MonoBehaviour
         if (aliveCount == 1) {
           winner.GetComponent<Text>().enabled = true;
           winner.text = alivePlayer.playerName + " Wins :)";
+          MatchManager.manager.EndGame();
+        } else if (players.Length == 1) {
           MatchManager.manager.EndGame();
         }
       }

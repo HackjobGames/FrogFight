@@ -307,7 +307,7 @@ public class Character : NetworkBehaviour
         main_camera.gameObject.SetActive(false);
         rigid_body.isKinematic = true;
         spine.enabled = false;
-        spine.transform.position = new Vector3(0, 0, 0);      
+        spine.transform.position = new Vector3(10000, 10000, 10000);      
         GetComponent<Character>().enabled = false;
     }
 }

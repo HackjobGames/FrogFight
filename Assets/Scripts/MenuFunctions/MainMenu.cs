@@ -21,7 +21,9 @@ public class MainMenu : MonoBehaviour
     public GameObject menuCamera;
     public GameObject mainMenuUi;
     public Text apiError;
+    public Text joinError;
     public GameObject errorDialog;
+    public GameObject joinDialog;
     public GameObject matchButtonPrefab;
     public GameObject buttonContainer;
     public GameObject matchButtonDialog;
@@ -72,6 +74,11 @@ public class MainMenu : MonoBehaviour
       matchButtonDialog.SetActive(status);
     }
 
+    public void toggleJoinDialog(bool status) {
+      joinDialog.SetActive(status);
+      joinError.text = "";
+    }
+
     public void toggleIsPrivate() {
       hostPassword.interactable = isPrivate.isOn;
       hostPassword.text = isPrivate.isOn ? hostPassword.text : "";
@@ -86,14 +93,24 @@ public class MainMenu : MonoBehaviour
     }
 
     public void Play() {
+      matchButtonDialog.SetActive(true);
+      StartCoroutine(GetMatches());
+    }
+
+    public void Refresh() {
       StartCoroutine(GetMatches());
     }
 
     public void Join() {
       playerName = nameEntry.text;
-      ServerManager.server.matchID = roomInput.text;
-      ServerManager.server.password = joinPassword.text;
-      ServerManager.server.Join();
+      if (roomInput.text.Length == 6) {
+        ServerManager.server.matchID = roomInput.text;
+        ServerManager.server.password = joinPassword.text;
+        ServerManager.server.Join();
+        joinError.text = "";
+      } else {
+        joinError.text = "Match ID must be 6 digits long.";
+      }
     }
 
     
@@ -105,10 +122,11 @@ public class MainMenu : MonoBehaviour
     }
 
     IEnumerator GetMatches() {
+      foreach (Transform obj in buttonContainer.transform) {
+        Destroy(obj.gameObject);
+      }
       UnityWebRequest req = UnityWebRequest.Get($"http://localhost:8090/getMatches");
       yield return req.SendWebRequest();
-      matchButtonDialog.SetActive(true);
-      
       int ix = 0;
       IDictionary<string, Match> matches = JsonConvert.DeserializeObject<IDictionary<string, Match>>(Encoding.UTF8.GetString(req.downloadHandler.data));
       RectTransform containerRect = buttonContainer.GetComponent<RectTransform>();
@@ -119,7 +137,7 @@ public class MainMenu : MonoBehaviour
         button.GetComponent<MatchButton>().SetMatch(match.Value);
         RectTransform rect = button.GetComponent<RectTransform>();
         rect.localScale = new Vector3(1,1,1);
-        rect.anchoredPosition3D = new Vector3(0, -matchButtonPrefab.GetComponent<RectTransform>().rect.height * ((float)ix - (.5f * (matches.Count - 1))), 0);
+        rect.anchoredPosition3D = new Vector3(-10, -matchButtonPrefab.GetComponent<RectTransform>().rect.height * ((float)ix - (.5f * (matches.Count - 1))), 0);
         ix++;
       }
     }

@@ -31,8 +31,8 @@ func generateMatchID() string {
 
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
-	matches := map[string]*Match{}
-
+	matches := map[string]Match{}
+	matchesPointer := &matches
 	http.HandleFunc("/host", func(res http.ResponseWriter, req *http.Request) {
 		fmt.Println(req.FormValue("relayID"))
 		relayID, rE := strconv.Atoi(req.FormValue("relayID"))
@@ -70,7 +70,7 @@ func main() {
 			CurrentPlayers: 1,
 		}
 		fmt.Println(newMatch.Private)
-		matches[newMatch.MatchID] = &newMatch
+		matches[newMatch.MatchID] = newMatch
 		io.WriteString(res, newMatch.MatchID)
 	})
 
@@ -99,7 +99,7 @@ func main() {
 	})
 
 	http.HandleFunc("/getMatches", func(res http.ResponseWriter, req *http.Request) {
-		jsonString, err := json.Marshal(matches)
+		jsonString, err := json.Marshal(matchesPointer)
 		if err != nil {
 			fmt.Println(err.Error())
 			return
