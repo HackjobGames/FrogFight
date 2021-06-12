@@ -10,7 +10,7 @@ public class Player : NetworkBehaviour
   public string playerName = null;
 
   [SyncVar]
-  public bool dead = false;
+  public bool dead = true;
 
   [SyncVar]
   public bool loaded;
@@ -39,7 +39,6 @@ public class Player : NetworkBehaviour
 
   IEnumerator WaitForGlobals() {
     yield return new WaitUntil(() => GameGlobals.globals != null && this.playerName != null && this.playerName != "");
-    print(this.playerName);
     GameGlobals.globals.GetPlayers();
   }
 

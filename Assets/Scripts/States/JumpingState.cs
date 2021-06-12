@@ -11,7 +11,6 @@ public class JumpingState : State
     {
         base.Enter();
         Vector3 angle = new Vector3(Camera.main.transform.forward.x, 1, Camera.main.transform.forward.z);
-        character.TransitionAnimations(Character.Anim.Jump);
         character.Jump(angle);
         state_machine.ChangeState(character.falling_state);
     }

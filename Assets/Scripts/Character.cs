@@ -17,7 +17,6 @@ public class Character : NetworkBehaviour
     public State grappling_state;
     public State idle_state;
     public LineRenderer jump_arc;
-    public Animator animations;
     [SerializeField]
     private float jump_speed = 40f;
     [SerializeField]
@@ -42,8 +41,7 @@ public class Character : NetworkBehaviour
     private LayerMask is_grappleable;
 
     public Rigidbody rigid_body;
-    private ConfigurableJoint joint;
-    private ConfigurableJoint player_joint;
+    public Rigidbody mouth_body;
 
     public float initial_tongue_distance { get; private set; }
     public float cur_tongue_distance { get; private set; }
@@ -53,7 +51,7 @@ public class Character : NetworkBehaviour
     private Transform main_camera;
     [SerializeField]
     private Transform player;
-    private GameObject hit_location;
+    public GameObject hit_location;
     private GameObject player_pivot_location;
     [SerializeField]
     private GameObject crosshair;
@@ -66,10 +64,6 @@ public class Character : NetworkBehaviour
 
     [SerializeField]
     private Transform head;
-    [SerializeField]
-    private ConfigurableJoint head_joint;
-    [SerializeField]
-    private ConfigurableJoint spine_joint;
     [SerializeField]
     private Transform focal_point;
     private Quaternion head_initial_pos;
@@ -100,10 +94,6 @@ public class Character : NetworkBehaviour
 
     public float aerial_influence = 500;
 
-    public enum Anim {Idle, Jump, Air};
-
-    private Anim current_animation;
-
     public void Move(float speed_modifier, Vector3 direction){
         if(Mathf.Abs(rigid_body.velocity.magnitude) > max_speed) {
             rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, direction * speed * speed_modifier, dec_speed * Time.deltaTime);
@@ -131,8 +121,6 @@ public class Character : NetworkBehaviour
             Vector(speed_modifier, moveDir.normalized);
 
             var rotation = new Quaternion(0f,Quaternion.Euler(0f, targetAngle, 0f).y, 0f, 1);
-            print(spine_initial_pos);
-            ConfigurableJointExtensions.SetTargetRotationLocal(spine_joint, rotation, spine_initial_pos);
         } else {
             Vector(1f, Vector3.zero);
         }
@@ -174,43 +162,17 @@ public class Character : NetworkBehaviour
     }
 
     public void DisableTongue(){
-        Destroy(joint);
-        Destroy(player_joint);
         Destroy(player_pivot_location);
     }
 
     public void StopGrapple(){
-        var dir = (focal_point.position - head.position).normalized;
-        //head_joint.targetRotation = Quaternion.LookRotation(dir);
-        ConfigurableJointExtensions.SetTargetRotationLocal(head_joint,head_initial_pos, head_initial_pos);
-
-        Destroy(joint);
-        Destroy(player_joint);
+        head.rotation = new Quaternion();
         Destroy(player_pivot_location);
         Destroy(hit_location);
     }
 
-    public void TransitionAnimations(Anim animation_switch){
-      switch(animation_switch){
-        case Anim.Idle:
-          animations.SetInteger("animation_value", 0);
-          break;
-        case Anim.Jump:
-          animations.SetInteger("animation_value", 1);
-          break;
-        case Anim.Air:
-          animations.SetInteger("animation_value", 2);
-          break;
-      }
-      print(animation_switch + " " + animations.GetInteger("animation_value"));
-      current_animation = animation_switch;
-    }
-
     public void UpdateTonguePositions(){
         cur_tongue_distance = Vector3.Distance(mouth.position, hit_location.transform.position);
-
-        var dir = (hit_location.transform.position - head.position).normalized;
-        ConfigurableJointExtensions.SetTargetRotationLocal(head_joint, Quaternion.LookRotation(dir), head_initial_pos);
         if(cable_component.line != null){
             cable_component.line.SetPosition(cable_component.segments, mouth.position);
             cable_component.cableLength = cur_tongue_distance;
@@ -223,21 +185,23 @@ public class Character : NetworkBehaviour
       }
       Rigidbody hitBody = tongue_hit.collider.GetComponent<Rigidbody>();
       Character character = tongue_hit.collider.GetComponentInParent<Character>();
-      Vector3 dist = hit_location.transform.position - head.position;
-      Vector3 force = (dist.magnitude > max_tongue_strength) ? dist * max_tongue_strength/dist.magnitude : dist;
+      Vector3 diff = hit_location.transform.position - head.position;
+      Vector3 dir = diff.normalized;
+      head.rotation = Quaternion.FromToRotation(Vector3.forward, dir);
+      Vector3 force = (diff.magnitude > max_tongue_strength) ? diff * max_tongue_strength/diff.magnitude : diff;
       force *= tongue_dampen;
       if (character != null) {
         float ratio = mass / (character.mass + mass);
         PullPlayer(character, -force * ratio);
-        rigid_body.AddForce(force * (1 - ratio), ForceMode.Impulse);
+        mouth_body.AddForce(force * (1 - ratio), ForceMode.Impulse);
       } else if (hitBody != null) {
         float ratio = mass / (hitBody.mass + mass);
         hitBody.AddForce(-force * ratio, ForceMode.Impulse);
-        rigid_body.AddForce(force * (1 - ratio), ForceMode.Impulse);
+        mouth_body.AddForce(force * (1 - ratio), ForceMode.Impulse);
       } else {
-        rigid_body.AddForce(force, ForceMode.Impulse);
+        mouth_body.AddForce(force, ForceMode.Impulse);
       }
-      return(max_tongue_distance >= dist.magnitude);
+      return(max_tongue_distance >= diff.magnitude);
     }
 
     [Command (requiresAuthority = false)]
@@ -260,8 +224,6 @@ public class Character : NetworkBehaviour
           aim_marker_mesh.enabled = true;
         }
         aim_marker.transform.position = tongue_hit.point;
-        var dir = (aim_marker.transform.position - head.position).normalized;
-         ConfigurableJointExtensions.SetTargetRotationLocal(head_joint, Quaternion.LookRotation(dir), head_initial_pos);
       } else if(aim_marker_mesh.enabled){
         aim_marker_mesh.enabled = false;
       }
@@ -325,6 +287,7 @@ public class Character : NetworkBehaviour
     private void Update()
     {
       if(this.isLocalPlayer) {
+        look_at.transform.position = rigid_body.transform.position + new Vector3(0, 10, 0);
         movement_machine.cur_state.HandleInput();
         action_machine.cur_state.HandleInput();
         action_machine.cur_state.LogicUpdate();
@@ -344,7 +307,7 @@ public class Character : NetworkBehaviour
         main_camera.gameObject.SetActive(false);
         rigid_body.isKinematic = true;
         spine.enabled = false;
-        spine.transform.position = new Vector3(0, 0, 0);      
+        spine.transform.position = new Vector3(10000, 10000, 10000);      
         GetComponent<Character>().enabled = false;
     }
 }

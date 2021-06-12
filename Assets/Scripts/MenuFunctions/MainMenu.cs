@@ -21,10 +21,11 @@ public class MainMenu : MonoBehaviour
     public GameObject menuCamera;
     public GameObject mainMenuUi;
     public Text apiError;
+    public Text joinError;
     public GameObject errorDialog;
+    public GameObject joinDialog;
     public GameObject matchButtonPrefab;
     public GameObject buttonContainer;
-    public RectTransform containerMarker;
     public GameObject matchButtonDialog;
     public GameObject inGameMenu;
     public static string playerName;
@@ -73,6 +74,11 @@ public class MainMenu : MonoBehaviour
       matchButtonDialog.SetActive(status);
     }
 
+    public void toggleJoinDialog(bool status) {
+      joinDialog.SetActive(status);
+      joinError.text = "";
+    }
+
     public void toggleIsPrivate() {
       hostPassword.interactable = isPrivate.isOn;
       hostPassword.text = isPrivate.isOn ? hostPassword.text : "";
@@ -87,14 +93,24 @@ public class MainMenu : MonoBehaviour
     }
 
     public void Play() {
+      matchButtonDialog.SetActive(true);
+      StartCoroutine(GetMatches());
+    }
+
+    public void Refresh() {
       StartCoroutine(GetMatches());
     }
 
     public void Join() {
       playerName = nameEntry.text;
-      ServerManager.server.matchID = roomInput.text;
-      ServerManager.server.password = joinPassword.text;
-      ServerManager.server.Join();
+      if (roomInput.text.Length == 6) {
+        ServerManager.server.matchID = roomInput.text;
+        ServerManager.server.password = joinPassword.text;
+        ServerManager.server.Join();
+        joinError.text = "";
+      } else {
+        joinError.text = "Match ID must be 6 digits long.";
+      }
     }
 
     
@@ -106,19 +122,22 @@ public class MainMenu : MonoBehaviour
     }
 
     IEnumerator GetMatches() {
+      foreach (Transform obj in buttonContainer.transform) {
+        Destroy(obj.gameObject);
+      }
       UnityWebRequest req = UnityWebRequest.Get($"http://localhost:8090/getMatches");
       yield return req.SendWebRequest();
-      matchButtonDialog.SetActive(true); 
       int ix = 0;
       IDictionary<string, Match> matches = JsonConvert.DeserializeObject<IDictionary<string, Match>>(Encoding.UTF8.GetString(req.downloadHandler.data));
+      RectTransform containerRect = buttonContainer.GetComponent<RectTransform>();
+      containerRect.sizeDelta = new Vector2(containerRect.sizeDelta.x, matchButtonPrefab.GetComponent<RectTransform>().sizeDelta.y * matches.Count + 10);
       foreach(KeyValuePair<string, Match> match in matches) {
         GameObject button = Instantiate(matchButtonPrefab) as GameObject;
-        button.transform.parent = buttonContainer.transform;
-        button.GetComponent<MatchButton>().match = match.Value;
-        button.GetComponentInChildren<Text>().text = match.Value.HostName + "'s game.";
+        button.transform.SetParent(buttonContainer.transform);
+        button.GetComponent<MatchButton>().SetMatch(match.Value);
         RectTransform rect = button.GetComponent<RectTransform>();
-        rect.localPosition = new Vector3(containerMarker.localPosition.x, containerMarker.localPosition.y - 70 - 127 * ix, containerMarker.localPosition.z);
-        matchButtonPrefab.GetComponent<RectTransform>().localPosition += new Vector3(0, -127, 0);
+        rect.localScale = new Vector3(1,1,1);
+        rect.anchoredPosition3D = new Vector3(-10, -matchButtonPrefab.GetComponent<RectTransform>().rect.height * ((float)ix - (.5f * (matches.Count - 1))), 0);
         ix++;
       }
     }

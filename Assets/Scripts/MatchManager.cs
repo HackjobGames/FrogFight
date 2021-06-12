@@ -91,6 +91,7 @@ public class MatchManager : NetworkBehaviour
     GameObject[] spawns = GameObject.FindGameObjectsWithTag("SpawnPosition");
     for (int i = 0; i < players.Length; i++) {
       players[i].GetComponent<Character>().enabled = true;
+      players[i].dead = false;
       players[i].GetComponentInChildren<Impact>().transform.position = spawns[i].transform.position;
     }
   }
@@ -104,7 +105,7 @@ public class MatchManager : NetworkBehaviour
     Player[] players = GameGlobals.globals.GetPlayers();
     foreach(Player player in players) {
       player.GetComponent<Character>().ResetCharacter();
-      player.dead = false;
+      player.dead = true;
     }
     ServerManager.server.lobbyUI.GetComponent<Canvas>().enabled = true;
     MainMenu.menu.menuCamera.SetActive(true);

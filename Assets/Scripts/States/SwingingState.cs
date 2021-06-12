@@ -12,7 +12,6 @@ public class SwingingState : State
     public override void Enter()
     {
         base.Enter();
-        character.TransitionAnimations(Character.Anim.Air);
     }
     public override void Exit()
     {
@@ -22,7 +21,7 @@ public class SwingingState : State
     public override void HandleInput()
     {
         base.HandleInput();
-        if(Input.GetMouseButtonUp(0)){
+        if(Input.GetMouseButtonUp(0) || !character.hit_location){
             state_machine.ChangeState(character.falling_state);
         }
     }

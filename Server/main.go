@@ -13,9 +13,9 @@ import (
 type Match struct {
 	MatchID        string
 	HostName			 string
-	RelayID        int
+	relayID        int
 	Private        bool
-	Password       string
+	password       string
 	MaxPlayers     int
 	CurrentPlayers int
 }
@@ -31,8 +31,8 @@ func generateMatchID() string {
 
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
-	matches := map[string]*Match{}
-
+	matches := map[string]Match{}
+	matchesPointer := &matches
 	http.HandleFunc("/host", func(res http.ResponseWriter, req *http.Request) {
 		fmt.Println(req.FormValue("relayID"))
 		relayID, rE := strconv.Atoi(req.FormValue("relayID"))
@@ -63,14 +63,14 @@ func main() {
 		newMatch := Match{
 			MatchID:        ID,
 			HostName: 			hostName,
-			RelayID:        relayID,
+			relayID:        relayID,
 			Private:        isPrivate == "true",
-			Password:       password,
+			password:       password,
 			MaxPlayers:     maxPlayers,
 			CurrentPlayers: 1,
 		}
 		fmt.Println(newMatch.Private)
-		matches[newMatch.MatchID] = &newMatch
+		matches[newMatch.MatchID] = newMatch
 		io.WriteString(res, newMatch.MatchID)
 	})
 
@@ -81,9 +81,9 @@ func main() {
 		fmt.Println(match.CurrentPlayers)
 		fmt.Println(match.MaxPlayers)
 		if exists {
-			if !match.Private || match.Password == password {
+			if !match.Private || match.password == password {
 				if match.CurrentPlayers < match.MaxPlayers {
-					io.WriteString(res, strconv.Itoa(match.RelayID))
+					io.WriteString(res, strconv.Itoa(match.relayID))
 					match.CurrentPlayers++
 				} else {
 					res.WriteHeader(http.StatusForbidden)
@@ -99,7 +99,7 @@ func main() {
 	})
 
 	http.HandleFunc("/getMatches", func(res http.ResponseWriter, req *http.Request) {
-		jsonString, err := json.Marshal(matches)
+		jsonString, err := json.Marshal(matchesPointer)
 		if err != nil {
 			fmt.Println(err.Error())
 			return
