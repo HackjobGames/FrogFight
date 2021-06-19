@@ -84,7 +84,7 @@ func main() {
 			if !match.Private || match.password == password {
 				if match.CurrentPlayers < match.MaxPlayers {
 					io.WriteString(res, strconv.Itoa(match.relayID))
-					match.CurrentPlayers++
+					match.CurrentPlayers = match.CurrentPlayers + 1
 				} else {
 					res.WriteHeader(http.StatusForbidden)
 					io.WriteString(res, "Match Is Full")
