@@ -12,17 +12,17 @@ public class Death : MonoBehaviour
         finished = true;
         other.gameObject.GetComponentInParent<Player>().dead = true;
         int aliveCount = 0;
-        Player alivePlayer = new Player();
+        string alivePlayerName = "";
         Player[] players = GameGlobals.globals.GetPlayers();
         foreach(Player player in players) {
           if (!player.dead) {
             aliveCount++;
-            alivePlayer = player;
+            alivePlayerName = player.playerName;
           }
         }
         if (aliveCount == 1) {
           winner.GetComponent<Text>().enabled = true;
-          winner.text = alivePlayer.playerName + " Wins :)";
+          winner.text = alivePlayerName + " Wins :)";
           MatchManager.manager.EndGame();
         } else if (players.Length == 1) {
           MatchManager.manager.EndGame();

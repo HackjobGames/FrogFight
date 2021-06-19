@@ -44,21 +44,14 @@ public class MatchManager : NetworkBehaviour
   }
   [ClientRpc]
   public void LoadMap() {
-    SceneManager.LoadScene(map, LoadSceneMode.Additive);
     inGame = true;
     playButton.interactable = false;
     StartCoroutine(AfterLoad());
   }
 
   [Command (requiresAuthority = false)]
-  void CmdSetLoadedFlag(string playerName, Player[] players) {
-    foreach(Player player in players) {
-      print(player.playerName);
-      print(playerName);
-      if (player.playerName == playerName) {
-        player.loaded = true;
-      }
-    }
+  void CmdSetLoadedFlag(Player player) {
+    player.loaded = true;
   }
 
   public static void EndMatch() {
@@ -75,16 +68,9 @@ public class MatchManager : NetworkBehaviour
   }
 
   IEnumerator AfterLoad() {
+    AsyncOperation load = SceneManager.LoadSceneAsync(map, LoadSceneMode.Additive);
+    yield return new WaitUntil (() => load.isDone);
     Player[] players = GameGlobals.globals.GetPlayers();
-    CmdSetLoadedFlag(Player.localPlayer.playerName, players);
-    yield return new WaitUntil(() => {
-      foreach(Player player in players) {
-        if (!player.loaded) {
-          return false;
-        }
-      }
-      return true;
-    });
     ServerManager.server.lobbyUI.GetComponent<Canvas>().enabled = false;
     MainMenu.menu.mainMenuUi.SetActive(false);
     MainMenu.menu.menuCamera.SetActive(false);
@@ -94,6 +80,15 @@ public class MatchManager : NetworkBehaviour
       players[i].dead = false;
       players[i].GetComponentInChildren<Impact>().transform.position = spawns[i].transform.position;
     }
+    CmdSetLoadedFlag(Player.localPlayer);
+    yield return new WaitUntil(() => {
+      foreach(Player player in players) {
+        if (!player.loaded) {
+          return false;
+        }
+      }
+      return true;
+    });
   }
 
   public void EndGame() {
