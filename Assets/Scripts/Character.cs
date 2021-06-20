@@ -311,6 +311,9 @@ public class Character : NetworkBehaviour
         spine.enabled = false;
         spine.transform.position = new Vector3(10000, 10000, 10000);      
         GetComponent<Character>().enabled = false;
+        if (this.isLocalPlayer) {
+          main_camera.GetComponent<CameraFollow>().lookAt = this.look_at;
+        }
     }
 }
 
