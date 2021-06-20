@@ -16,6 +16,7 @@ public class Character : NetworkBehaviour
     public State aiming_state;
     public State grappling_state;
     public State idle_state;
+    public State spectate_state;
     public LineRenderer jump_arc;
     [SerializeField]
     private float jump_speed = 40f;

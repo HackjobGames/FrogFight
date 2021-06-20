@@ -33,6 +33,9 @@ public class IdleState : State
     {
         base.LogicUpdate();
         character.AimMarkerUpdate();
+        if (Player.localPlayer.dead) {
+          state_machine.ChangeState(character.spectate_state);
+        }
     }
     public override void PhysicsUpdate()
     {
