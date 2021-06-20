@@ -17,7 +17,7 @@ public class SpectateState : State
       base.Enter();
       for(int i = 0; i < players.Length; i++) {
         if (!players[i].dead) {
-          Camera.main.GetComponent<CameraFollow>().lookAt = players[i].transform;
+          Camera.main.GetComponent<CameraFollow>().lookAt = players[i].GetComponent<Character>().spine.transform;
           lookingAt = players[i].playerName;
           playerIndex = i;
         }
@@ -39,20 +39,20 @@ public class SpectateState : State
           playerIndex -= 1;
         }
         if (!players[playerIndex].dead) {
-          Camera.main.GetComponent<CameraFollow>().lookAt = players[playerIndex].transform;
+          Camera.main.GetComponent<CameraFollow>().lookAt = players[playerIndex].GetComponent<Character>().spine.transform;
           lookingAt = players[playerIndex].playerName;
           break;
         }
       }
     } else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) {
       while (true) {
-        if (playerIndex == players.Length) {
+        if (playerIndex == players.Length - 1) {
           playerIndex = 0;
         } else {
           playerIndex += 1;
         }
         if (!players[playerIndex].dead) {
-          Camera.main.GetComponent<CameraFollow>().lookAt = players[playerIndex].transform;
+          Camera.main.GetComponent<CameraFollow>().lookAt = players[playerIndex].GetComponent<Character>().spine.transform;
           lookingAt = players[playerIndex].playerName;
           break;
         }
@@ -66,5 +66,7 @@ public class SpectateState : State
         state_machine.ChangeState(character.idle_state);
       }
   }
-  public override void PhysicsUpdate(){}
+  public override void PhysicsUpdate(){
+      base.PhysicsUpdate();
+  }
 }

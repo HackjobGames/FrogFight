@@ -257,6 +257,7 @@ public class Character : NetworkBehaviour
         idle_state = new IdleState(this, action_machine);
         aiming_state = new AimingState(this, action_machine);
         grappling_state = new GrappleState(this, action_machine);
+        spectate_state = new SpectateState(this, action_machine);
 
         action_machine.Initialize(idle_state);
         rigid_body.isKinematic = false;
