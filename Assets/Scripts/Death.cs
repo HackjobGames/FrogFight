@@ -8,9 +8,10 @@ public class Death : MonoBehaviour
     public Text winner;
     bool finished = false;
     void OnTriggerEnter(Collider other) {
-      if (other.gameObject.GetComponentInParent<Player>() && other.gameObject.GetComponentInParent<Player>() == Player.localPlayer && !finished) {
+      Player deadPlayer = other.gameObject.GetComponentInParent<Player>();
+      if (deadPlayer && !finished) {
         finished = true;
-        Player.localPlayer.dead = true;
+        deadPlayer.dead = true;
         int aliveCount = 0;
         string alivePlayerName = "";
         Player[] players = GameGlobals.globals.GetPlayers();
