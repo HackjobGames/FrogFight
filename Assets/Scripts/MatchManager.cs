@@ -53,8 +53,6 @@ public class MatchManager : NetworkBehaviour
   [Command (requiresAuthority = false)]
   void CmdSetLoadedFlag(string playerName, Player[] players) {
     foreach(Player player in players) {
-      print(player.playerName);
-      print(playerName);
       if (player.playerName == playerName) {
         player.loaded = true;
       }

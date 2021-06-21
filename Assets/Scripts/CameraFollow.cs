@@ -13,6 +13,8 @@ public class CameraFollow : MonoBehaviour
     private float sensitivityX = 4.0f;
     private float sensitivityY = 4.0f;
 
+    public bool cameraWall = false;
+
     void Start() {
       cam = GetComponent<Camera>();
     }
@@ -25,9 +27,18 @@ public class CameraFollow : MonoBehaviour
     }
 
     void LateUpdate() {
+      if(!cameraWall){
         Vector3 dir = new Vector3(0, 0, -distance);
         Quaternion rotation = Quaternion.Euler(currentY, currentX, 0);
         transform.position = lookAt.position + rotation * dir;
+      }
         transform.LookAt(lookAt.position);
+    }
+
+    private void OnTriggerEnter(Collider other) {
+      print(other.tag);
+      if(other.tag == "CameraWall"){
+        cameraWall = true;
+      }
     }
 }
