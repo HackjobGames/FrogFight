@@ -44,8 +44,8 @@ public class MatchManager : NetworkBehaviour
       checkMark.GetComponent<Button>().interactable = true;
     }
     for(int i = 0; i < playerColors.Length; i++){
-        playerColors[i].color = playerMaterials[i].color;
-      }
+      playerColors[i].color = playerMaterials[i].color;
+    }
   }
   [ClientRpc]
   public void LoadMap() {
