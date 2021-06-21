@@ -127,7 +127,7 @@ public class MatchManager : NetworkBehaviour
     }
     Cursor.lockState = CursorLockMode.None;
     string route = this.isServer ? "Match" : "Player"; 
-    UnityWebRequest req = UnityWebRequest.Get($"http://localhost:8090/remove{route}?matchID={ServerManager.server.matchID}");
+    UnityWebRequest req = UnityWebRequest.Get($"http://3.15.215.53:8090/remove{route}?matchID={ServerManager.server.matchID}");
     req.SendWebRequest();
   }
 }
