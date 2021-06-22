@@ -8,6 +8,7 @@ TagManager:
   - SpawnPosition
   - PlayerRoot
   - Terrain
+  - CameraWall
   layers:
   - Default
   - TransparentFX
@@ -19,7 +20,7 @@ TagManager:
   - MoveableObject
   - Player
   - LocalPlayer
-  - 
+  - Camera
   - 
   - 
   - 
