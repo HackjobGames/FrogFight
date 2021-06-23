@@ -16,6 +16,8 @@ public class MatchManager : NetworkBehaviour
   public Button playButton;
   public bool inGame = false;
   public static MatchManager manager;
+  public Material[] playerMaterials = new Material[4];
+  public Image[] playerColors = new Image[4];
 
   public void ChangeMap(string map) {
     if (map == "") {
@@ -40,6 +42,9 @@ public class MatchManager : NetworkBehaviour
       forest.GetComponent<Button>().interactable = true;
       destructibleTest.GetComponent<Button>().interactable = true;
       checkMark.GetComponent<Button>().interactable = true;
+    }
+    for(int i = 0; i < playerColors.Length; i++){
+      playerColors[i].color = playerMaterials[i].color;
     }
   }
   [ClientRpc]
@@ -91,6 +96,7 @@ public class MatchManager : NetworkBehaviour
       players[i].GetComponent<Character>().enabled = true;
       players[i].dead = false;
       players[i].GetComponentInChildren<Impact>().transform.position = spawns[i].transform.position;
+      players[i].GetComponentInChildren<SkinnedMeshRenderer>().material = playerMaterials[i];
     }
   }
 

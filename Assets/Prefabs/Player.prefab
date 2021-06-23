@@ -1425,9 +1425,6 @@ MonoBehaviour:
   localPositionSensitivity: 0.01
   localRotationSensitivity: 0.01
   localScaleSensitivity: 0.01
-  compressRotation: 0
-  interpolateScale: 1
-  syncScale: 1
   target: {fileID: 8261726030993242832}
 --- !u!1 &2966245420377624610
 GameObject:
