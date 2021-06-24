@@ -11,7 +11,6 @@ public class MatchManager : NetworkBehaviour
   [SyncVar]
   public string map;
   public Image forest;
-  public Image destructibleTest;
   public Image checkMark;
   public Button playButton;
   public bool inGame = false;
@@ -28,8 +27,6 @@ public class MatchManager : NetworkBehaviour
       playButton.interactable = true;
       if (map == "Forest") {
         checkMark.rectTransform.position = forest.rectTransform.position;
-      } else if (map == "DestructibleTest") {
-        checkMark.rectTransform.position = destructibleTest.rectTransform.position;
       }
     }
   }
@@ -38,7 +35,6 @@ public class MatchManager : NetworkBehaviour
     manager = this;
     if (this.isServer) {
       forest.GetComponent<Button>().interactable = true;
-      destructibleTest.GetComponent<Button>().interactable = true;
       checkMark.GetComponent<Button>().interactable = true;
     }
   }

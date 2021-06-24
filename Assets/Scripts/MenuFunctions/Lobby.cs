@@ -29,5 +29,9 @@ public class Lobby : NetworkBehaviour
   public void Disconnect() {
     ServerManager.server.Disconnect();
   }
+
+  public void CopyCode() {
+    GUIUtility.systemCopyBuffer = ServerManager.server.matchID;
+  }
     
 }

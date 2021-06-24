@@ -26,7 +26,7 @@ public class SpectateState : State
   public override void Exit()
   {
       base.Exit();
-      Camera.main.GetComponent<CameraFollow>().lookAt = Player.localPlayer.transform;
+      Camera.main.GetComponent<CameraFollow>().lookAt = Player.localPlayer.GetComponent<Character>().look_at;
   }
 
   public override void HandleInput()
