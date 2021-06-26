@@ -3,30 +3,44 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-public class Death : MonoBehaviour
+using Mirror;
+public class Death : NetworkBehaviour
 {
     public Text winner;
-    bool finished = false;
-    void OnCollisionEnter(Collision other) {
-      if (other.gameObject.tag == "Player" && !finished) {
-        finished = true;
-        other.gameObject.GetComponentInParent<Player>().dead = true;
+    string alivePlayerName;
+
+    void OnTriggerEnter(Collider other) {
+      Player deadPlayer = other.gameObject.GetComponentInParent<Player>();
+      if (deadPlayer == Player.localPlayer && !Player.localPlayer.dead) {
+        CmdDeath(deadPlayer);
+      }
+    }
+
+    [Command (requiresAuthority = false)]
+    void CmdDeath(Player deadPlayer) {
+      RpcDeath(deadPlayer);
+    }
+
+    [ClientRpc]
+    void RpcDeath(Player deadPlayer) {
+        deadPlayer.dead = true;
         int aliveCount = 0;
-        Player alivePlayer = new Player();
+        string alivePlayerName = "";
         Player[] players = GameGlobals.globals.GetPlayers();
         foreach(Player player in players) {
           if (!player.dead) {
             aliveCount++;
-            alivePlayer = player;
+            alivePlayerName = player.playerName;
           }
         }
+        print(aliveCount);
         if (aliveCount == 1) {
           winner.GetComponent<Text>().enabled = true;
-          winner.text = alivePlayer.playerName + " Wins :)";
+          winner.text = alivePlayerName + " Wins :)";
           MatchManager.manager.EndGame();
         } else if (players.Length == 1) {
           MatchManager.manager.EndGame();
         }
-      }
+
     }
 }

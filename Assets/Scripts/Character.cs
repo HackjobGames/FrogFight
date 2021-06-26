@@ -16,6 +16,7 @@ public class Character : NetworkBehaviour
     public State aiming_state;
     public State grappling_state;
     public State idle_state;
+    public State spectate_state;
     public LineRenderer jump_arc;
     [SerializeField]
     private float jump_speed = 40f;
@@ -256,6 +257,7 @@ public class Character : NetworkBehaviour
         idle_state = new IdleState(this, action_machine);
         aiming_state = new AimingState(this, action_machine);
         grappling_state = new GrappleState(this, action_machine);
+        spectate_state = new SpectateState(this, action_machine);
 
         action_machine.Initialize(idle_state);
         rigid_body.isKinematic = false;
@@ -310,6 +312,9 @@ public class Character : NetworkBehaviour
         spine.transform.position = new Vector3(10000, 10000, 10000);      
         GetComponent<Character>().enabled = false;
         main_camera.GetComponent<CameraFollow>().cameraWall = false;
+        if (this.isLocalPlayer) {
+          main_camera.GetComponent<CameraFollow>().lookAt = this.look_at;
+        }
     }
 }
 

@@ -11,7 +11,6 @@ public class MatchManager : NetworkBehaviour
   [SyncVar]
   public string map;
   public Image forest;
-  public Image destructibleTest;
   public Image checkMark;
   public Button playButton;
   public bool inGame = false;
@@ -30,8 +29,6 @@ public class MatchManager : NetworkBehaviour
       playButton.interactable = true;
       if (map == "Forest") {
         checkMark.rectTransform.position = forest.rectTransform.position;
-      } else if (map == "DestructibleTest") {
-        checkMark.rectTransform.position = destructibleTest.rectTransform.position;
       }
     }
   }
@@ -40,7 +37,6 @@ public class MatchManager : NetworkBehaviour
     manager = this;
     if (this.isServer) {
       forest.GetComponent<Button>().interactable = true;
-      destructibleTest.GetComponent<Button>().interactable = true;
       checkMark.GetComponent<Button>().interactable = true;
     }
     for(int i = 0; i < playerColors.Length; i++){
@@ -49,19 +45,14 @@ public class MatchManager : NetworkBehaviour
   }
   [ClientRpc]
   public void LoadMap() {
-    SceneManager.LoadScene(map, LoadSceneMode.Additive);
     inGame = true;
     playButton.interactable = false;
     StartCoroutine(AfterLoad());
   }
 
   [Command (requiresAuthority = false)]
-  void CmdSetLoadedFlag(string playerName, Player[] players) {
-    foreach(Player player in players) {
-      if (player.playerName == playerName) {
-        player.loaded = true;
-      }
-    }
+  void CmdSetLoadedFlag(Player player) {
+    player.loaded = true;
   }
 
   public static void EndMatch() {
@@ -78,16 +69,9 @@ public class MatchManager : NetworkBehaviour
   }
 
   IEnumerator AfterLoad() {
+    AsyncOperation load = SceneManager.LoadSceneAsync(map, LoadSceneMode.Additive);
+    yield return new WaitUntil (() => load.isDone);
     Player[] players = GameGlobals.globals.GetPlayers();
-    CmdSetLoadedFlag(Player.localPlayer.playerName, players);
-    yield return new WaitUntil(() => {
-      foreach(Player player in players) {
-        if (!player.loaded) {
-          return false;
-        }
-      }
-      return true;
-    });
     ServerManager.server.lobbyUI.GetComponent<Canvas>().enabled = false;
     MainMenu.menu.mainMenuUi.SetActive(false);
     MainMenu.menu.menuCamera.SetActive(false);
@@ -98,6 +82,15 @@ public class MatchManager : NetworkBehaviour
       players[i].GetComponentInChildren<Impact>().transform.position = spawns[i].transform.position;
       players[i].GetComponentInChildren<SkinnedMeshRenderer>().material = playerMaterials[i];
     }
+    CmdSetLoadedFlag(Player.localPlayer);
+    yield return new WaitUntil(() => {
+      foreach(Player player in players) {
+        if (!player.loaded) {
+          return false;
+        }
+      }
+      return true;
+    });
   }
 
   public void EndGame() {
@@ -106,6 +99,10 @@ public class MatchManager : NetworkBehaviour
 
   public IEnumerator DelayEndGame() {
     yield return new WaitForSeconds(3);
+    if (this.isServer) {
+      UnityWebRequest req = UnityWebRequest.Get($"http://3.15.215.53:8090/ping?matchID={ServerManager.server.matchID}");
+      req.SendWebRequest();
+    }
     Player[] players = GameGlobals.globals.GetPlayers();
     foreach(Player player in players) {
       player.GetComponent<Character>().ResetCharacter();

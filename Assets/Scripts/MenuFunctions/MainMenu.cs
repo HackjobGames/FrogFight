@@ -125,19 +125,19 @@ public class MainMenu : MonoBehaviour
       foreach (Transform obj in buttonContainer.transform) {
         Destroy(obj.gameObject);
       }
-      UnityWebRequest req = UnityWebRequest.Get($"http://3.15.215.53:8090/getMatches");
+      UnityWebRequest req = UnityWebRequest.Get($"http://localhost:8090/getMatches");
       yield return req.SendWebRequest();
       int ix = 0;
-      IDictionary<string, Match> matches = JsonConvert.DeserializeObject<IDictionary<string, Match>>(Encoding.UTF8.GetString(req.downloadHandler.data));
+      Match[] matches = JsonConvert.DeserializeObject<Match[]>(Encoding.UTF8.GetString(req.downloadHandler.data));
       RectTransform containerRect = buttonContainer.GetComponent<RectTransform>();
-      containerRect.sizeDelta = new Vector2(containerRect.sizeDelta.x, matchButtonPrefab.GetComponent<RectTransform>().sizeDelta.y * matches.Count + 10);
-      foreach(KeyValuePair<string, Match> match in matches) {
+      containerRect.sizeDelta = new Vector2(containerRect.sizeDelta.x, matchButtonPrefab.GetComponent<RectTransform>().sizeDelta.y * matches.Length + 10);
+      foreach(Match match in matches) {
         GameObject button = Instantiate(matchButtonPrefab) as GameObject;
         button.transform.SetParent(buttonContainer.transform);
-        button.GetComponent<MatchButton>().SetMatch(match.Value);
+        button.GetComponent<MatchButton>().SetMatch(match);
         RectTransform rect = button.GetComponent<RectTransform>();
         rect.localScale = new Vector3(1,1,1);
-        rect.anchoredPosition3D = new Vector3(-10, -matchButtonPrefab.GetComponent<RectTransform>().rect.height * ((float)ix - (.5f * (matches.Count - 1))), 0);
+        rect.anchoredPosition3D = new Vector3(-10, -matchButtonPrefab.GetComponent<RectTransform>().rect.height * ((float)ix - (.5f * (matches.Length - 1))), 0);
         ix++;
       }
     }
