@@ -8,15 +8,27 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"os"
+	"database/sql"
+	_ "github.com/lib/pq"
 )
+
+var (
+	host = "localhost"
+	port = 5432
+	dbname = "Frog"
+	user = os.Getenv("PGUSER")
+	password = os.Getenv("PGPASSWORD")
+)
+
 
 type Match struct {
 	MatchID        string
 	HostName			 string
-	relayID        int
 	Private        bool
-	password       string
 	MaxPlayers     int
+	password			 string
+	relayID				 int
 	CurrentPlayers int
 }
 
@@ -29,10 +41,27 @@ func generateMatchID() string {
 	return string(ret)
 }
 
+func cleanUp(db *sql.DB) <-chan int {
+	r := make(chan int)
+	for {
+		time.Sleep(60 * time.Second)
+		_, err := db.Exec("delete from matches where DateDiff('', lastused::time, now()::time) > 3600")
+		if err != nil {
+			fmt.Println(err.Error())
+			return r
+		}
+	}
+}
+
 func main() {
+  sqlParams := fmt.Sprintf("host=%s port=%d user=%s "+
+			"password=%s dbname=%s sslmode=disable",
+			host, port, user, password, dbname)
+	db, err := sql.Open("postgres", sqlParams)
+	if err != nil {
+		panic(err)
+	}
 	rand.Seed(time.Now().UTC().UnixNano())
-	matches := map[string]Match{}
-	matchesPointer := &matches
 	http.HandleFunc("/host", func(res http.ResponseWriter, req *http.Request) {
 		fmt.Println(req.FormValue("relayID"))
 		relayID, rE := strconv.Atoi(req.FormValue("relayID"))
@@ -40,8 +69,6 @@ func main() {
 		isPrivate := req.FormValue("isPrivate")
 		password := req.FormValue("password")
 		hostName := req.FormValue("hostName")
-		fmt.Println("Password: " + password)
-		fmt.Println(maxPlayers)
 		if rE != nil {
 			fmt.Println(rE.Error())
 			return
@@ -50,42 +77,36 @@ func main() {
 			fmt.Println(mE.Error())
 			return
 		}
-		fmt.Println(relayID)
 		ID := ""
 		for {
 			ID = generateMatchID()
-			_, found := matches[ID]
-			if !found {
+			sql := fmt.Sprintf(`insert into public.matches (matchid, hostname, relayid, private, password, maxplayers, currentplayers)
+							values ('%s', '%s', %d, %s, '%s', %d, 1)`, ID, hostName, relayID, isPrivate, password, maxPlayers)
+			_, err = db.Exec(sql)
+			if err != nil {
+				fmt.Println(err.Error())
+			} else {
 				break
 			}
 		}
-
-		newMatch := Match{
-			MatchID:        ID,
-			HostName: 			hostName,
-			relayID:        relayID,
-			Private:        isPrivate == "true",
-			password:       password,
-			MaxPlayers:     maxPlayers,
-			CurrentPlayers: 1,
-		}
-		fmt.Println(newMatch.Private)
-		matches[newMatch.MatchID] = newMatch
-		io.WriteString(res, newMatch.MatchID)
+		io.WriteString(res, ID)
 	})
 
 	http.HandleFunc("/join", func(res http.ResponseWriter, req *http.Request) {
 		matchID := req.FormValue("matchID")
 		password := req.FormValue("password")
-		match, exists := matches[matchID]
-		fmt.Println(match.CurrentPlayers)
-		fmt.Println(match.MaxPlayers)
-		if exists {
+		var match Match
+		row := db.QueryRow("select matchid, hostname, private, password, relayid, maxplayers, currentplayers from public.matches where matchid = $1", matchID)
+		row.Scan(&match.MatchID, &match.HostName, &match.Private, &match.password, &match.relayID, &match.MaxPlayers, &match.CurrentPlayers)
+		fmt.Println(match.MatchID)
+		if !(match.MatchID == ""){
 			if !match.Private || match.password == password {
 				if match.CurrentPlayers < match.MaxPlayers {
 					io.WriteString(res, strconv.Itoa(match.relayID))
-					match.CurrentPlayers = match.CurrentPlayers + 1
-					matches[matchID] = match
+					_, err := db.Exec("update matches set currentplayers = currentplayers + 1, lastused = NOW() where matchid = $1", matchID)
+					if err != nil {
+						fmt.Println(err.Error())
+					}
 				} else {
 					res.WriteHeader(http.StatusForbidden)
 					io.WriteString(res, "Match Is Full")
@@ -100,7 +121,38 @@ func main() {
 	})
 
 	http.HandleFunc("/getMatches", func(res http.ResponseWriter, req *http.Request) {
-		jsonString, err := json.Marshal(matchesPointer)
+		var matches []Match
+		rows, err := db.Query("select matchid, hostname, private, maxplayers, currentplayers from public.matches")
+
+		if err != nil {
+			res.WriteHeader(http.StatusInternalServerError)
+			io.WriteString(res, "ServerError")
+			rows.Close()
+			return
+		}
+
+		for rows.Next() {
+			var match Match
+			err := rows.Scan(&match.MatchID, &match.HostName, &match.Private, &match.MaxPlayers, &match.CurrentPlayers)
+			if (err != nil) {
+				res.WriteHeader(http.StatusInternalServerError)
+				io.WriteString(res, "ServerError")
+				rows.Close()
+			}
+			matches = append(matches, match)
+		}
+
+		jsonString, err2 := json.Marshal(matches)
+
+		if err2 != nil {
+			res.WriteHeader(http.StatusInternalServerError)
+			io.WriteString(res, "ServerError")
+			rows.Close()
+			return
+		}
+
+		fmt.Println(len(matches))
+
 		if err != nil {
 			fmt.Println(err.Error())
 			return
@@ -111,26 +163,33 @@ func main() {
 
 	http.HandleFunc("/removeMatch", func(res http.ResponseWriter, req *http.Request) {
 		matchID := req.FormValue("matchID")
-		_, ok := matches[matchID]
+		_, err := db.Exec("delete from matches where matchid = $1", matchID)
 		fmt.Println("Remove: " + matchID)
-		if ok {
-			delete(matches, matchID)
+		if err == nil {
+			res.WriteHeader(http.StatusOK)
 		} else {
-			res.WriteHeader(http.StatusNotFound)
-			io.WriteString(res, "Invalid MatchId")
+			fmt.Println(err.Error())
+			res.WriteHeader(http.StatusInternalServerError)
 		}
 	})
 
 	http.HandleFunc("/removePlayer", func(res http.ResponseWriter, req *http.Request) {
 		matchID := req.FormValue("matchID")
-		match, ok := matches[matchID]
-		if ok {
-			match.CurrentPlayers--
-		}
+		db.Exec("update matches set currentplayers = currentplayers - 1 where matchid = $1", matchID)
 		fmt.Println("Remove Player From Match: ", matchID)
-		fmt.Println("Current Players: ", match.CurrentPlayers)
 	})
 
-	http.ListenAndServe(":8090", nil)
+	http.HandleFunc("/ping", func(res http.ResponseWriter, req *http.Request) {
+		matchID := req.FormValue("matchID")
+		db.Exec("update matches set lastused = NOW() where matchid = $1", matchID)
+	})
+
+	go cleanUp(db)
 	fmt.Println("Listening...")
+	http.ListenAndServe(":8090", nil)
+	
+
+
+
+
 }
