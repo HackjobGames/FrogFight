@@ -99,6 +99,10 @@ public class MatchManager : NetworkBehaviour
 
   public IEnumerator DelayEndGame() {
     yield return new WaitForSeconds(3);
+    if (this.isServer) {
+      UnityWebRequest req = UnityWebRequest.Get($"http://3.15.215.53:8090/ping?matchID={ServerManager.server.matchID}");
+      req.SendWebRequest();
+    }
     Player[] players = GameGlobals.globals.GetPlayers();
     foreach(Player player in players) {
       player.GetComponent<Character>().ResetCharacter();
