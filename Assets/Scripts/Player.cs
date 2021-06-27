@@ -36,6 +36,21 @@ public class Player : NetworkBehaviour
       MatchManager.manager.EndGame();
     }
   }
+  [ClientRpc]
+  public void Impact(Vector3 origin, float magnitude, Vector3 normal) {
+    Collider[] colliders = Physics.OverlapSphere(origin, magnitude);
+    foreach (Collider nearbyObject in colliders) {
+      Character player = nearbyObject.GetComponentInParent<Character>();
+      Rigidbody body = nearbyObject.GetComponent<Rigidbody>();
+      if (player) {
+        player.AddShockWave(GameGlobals.globals.slam_power, origin, magnitude, Quaternion.FromToRotation(Vector3.forward, normal));
+      } else if (body) {
+        body.AddExplosionForce(GameGlobals.globals.slam_power, origin, magnitude);
+      } else if (nearbyObject.gameObject.tag == "Terrain") {
+        Destroy(nearbyObject.gameObject);
+      }
+    }
+  }
 
   IEnumerator WaitForGlobals() {
     yield return new WaitUntil(() => GameGlobals.globals != null && this.playerName != null && this.playerName != "");

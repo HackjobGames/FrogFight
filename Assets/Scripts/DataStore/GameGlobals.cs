@@ -28,9 +28,13 @@ public class GameGlobals : NetworkBehaviour
       for (int i = 0; i < playerNames.Length; i++) {
         if (i < players.Length) {
           players[i] = prefabs[i].GetComponent<Player>();
-          playerNames[i].text = players[i].playerName;
+          if (playerNames[i]) {
+            playerNames[i].text = players[i].playerName;
+          }
         } else {
-          playerNames[i].text = "";
+          if (playerNames[i]) {
+            playerNames[i].text = "";
+          }
         }
         
       }
