@@ -78,6 +78,14 @@ public class MatchManager : NetworkBehaviour
       players[i].GetComponentInChildren<SkinnedMeshRenderer>().material = playerMaterials[i];
     }
     CmdSetLoadedFlag(Player.localPlayer);
+    yield return new WaitUntil(() => {
+      foreach(Player player in players) {
+        if (!player.loaded) {
+          return false;
+        }
+      }
+      return true;
+    });
   }
 
   [Command (requiresAuthority = false)]
@@ -95,6 +103,7 @@ public class MatchManager : NetworkBehaviour
   }
   [ClientRpc]
   public void DestroyObjectClient(GameObject gObject) {
+    print(gObject);
     Destroy(gObject);
   }
 
