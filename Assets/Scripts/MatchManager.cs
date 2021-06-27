@@ -67,6 +67,15 @@ public class MatchManager : NetworkBehaviour
     }
     yield return new WaitUntil(() => serverLoaded);
     Player[] players = GameGlobals.globals.GetPlayers();
+    CmdSetLoadedFlag(Player.localPlayer);
+    yield return new WaitUntil(() => {
+      foreach(Player player in players) {
+        if (!player.loaded) {
+          return false;
+        }
+      }
+      return true;
+    });
     ServerManager.server.lobbyUI.GetComponent<Canvas>().enabled = false;
     MainMenu.menu.mainMenuUi.SetActive(false);
     MainMenu.menu.menuCamera.SetActive(false);
@@ -77,15 +86,6 @@ public class MatchManager : NetworkBehaviour
       players[i].GetComponentInChildren<Impact>().transform.position = spawns[i].transform.position;
       players[i].GetComponentInChildren<SkinnedMeshRenderer>().material = playerMaterials[i];
     }
-    CmdSetLoadedFlag(Player.localPlayer);
-    yield return new WaitUntil(() => {
-      foreach(Player player in players) {
-        if (!player.loaded) {
-          return false;
-        }
-      }
-      return true;
-    });
   }
 
   [Command (requiresAuthority = false)]

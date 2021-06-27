@@ -36,8 +36,14 @@ public class Player : NetworkBehaviour
       MatchManager.manager.EndGame();
     }
   }
-  [ClientRpc]
+
+  [Command (requiresAuthority=false)]
   public void Impact(Vector3 origin, float magnitude, Vector3 normal) {
+    ImpactClient(origin, magnitude, normal);
+  }
+
+  [ClientRpc]
+  public void ImpactClient(Vector3 origin, float magnitude, Vector3 normal) {
     Collider[] colliders = Physics.OverlapSphere(origin, magnitude);
     foreach (Collider nearbyObject in colliders) {
       Character player = nearbyObject.GetComponentInParent<Character>();
