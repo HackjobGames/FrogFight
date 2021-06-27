@@ -309,6 +309,7 @@ public class Character : NetworkBehaviour
         main_camera.gameObject.SetActive(false);
         rigid_body.isKinematic = true;
         spine.enabled = false;
+        Destroy(aim_marker);
         spine.transform.position = new Vector3(10000, 10000, 10000);      
         GetComponent<Character>().enabled = false;
         main_camera.GetComponent<CameraFollow>().cameraWall = false;

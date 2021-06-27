@@ -1,18 +1,17 @@
+using Newtonsoft.Json;
+
 public class Match
 {
-    public string HostName;
     public string MatchID;
-    public int RelayID;
+    public string HostName;
     public bool Private;
-    public string Password;
     public int MaxPlayers;
     public int CurrentPlayers;
 
-    public Match(string MatchID, int RelayID, bool Private, string Password, int MaxPlayers, int CurrentPlayers) {
+    public Match(string MatchID, string HostName, bool Private, int MaxPlayers, int CurrentPlayers) {
         this.MatchID = MatchID;
-        this.RelayID = RelayID;
+        this.HostName = HostName;
         this.Private = Private;
-        this.Password = Password;
         this.MaxPlayers = MaxPlayers;
         this.CurrentPlayers = CurrentPlayers;
     }

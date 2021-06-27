@@ -2974,6 +2974,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   map: 
+  serverLoaded: 0
   forest: {fileID: 6631824365046921606}
   checkMark: {fileID: 6631824365697304991}
   playButton: {fileID: 1203543573536779553}
@@ -2988,6 +2989,8 @@ MonoBehaviour:
   - {fileID: 6517011808272588870}
   - {fileID: 3271920111538104401}
   - {fileID: 4376554348396521082}
+  forestPrefab: {fileID: 5696622811837506397, guid: bc758f7a26a981647a99cda443296690, type: 3}
+  currentMapInstance: {fileID: 0}
 --- !u!114 &6062781409008242948
 MonoBehaviour:
   m_ObjectHideFlags: 0

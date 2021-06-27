@@ -4113,7 +4113,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectToRelayOnAwake: 1
-  relayIP: 3.15.215.53
+  relayIP: 66.41.159.125
   relayPort: 4296
   forceRelayTraffic: 0
   relayPassword: 
@@ -4141,7 +4141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d2b44c570cb28644b8762e0b13e7c23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  host: 3.15.215.53
+  host: 66.41.159.125
   port: 4296
   noDelay: 0
   autoConnect: 0
@@ -4181,14 +4181,14 @@ MonoBehaviour:
   dontDestroyOnLoad: 1
   PersistNetworkManagerToOfflineScene: 0
   runInBackground: 1
-  autoStartServerBuild: 1
+  autoStartServerBuild: 0
   serverTickRate: 30
-  serverBatching: 1
+  serverBatching: 0
   serverBatchInterval: 0
   offlineScene: 
   onlineScene: 
   transport: {fileID: 1207018277}
-  networkAddress: 3.15.215.53
+  networkAddress: 66.41.159.125
   maxConnections: 100
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
@@ -4198,6 +4198,7 @@ MonoBehaviour:
   playerSpawnMethod: 0
   spawnPrefabs:
   - {fileID: 6631824366866260547, guid: fdd9b8c2731a44f4f889c7f6281560bc, type: 3}
+  - {fileID: 5696622811837506397, guid: bc758f7a26a981647a99cda443296690, type: 3}
   matchID: 
   isPrivate: 0
   password: 
