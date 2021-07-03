@@ -44,15 +44,16 @@ public class Player : NetworkBehaviour
 
   [ClientRpc]
   public void ImpactClient(Vector3 origin, float magnitude, Vector3 normal) {
-    Collider[] colliders = Physics.OverlapSphere(origin, magnitude);
-    foreach (Collider nearbyObject in colliders) {
+    Collider[] players = Physics.OverlapSphere(origin, magnitude * 3);
+    Collider[] terrain = Physics.OverlapSphere(origin, magnitude / 2);
+    foreach (Collider nearbyObject in players) {
       Character player = nearbyObject.GetComponentInParent<Character>();
-      Rigidbody body = nearbyObject.GetComponent<Rigidbody>();
       if (player) {
         player.AddShockWave(GameGlobals.globals.slam_power, origin, magnitude, Quaternion.FromToRotation(Vector3.forward, normal));
-      } else if (body) {
-        body.AddExplosionForce(GameGlobals.globals.slam_power, origin, magnitude);
-      } else if (nearbyObject.gameObject.tag == "Terrain") {
+      }
+    }
+    foreach(Collider nearbyObject in terrain) {
+       if (nearbyObject.gameObject.tag == "Terrain") {
         Destroy(nearbyObject.gameObject);
       }
     }

@@ -139,9 +139,6 @@ public class MatchManager : NetworkBehaviour
     Destroy(ServerManager.server.lobbyUI);
     MainMenu.menu.mainMenuUi.SetActive(true);
     MainMenu.menu.menuCamera.SetActive(true);
-    if (MatchManager.manager.inGame) {
-      SceneManager.UnloadScene(MatchManager.manager.map);
-    }
     Cursor.lockState = CursorLockMode.None;
     string route = this.isServer ? "Match" : "Player"; 
     UnityWebRequest req = UnityWebRequest.Get($"http://66.41.159.125:8090/remove{route}?matchID={ServerManager.server.matchID}");

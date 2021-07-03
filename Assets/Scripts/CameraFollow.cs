@@ -23,7 +23,7 @@ public class CameraFollow : MonoBehaviour
       currentX += Input.GetAxis("Mouse X");
       currentY -= Input.GetAxis("Mouse Y");
       distance -= Input.GetAxis("Mouse ScrollWheel");
-      currentY = Mathf.Clamp(currentY, -60.0f, 90.0f);
+      currentY = Mathf.Clamp(currentY, -60.0f, 89.0f);
     }
 
     void LateUpdate() {
