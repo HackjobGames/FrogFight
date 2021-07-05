@@ -2951,7 +2951,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   max_tongue_distance: 150
-  slam_power: 1000
+  slam_power: 3500
   tongue_input: {fileID: 6631824365541397117}
   slam_input: {fileID: 6631824366752644186}
   playerNames:
