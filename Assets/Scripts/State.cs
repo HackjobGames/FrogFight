@@ -15,6 +15,9 @@ public abstract class State
     }
 
     public virtual void HandleInput(){
+        if (Input.GetKeyDown(KeyCode.C)) {
+            character.CmdCroak();
+        }
     }
 
     public virtual void LogicUpdate(){

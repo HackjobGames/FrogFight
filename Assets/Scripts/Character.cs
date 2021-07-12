@@ -95,6 +95,10 @@ public class Character : NetworkBehaviour
 
     public float aerial_influence = 500;
 
+    public AudioSource slamSound;
+    public AudioSource slurpSound;
+    public AudioSource croak;
+
     public void Move(float speed_modifier, Vector3 direction){
         if(Mathf.Abs(rigid_body.velocity.magnitude) > max_speed) {
             rigid_body.velocity = Vector3.MoveTowards(rigid_body.velocity, direction * speed * speed_modifier, dec_speed * Time.deltaTime);
@@ -156,6 +160,7 @@ public class Character : NetworkBehaviour
             cable_component.endPoint = mouth;
             cable_component.cableMaterial = tongue_material;
             cable_component.cableLength = initial_tongue_distance;
+            slurpSound.Play();
             return true;
         } else {
             return false;
@@ -171,14 +176,15 @@ public class Character : NetworkBehaviour
         Destroy(player_pivot_location);
         Destroy(hit_location);
     }
-
-    public void UpdateTonguePositions(){
-        cur_tongue_distance = Vector3.Distance(mouth.position, hit_location.transform.position);
-        if(cable_component.line != null){
-            cable_component.line.SetPosition(cable_component.segments, mouth.position);
-            cable_component.cableLength = cur_tongue_distance;
-        }
+    
+    public void UpdateTonguePositions() {
+      cur_tongue_distance = Vector3.Distance(mouth.position, hit_location.transform.position);
+      if(cable_component.line != null){
+        cable_component.line.SetPosition(cable_component.segments, mouth.position);
+        cable_component.cableLength = cur_tongue_distance;
+      }
     }
+    
 
     public bool ApplyTongueForce() {
       if (!hit_location) {
@@ -281,9 +287,20 @@ public class Character : NetworkBehaviour
     }
     [ClientRpc]
     public void AddShockWaveClient(float force, Vector3 source, float radius, Quaternion rotation) {
+      slamSound.Play();
       explosionEffect.startLifetime = radius / 100;
       Instantiate(explosionEffect, source, rotation);
       rigid_body.AddExplosionForce(force, source, radius);
+    }
+
+    [Command (requiresAuthority = false)]
+    public void CmdCroak() {
+      RpcCroak();
+    }
+
+    [ClientRpc]
+    public void RpcCroak() {
+      croak.Play();
     }
 
     private void Update()
