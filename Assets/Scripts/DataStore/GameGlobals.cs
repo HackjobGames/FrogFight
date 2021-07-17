@@ -13,6 +13,7 @@ public class GameGlobals : NetworkBehaviour
 
     public InputField tongue_input;
     public InputField slam_input;
+    public Dropdown game_mode;
 
     public Text[] playerNames;
 
@@ -20,6 +21,11 @@ public class GameGlobals : NetworkBehaviour
 
     private void Start() {
       globals = this;
+    }
+
+    void SetDefaultValues() {
+      slam_input.text = slam_power + "";
+      tongue_input.text = max_tongue_distance + "";
     }
 
     public Player[] GetPlayers() {
