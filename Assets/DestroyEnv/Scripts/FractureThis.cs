@@ -5,13 +5,13 @@ namespace Project.Scripts.Fractures
 {
     public class FractureThis : MonoBehaviour
     {
-        [SerializeField] private Anchor anchor = Anchor.Bottom;
         [SerializeField] private int chunks = 500;
         [SerializeField] private float density = 50;
-        [SerializeField] private float internalStrength = 100;
             
         [SerializeField] private Material insideMaterial;
         [SerializeField] private Material outsideMaterial;
+
+        [SerializeField] private GameObject effect;
 
         private Random rng = new Random();
 
@@ -26,13 +26,12 @@ namespace Project.Scripts.Fractures
             var seed = rng.Next();
             Fracture.FractureGameObject(
                 gameObject,
-                anchor,
                 seed,
                 chunks,
                 insideMaterial,
                 outsideMaterial,
-                internalStrength,
-                density
+                density,
+                effect
             );
         }
     }

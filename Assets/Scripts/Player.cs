@@ -54,7 +54,7 @@ public class Player : NetworkBehaviour
     }
     foreach(Collider nearbyObject in terrain) {
        if (nearbyObject.gameObject.tag == "Terrain") {
-        Destroy(nearbyObject.gameObject);
+        nearbyObject.GetComponent<DestructableObject>().Destroy();
       }
     }
   }
