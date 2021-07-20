@@ -31,7 +31,11 @@ jobs:
           rm DarkRift.zip
 
       - name: Install Blender
-        run: sudo snap install blender --classic
+        run: |
+          sudo add-apt-repository ppa:cheleb/blender-svn
+          sudo apt-get update
+          sudo apt-get install blender
+          blender
 
       - name: Build project
         uses: game-ci/unity-builder@v2
