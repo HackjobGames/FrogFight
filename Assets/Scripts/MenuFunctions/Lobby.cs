@@ -9,7 +9,6 @@ public class Lobby : NetworkBehaviour
   public Image menu;
   public Button menuButton;
   public Text codeDisplay;
-  public GameObject inGameMenu;
 
   public static Lobby lobby;
 

@@ -15,6 +15,9 @@ public class Player : NetworkBehaviour
   [SyncVar]
   public bool loaded;
 
+  [SyncVar]
+  public int score;
+
   public static Player localPlayer;
   
   public void Start() {
@@ -54,7 +57,11 @@ public class Player : NetworkBehaviour
     }
     foreach(Collider nearbyObject in terrain) {
        if (nearbyObject.gameObject.tag == "Terrain") {
-        Destroy(nearbyObject.gameObject);
+        nearbyObject.GetComponent<DestructableObject>().Destroy();
+        if (GameGlobals.globals.game_mode == "Demolition") {
+          score += 1;
+          PlayerStatus.status.UpdateGame();
+        }
       }
     }
   }
