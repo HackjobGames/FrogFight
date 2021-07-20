@@ -10,10 +10,13 @@ public class GameGlobals : NetworkBehaviour
     public float max_tongue_distance = 150f;
     [SyncVar]
     public float slam_power = 20000f;
+    [SyncVar]
+    public string game_mode;
+
+    public Dropdown game_mode_dropdown;
 
     public InputField tongue_input;
     public InputField slam_input;
-    public Dropdown game_mode;
 
     public Text[] playerNames;
 
@@ -21,11 +24,17 @@ public class GameGlobals : NetworkBehaviour
 
     private void Start() {
       globals = this;
+      SetDefaultValues();
     }
 
     void SetDefaultValues() {
       slam_input.text = slam_power + "";
       tongue_input.text = max_tongue_distance + "";
+      game_mode = "Survival";
+    }
+
+    public void UpdateGameMode() {
+      game_mode = game_mode_dropdown.captionText.text;
     }
 
     public Player[] GetPlayers() {

@@ -13,8 +13,6 @@ namespace Project.Scripts.Fractures
 
         [SerializeField] private GameObject effect;
 
-        private Random rng = new Random();
-
         private void Start()
         {
             FractureGameobject();
@@ -23,10 +21,9 @@ namespace Project.Scripts.Fractures
 
         public void FractureGameobject()
         {
-            var seed = rng.Next();
             Fracture.FractureGameObject(
                 gameObject,
-                seed,
+                4,
                 chunks,
                 insideMaterial,
                 outsideMaterial,

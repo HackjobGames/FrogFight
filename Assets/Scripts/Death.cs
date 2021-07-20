@@ -26,6 +26,7 @@ public class Death : NetworkBehaviour
         deadPlayer.dead = true;
         int aliveCount = 0;
         string alivePlayerName = "";
+        PlayerStatus.status.UpdateGame();
         Player[] players = GameGlobals.globals.GetPlayers();
         foreach(Player player in players) {
           if (!player.dead) {
@@ -33,14 +34,28 @@ public class Death : NetworkBehaviour
             alivePlayerName = player.playerName;
           }
         }
-        print(aliveCount);
-        if (aliveCount == 1) {
+        if (GameGlobals.globals.game_mode == "Survival") {
+          if (aliveCount == 1) {
+            winner.GetComponent<Text>().enabled = true;
+            winner.text = alivePlayerName + " Wins :)";
+            MatchManager.manager.EndGame();
+          } else if (players.Length == 1) {
+            MatchManager.manager.EndGame();
+          }
+        } else if (GameGlobals.globals.game_mode == "Demolition" && aliveCount == 0) {
+          string maxPlayer = "";
+          int maxScore = 0;
+          foreach(Player player in players) {
+            if (player.score > maxScore) {
+              maxScore = player.score;
+              maxPlayer = player.playerName;
+            }
+          }
           winner.GetComponent<Text>().enabled = true;
-          winner.text = alivePlayerName + " Wins :)";
-          MatchManager.manager.EndGame();
-        } else if (players.Length == 1) {
+          winner.text = maxPlayer + " Wins :)";
           MatchManager.manager.EndGame();
         }
+
 
     }
 }

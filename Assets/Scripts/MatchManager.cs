@@ -76,6 +76,7 @@ public class MatchManager : NetworkBehaviour
       }
       return true;
     });
+    PlayerStatus.status.StartGame();
     ServerManager.server.lobbyUI.GetComponent<Canvas>().enabled = false;
     MainMenu.menu.mainMenuUi.SetActive(false);
     MainMenu.menu.menuCamera.SetActive(false);
@@ -91,10 +92,6 @@ public class MatchManager : NetworkBehaviour
   [Command (requiresAuthority = false)]
   void CmdSetLoadedFlag(Player player) {
     player.loaded = true;
-  }
-
-  public static void EndMatch() {
-    SceneManager.LoadScene("MainMenu");
   }
 
   [Command (requiresAuthority = false)]
@@ -121,7 +118,9 @@ public class MatchManager : NetworkBehaviour
     foreach(Player player in players) {
       player.GetComponent<Character>().ResetCharacter();
       player.dead = true;
+      player.score = 0;
     }
+    PlayerStatus.status.EndGame();
     ServerManager.server.lobbyUI.GetComponent<Canvas>().enabled = true;
     MainMenu.menu.menuCamera.SetActive(true);
     MatchManager.manager.ChangeMap("");
@@ -135,6 +134,7 @@ public class MatchManager : NetworkBehaviour
   }
 
   override public void OnStopClient() {
+    PlayerStatus.status.EndGame();
     base.OnStopClient();
     Destroy(ServerManager.server.lobbyUI);
     MainMenu.menu.mainMenuUi.SetActive(true);

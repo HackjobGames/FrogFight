@@ -13,7 +13,7 @@ public class Impact : MonoBehaviour
   }
 
   void OnCollisionEnter(Collision other) {
-    if ((other.gameObject.tag == "Terrain" || other.gameObject.tag == "Player") && other.gameObject.GetComponentInParent<Impact>() != this && other.relativeVelocity.magnitude > 15 && canSlam) {
+    if ((other.gameObject.tag == "Terrain" || other.gameObject.tag == "Player" && MatchManager.manager.inGame) && other.gameObject.GetComponentInParent<Impact>() != this && other.relativeVelocity.magnitude > 15 && canSlam) {
       Player.localPlayer.Impact(transform.position, other.relativeVelocity.magnitude, other.GetContact(0).normal);
       StartCoroutine(WaitForNextSlam());
     }
