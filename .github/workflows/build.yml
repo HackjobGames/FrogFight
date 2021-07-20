@@ -11,28 +11,28 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      # - name: Checkout code
+      #   uses: actions/checkout@v2
 
-      - name: Get Packages
-        run: |
-          curl --output mirror.zip https://codeload.github.com/vis2k/Mirror/zip/refs/tags/v35.0.0
-          curl --output DarkRift.zip https://codeload.github.com/DylanKersting/TestZone/zip/refs/tags/Test2
-          unzip mirror.zip
-          unzip DarkRift.zip
-          mv ./TestZone-Test2/Test ./Assets/DarkRift
-          mv ./Mirror-35.0.0/Assets/Mirror ./Assets/Mirror
-          rm -rf ./Mirror-35.0.0
-          rm -rf ./TestZone-Test2
-          rm mirror.zip
-          rm DarkRift.zip
+      # - name: Get Packages
+      #   run: |
+      #     curl --output mirror.zip https://codeload.github.com/vis2k/Mirror/zip/refs/tags/v35.0.0
+      #     curl --output DarkRift.zip https://codeload.github.com/DylanKersting/TestZone/zip/refs/tags/Test2
+      #     unzip mirror.zip
+      #     unzip DarkRift.zip
+      #     mv ./TestZone-Test2/Test ./Assets/DarkRift
+      #     mv ./Mirror-35.0.0/Assets/Mirror ./Assets/Mirror
+      #     rm -rf ./Mirror-35.0.0
+      #     rm -rf ./TestZone-Test2
+      #     rm mirror.zip
+      #     rm DarkRift.zip
 
 
-      - name: Build project
-        uses: game-ci/unity-builder@v2
-        with:
-          projectPath: ./
-          targetPlatform: StandaloneWindows64
+      # - name: Build project
+      #   uses: game-ci/unity-builder@v2
+      #   with:
+      #     projectPath: ./
+      #     targetPlatform: StandaloneWindows64
 
       - name: Create Release
         id: create_release
@@ -46,7 +46,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build.zip
-          asset_name: build.zip
-          asset_content_type: application/zip
+          asset_path: ./packages.config
+          asset_name: packages.config
+          asset_content_type: text/plain
           overwrite: true
