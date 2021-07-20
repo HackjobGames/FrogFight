@@ -22,7 +22,6 @@ jobs:
           unzip DarkRift.zip
           mv ./TestZone-Test2/Test ./Assets/DarkRift
           mv ./Mirror-43.3.1/Assets/Mirror ./Assets/Mirror
-          mv ./DarkRift ./Assets/DarkRift
           rm -rf ./Mirror-43.3.1
           rm -rf ./TestZone-Test2
           rm mirror.zip
