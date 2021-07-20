@@ -31,7 +31,7 @@ jobs:
           rm DarkRift.zip
 
       - name: Install Blender
-        run: sudo snap install blender
+        run: sudo snap install blender --classic
 
       - name: Build project
         uses: game-ci/unity-builder@v2
