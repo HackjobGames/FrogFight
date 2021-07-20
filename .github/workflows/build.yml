@@ -14,15 +14,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Get Packages
+        run: |
+          curl --output mirror.zip https://codeload.github.com/vis2k/Mirror/zip/refs/tags/v43.3.1  
+          unzip -j -o mirror.zip "Mirror-43.3.1/Assets/Mirror/**/*" -d "./Assets/Mirror"
+
       - name: Build project
         uses: game-ci/unity-builder@v2
         with:
           projectPath: ./
           targetPlatform: StandaloneWindows64
-      - name: Get Packages
-        run: |
-          curl --output mirror.zip https://codeload.github.com/vis2k/Mirror/zip/refs/tags/v43.3.1  
-          unzip -j -o mirror.zip "Mirror-43.3.1/Assets/Mirror/**/*" -d "./Assets/Mirror"
 
       - uses: actions/upload-artifact@v2
         with:
