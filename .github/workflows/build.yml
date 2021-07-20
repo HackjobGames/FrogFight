@@ -33,7 +33,6 @@ jobs:
       - name: Install Blender
         run: |
           sudo snap install blender --classic
-          export PATH=$PATH:/snap/bin
           blender
 
       - name: Build project
