@@ -17,7 +17,7 @@ jobs:
       - name: Get Packages
         run: |
           curl --output mirror.zip https://codeload.github.com/vis2k/Mirror/zip/refs/tags/v43.3.1  
-          curl --output DarkRift.zip https://github-releases.githubusercontent.com/326084248/6963a192-762a-45b1-9ab2-564d71358dd2?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20210720%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210720T194844Z&X-Amz-Expires=300&X-Amz-Signature=bdc35c6db53efce9e2a7e89fa5cf5b9a70668a620c39118b21dc9ee18b887a9e&X-Amz-SignedHeaders=host&actor_id=44300617&key_id=0&repo_id=326084248&response-content-disposition=attachment%3B%20filename%3DDarkRift.zip&response-content-type=application%2Foctet-stream
+          curl --output DarkRift.zip "https://github-releases.githubusercontent.com/326084248/6963a192-762a-45b1-9ab2-564d71358dd2?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20210720%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210720T194844Z&X-Amz-Expires=300&X-Amz-Signature=bdc35c6db53efce9e2a7e89fa5cf5b9a70668a620c39118b21dc9ee18b887a9e&X-Amz-SignedHeaders=host&actor_id=44300617&key_id=0&repo_id=326084248&response-content-disposition=attachment%3B%20filename%3DDarkRift.zip&response-content-type=application%2Foctet-stream"
           unzip mirror.zip
           unzip DarkRift.zip
           mv ./Mirror-43.3.1/Assets/Mirror ./Assets/Mirror
