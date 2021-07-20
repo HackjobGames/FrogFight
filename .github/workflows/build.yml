@@ -32,9 +32,8 @@ jobs:
 
       - name: Install Blender
         run: |
-          sudo add-apt-repository ppa:cheleb/blender-svn
-          sudo apt-get update
-          sudo apt-get install blender
+          sudo snap install blender --classic
+          export PATH=$PATH:/snap/bin
           blender
 
       - name: Build project
