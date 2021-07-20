@@ -30,6 +30,8 @@ jobs:
           rm mirror.zip
           rm DarkRift.zip
 
+      - name: Install Blender
+        run: snap install blender
 
       - name: Build project
         uses: game-ci/unity-builder@v2
