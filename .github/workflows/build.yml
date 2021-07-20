@@ -17,7 +17,9 @@ jobs:
       - name: Get Packages
         run: |
           curl --output mirror.zip https://codeload.github.com/vis2k/Mirror/zip/refs/tags/v43.3.1  
-          unzip -j -o mirror.zip "Mirror-43.3.1/Assets/Mirror/**/*" -d "./Assets/Mirror"
+          unzip mirror.zip
+          mv ./Mirror-43.3.1/Assets/Mirror ./Assets/Mirror
+          rm -rf ./Mirror-43.3.1
           rm mirror.zip
 
       - name: Build project
