@@ -34,7 +34,8 @@ jobs:
           projectPath: ./
           targetPlatform: StandaloneWindows64
 
-      - uses: actions/upload-artifact@v2
-        with:
-          name: Build
-          path: build
+      - name: Create Release
+        id: create_release
+        uses: release-drafter/release-drafter@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
