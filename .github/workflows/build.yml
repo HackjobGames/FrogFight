@@ -16,24 +16,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Install Blender
+        run: sudo snap install blender --classic
+      - name: Test Blender
+        run: blender
 
       - name: Get Packages
         run: |
           curl --output mirror.zip https://codeload.github.com/vis2k/Mirror/zip/refs/tags/v35.0.0
           curl --output DarkRift.zip https://codeload.github.com/DylanKersting/TestZone/zip/refs/tags/Test2
-          curl --output blender.tar.xz https://mirror.clarkson.edu/blender/release/Blender2.93/blender-2.93.1-linux-x64.tar.xz
           unzip mirror.zip
           unzip DarkRift.zip
           tar -xf blender.tar.xz
           mv ./TestZone-Test2/Test ./Assets/DarkRift
           mv ./Mirror-35.0.0/Assets/Mirror ./Assets/Mirror
-          mv ./blender-2.93.1-linux-x64/blender ./blender
           rm -rf ./Mirror-35.0.0
           rm -rf ./TestZone-Test2
-          rm -rf ./blender-2.93.1-linux-x64
           rm mirror.zip
           rm DarkRift.zip
-          rm blender.tar.xz
 
       - name: Build project
         uses: game-ci/unity-builder@v2
