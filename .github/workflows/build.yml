@@ -33,14 +33,13 @@ jobs:
       - name: Install Blender
         run: |
           sudo snap install blender --classic
+          echo "/snap/bin" >> $GITHUB_PATH
 
       - name: Build project
         uses: game-ci/unity-builder@v2
         with:
           projectPath: ./
           targetPlatform: StandaloneWindows64
-        env:
-          PATH: ${{env.PATH + :/snap/bin}}
 
       - name: Create Release
         id: create_release
