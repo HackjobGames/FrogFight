@@ -25,7 +25,6 @@ jobs:
           curl --output DarkRift.zip https://codeload.github.com/DylanKersting/TestZone/zip/refs/tags/Test2
           unzip mirror.zip
           unzip DarkRift.zip
-          tar -xf blender.tar.xz
           mv ./TestZone-Test2/Test ./Assets/DarkRift
           mv ./Mirror-35.0.0/Assets/Mirror ./Assets/Mirror
           rm -rf ./Mirror-35.0.0
