@@ -55,8 +55,6 @@ public class Character : NetworkBehaviour
     public GameObject hit_location;
     private GameObject player_pivot_location;
     [SerializeField]
-    private GameObject crosshair;
-    [SerializeField]
     private GameObject aim_marker_prefab;
     private GameObject aim_marker;
     private MeshRenderer aim_marker_mesh;
@@ -84,7 +82,6 @@ public class Character : NetworkBehaviour
     private float max_air_speed = 5f;
     private float tongue_dampen = 20f;
     
-    public Transform frog;
     private float max_tongue_distance;
 
     public ParticleSystem explosionEffect;
