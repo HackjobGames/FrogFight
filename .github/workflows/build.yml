@@ -24,7 +24,7 @@ jobs:
           curl --output blender.tar.xz https://mirror.clarkson.edu/blender/release/Blender2.93/blender-2.93.1-linux-x64.tar.xz
           unzip mirror.zip
           unzip DarkRift.zip
-          unzip blender.tar.xz
+          tar -xf blender.tar.xz
           mv ./TestZone-Test2/Test ./Assets/DarkRift
           mv ./Mirror-35.0.0/Assets/Mirror ./Assets/Mirror
           mv ./blender-2.93.1-linux-x64/blender ./blender
