@@ -9,12 +9,8 @@ public class Lobby : NetworkBehaviour
   public Image menu;
   public Button menuButton;
   public Text codeDisplay;
-  public GameObject inGameMenu;
 
   public static Lobby lobby;
-
-  public InputField tongueLengthInput;
-  public InputField slamPowerInput;
 
   private void Start() {
     lobby = this;
@@ -23,7 +19,6 @@ public class Lobby : NetworkBehaviour
       menuButton.interactable = true;
     }
     codeDisplay.text = "Code: " + ServerManager.server.matchID;
-    SetDefaultSettings();
   }
 
   public void toggleMenu(bool enable) {
@@ -32,12 +27,6 @@ public class Lobby : NetworkBehaviour
 
   public void Disconnect() {
     ServerManager.server.Disconnect();
-  }
-
-  public void SetDefaultSettings() {
-    print(GameGlobals.globals.slam_power);
-    slamPowerInput.text = GameGlobals.globals.slam_power.ToString();
-    tongueLengthInput.text = GameGlobals.globals.max_tongue_distance.ToString();
   }
 
   public void CopyCode() {
