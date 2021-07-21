@@ -18,8 +18,6 @@ jobs:
 
       - name: Install Blender
         run: sudo snap install blender --classic
-      - name: Test Blender
-        run: blender
 
       - name: Get Packages
         run: |
@@ -37,6 +35,8 @@ jobs:
 
       - name: Build project
         uses: game-ci/unity-builder@v2
+        env:
+          PATH: ${{ env.GITHUB_PATH }}
         with:
           projectPath: ./
           targetPlatform: StandaloneWindows64
