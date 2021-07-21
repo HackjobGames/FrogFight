@@ -16,48 +16,42 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install Blender
-        run: sudo snap install blender --classic
+      - name: Get Packages
+        run: |
+          curl --output mirror.zip https://codeload.github.com/vis2k/Mirror/zip/refs/tags/v35.0.0
+          curl --output DarkRift.zip https://codeload.github.com/DylanKersting/TestZone/zip/refs/tags/Test2
+          unzip mirror.zip
+          unzip DarkRift.zip
+          mv ./TestZone-Test2/Test ./Assets/DarkRift
+          mv ./Mirror-35.0.0/Assets/Mirror ./Assets/Mirror
+          rm -rf ./Mirror-35.0.0
+          rm -rf ./TestZone-Test2
+          rm mirror.zip
+          rm DarkRift.zip
+
+      - name: Build project
+        uses: game-ci/unity-builder@v2
+        with:
+          projectPath: ./
+          targetPlatform: StandaloneWindows64
+
+      - name: Create Release
+        id: create_release
+        uses: release-drafter/release-drafter@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Test
-        run: echo $PATH
-
-      # - name: Get Packages
-      #   run: |
-      #     curl --output mirror.zip https://codeload.github.com/vis2k/Mirror/zip/refs/tags/v35.0.0
-      #     curl --output DarkRift.zip https://codeload.github.com/DylanKersting/TestZone/zip/refs/tags/Test2
-      #     unzip mirror.zip
-      #     unzip DarkRift.zip
-      #     mv ./TestZone-Test2/Test ./Assets/DarkRift
-      #     mv ./Mirror-35.0.0/Assets/Mirror ./Assets/Mirror
-      #     rm -rf ./Mirror-35.0.0
-      #     rm -rf ./TestZone-Test2
-      #     rm mirror.zip
-      #     rm DarkRift.zip
-
-      # - name: Build project
-      #   uses: game-ci/unity-builder@v2
-      #   with:
-      #     projectPath: ./
-      #     targetPlatform: StandaloneWindows64
-
-      # - name: Create Release
-      #   id: create_release
-      #   uses: release-drafter/release-drafter@v5
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      # - name: Create Zip
-      #   run: zip -r build.zip build
+      - name: Create Zip
+        run: zip -r build.zip build
   
-      # - name: Upload Release Asset
-      #   id: upload-release-asset 
-      #   uses: shogo82148/actions-upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: ./build.zip
-      #     asset_name: build.zip
-      #     asset_content_type: application/zip
-      #     overwrite: true
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: shogo82148/actions-upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build.zip
+          asset_name: build.zip
+          asset_content_type: application/zip
+          overwrite: true
