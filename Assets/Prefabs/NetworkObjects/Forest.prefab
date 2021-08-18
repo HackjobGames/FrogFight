@@ -1282,7 +1282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2c719e38ae7fd74b85e6ef361689e4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunks: 30
+  chunks: 100
   density: 50
   insideMaterial: {fileID: 2100000, guid: 1fe56a0e685b8434ebfeb53c69b59a5e, type: 3}
   outsideMaterial: {fileID: 2100000, guid: 1fe56a0e685b8434ebfeb53c69b59a5e, type: 3}
@@ -2190,7 +2190,7 @@ MonoBehaviour:
   sceneId: 0
   serverOnly: 0
   visible: 0
-  m_AssetId: 
+  m_AssetId: bc758f7a26a981647a99cda443296690
   hasSpawned: 0
 --- !u!114 &6015457143038403738
 MonoBehaviour:
