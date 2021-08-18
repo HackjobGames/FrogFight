@@ -8,7 +8,6 @@ public class UIAudio : MonoBehaviour
   public static UIAudio UIclick;
 
   private void Start() {
-    click = GetComponent<AudioSource>();
     UIclick = this;
   }
 

@@ -22,6 +22,7 @@ public class MatchManager : NetworkBehaviour
   public Image[] playerColors = new Image[4];
   public GameObject forestPrefab;
   public GameObject currentMapInstance;
+  public AudioSource song;
 
   public void ChangeMap(string map) {
     if (map == "") {
@@ -81,6 +82,7 @@ public class MatchManager : NetworkBehaviour
     MainMenu.menu.mainMenuUi.SetActive(false);
     MainMenu.menu.menuCamera.SetActive(false);
     GameObject[] spawns = GameObject.FindGameObjectsWithTag("SpawnPosition");
+    song.Play();
     for (int i = 0; i < players.Length; i++) {
       players[i].GetComponent<Character>().enabled = true;
       players[i].dead = false;
@@ -125,6 +127,7 @@ public class MatchManager : NetworkBehaviour
     MainMenu.menu.menuCamera.SetActive(true);
     MatchManager.manager.ChangeMap("");
     Cursor.lockState = CursorLockMode.None;
+    song.Stop();
     inGame = false;
     if (this.isServer) {
       playButton.interactable = true;

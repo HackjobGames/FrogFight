@@ -495,7 +495,7 @@ public class DarkReflectiveMirrorTransport : Transport
         return isServer;
     }
 
-    public override bool ServerDisconnect(int connectionId)
+    public override void ServerDisconnect(int connectionId)
     {
         ushort relayID;
         int directID;
@@ -507,17 +507,12 @@ public class DarkReflectiveMirrorTransport : Transport
                 using (Message sendKickMessage = Message.Create((ushort)OpCodes.KickPlayer, writer))
                     drClient.Client.SendMessage(sendKickMessage, SendMode.Reliable);
             }
-
-            return true;
         }
 
         if (connectedDirectClients.TryGetBySecond(connectionId, out directID))
         {
             directConnectModule.KickClient(directID);
-
-            return true;
         }
-        return false;
     }
 
     public override string ServerGetClientAddress(int connectionId)

@@ -175,7 +175,9 @@ public class Character : NetworkBehaviour
     }
     
     public void UpdateTonguePositions() {
-      cur_tongue_distance = Vector3.Distance(mouth.position, hit_location.transform.position);
+      if (hit_location) {
+        cur_tongue_distance = Vector3.Distance(mouth.position, hit_location.transform.position);
+      }
       if(cable_component.line != null){
         cable_component.line.SetPosition(cable_component.segments, mouth.position);
         cable_component.cableLength = cur_tongue_distance;
