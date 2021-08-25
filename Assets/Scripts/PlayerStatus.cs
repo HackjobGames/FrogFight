@@ -21,7 +21,7 @@ public class PlayerStatus : MonoBehaviour
       Player[] players = GameGlobals.globals.GetPlayers();
       for(int i = 0; i < GameGlobals.globals.GetPlayers().Length; i++) {
         names[i].gameObject.SetActive(true);
-        names[i].text = players[i].playerName + ":";
+        names[i].text = players[i].playerName;
         if (GameGlobals.globals.game_mode == "Survival") {
           statuses[i].gameObject.SetActive(true);
           statuses[i].color = Color.green;
