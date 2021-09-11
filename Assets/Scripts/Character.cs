@@ -331,6 +331,7 @@ public class Character : NetworkBehaviour
         main_camera.GetComponent<CameraFollow>().cameraWall = false;
         if (this.isLocalPlayer) {
           main_camera.GetComponent<CameraFollow>().lookAt = this.look_at;
+          Destroy(aim_marker);
         }
     }
 }
