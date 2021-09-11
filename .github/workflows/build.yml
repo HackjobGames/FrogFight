@@ -18,13 +18,13 @@ jobs:
 
       - name: Get Packages
         run: |
-          curl --output mirror.zip https://codeload.github.com/vis2k/Mirror/zip/refs/tags/v47.0.1
+          curl --output mirror.zip https://codeload.github.com/vis2k/Mirror/zip/refs/tags/v46.0.4
           curl --output DarkRift.zip https://codeload.github.com/DylanKersting/TestZone/zip/refs/tags/Test2
           unzip mirror.zip
           unzip DarkRift.zip
           mv ./TestZone-Test2/Test ./Assets/DarkRift
-          mv ./Mirror-47.0.1/Assets/Mirror ./Assets/Mirror
-          rm -rf ./Mirror-47.0.1
+          mv ./Mirror-46.0.4/Assets/Mirror ./Assets/Mirror
+          rm -rf ./Mirror-46.0.4
           rm -rf ./TestZone-Test2
           rm mirror.zip
           rm DarkRift.zip
