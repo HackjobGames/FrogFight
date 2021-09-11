@@ -174,7 +174,13 @@ public class Character : NetworkBehaviour
         Destroy(hit_location);
     }
     
-    public void UpdateTonguePositions() {
+    [Command (requiresAuthority = false)]
+    public void CommandUpdateTonguePositions() {
+      ClientCommandUpdateTonguePositions();
+    }
+
+    [ClientRpc]
+    void ClientCommandUpdateTonguePositions() {
       if (hit_location) {
         cur_tongue_distance = Vector3.Distance(mouth.position, hit_location.transform.position);
       }
@@ -183,7 +189,6 @@ public class Character : NetworkBehaviour
         cable_component.cableLength = cur_tongue_distance;
       }
     }
-    
 
     public bool ApplyTongueForce() {
       if (!hit_location) {
