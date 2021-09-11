@@ -23,7 +23,7 @@ public class Player : NetworkBehaviour
   public void Start() {
     StartCoroutine(WaitForGlobals());
     if (this.isLocalPlayer) {
-      SetName(MainMenu.playerName);
+      SetName(Save.name);
       localPlayer = this;
     }
   }

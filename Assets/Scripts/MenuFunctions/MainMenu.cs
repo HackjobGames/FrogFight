@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 public class MainMenu : MonoBehaviour
 {
     public Text roomInput;
-    public Text nameEntry;
+    public InputField nameEntry;
     public GameObject hostDialog;
     public InputField hostPassword;
     public InputField joinPassword;
@@ -28,12 +28,13 @@ public class MainMenu : MonoBehaviour
     public GameObject buttonContainer;
     public GameObject matchButtonDialog;
     public GameObject inGameMenu;
-    public static string playerName;
     public static MainMenu menu;
     
 
     private void Start() {
+      Save.Load();
       menu = this;
+      nameEntry.text = Save.name;
     }
 
     void Update() {
@@ -41,6 +42,11 @@ public class MainMenu : MonoBehaviour
         Cursor.lockState = inGameMenu.active && MatchManager.manager.inGame ? CursorLockMode.Locked : CursorLockMode.None;
         inGameMenu.SetActive(!inGameMenu.active);
       }
+    }
+
+    public void UpdatePlayerName() {
+      Save.name = nameEntry.text;
+      Save.SaveName();
     }
 
     public void Disconnect() {
@@ -85,7 +91,6 @@ public class MainMenu : MonoBehaviour
     }
 
     public void Host() {
-      playerName = nameEntry.text;
       ServerManager.server.isPrivate = isPrivate.isOn;
       ServerManager.server.password = hostPassword.text;
       ServerManager.server.maxPlayers = maxPlayers.value + 2;
@@ -102,7 +107,6 @@ public class MainMenu : MonoBehaviour
     }
 
     public void Join() {
-      playerName = nameEntry.text;
       if (roomInput.text.Length == 6) {
         ServerManager.server.matchID = roomInput.text;
         ServerManager.server.password = joinPassword.text;
@@ -115,7 +119,6 @@ public class MainMenu : MonoBehaviour
 
     
     public void JoinFromMatch(Match match) {
-      playerName = nameEntry.text;
       ServerManager.server.matchID = match.MatchID;
       ServerManager.server.password = joinPassword.text;
       ServerManager.server.Join();
