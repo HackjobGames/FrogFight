@@ -151,12 +151,6 @@ public class Character : NetworkBehaviour
             hit_location.transform.parent = tongue_hit.transform;
             initial_tongue_distance = Vector3.Distance(player.position, tongue_hit.transform.position);
             cur_tongue_distance = initial_tongue_distance;
-
-            hit_location.AddComponent<CableComponent>();
-            cable_component = hit_location.GetComponent<CableComponent>();
-            cable_component.endPoint = mouth;
-            cable_component.cableMaterial = tongue_material;
-            cable_component.cableLength = initial_tongue_distance;
             slurpSound.Play();
             return true;
         } else {
@@ -174,21 +168,6 @@ public class Character : NetworkBehaviour
         Destroy(hit_location);
     }
     
-    [Command (requiresAuthority = false)]
-    public void CommandUpdateTonguePositions() {
-      ClientCommandUpdateTonguePositions();
-    }
-
-    [ClientRpc]
-    void ClientCommandUpdateTonguePositions() {
-      if (hit_location) {
-        cur_tongue_distance = Vector3.Distance(mouth.position, hit_location.transform.position);
-      }
-      if(cable_component.line != null){
-        cable_component.line.SetPosition(cable_component.segments, mouth.position);
-        cable_component.cableLength = cur_tongue_distance;
-      }
-    }
 
     public bool ApplyTongueForce() {
       if (!hit_location) {
