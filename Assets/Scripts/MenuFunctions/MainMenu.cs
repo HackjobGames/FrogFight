@@ -28,6 +28,7 @@ public class MainMenu : MonoBehaviour
     public GameObject buttonContainer;
     public GameObject matchButtonDialog;
     public GameObject inGameMenu;
+    public GameObject settingsMenu;
     public static MainMenu menu;
     
 
@@ -38,12 +39,24 @@ public class MainMenu : MonoBehaviour
     }
 
     void Update() {
-      if (Input.GetButtonDown("Cancel") && MatchManager.manager.inGame) {
-        Cursor.lockState = inGameMenu.active && MatchManager.manager.inGame ? CursorLockMode.Locked : CursorLockMode.None;
-        inGameMenu.SetActive(!inGameMenu.active);
+      if(MatchManager.manager!= null){
+        if (Input.GetButtonDown("Cancel") && MatchManager.manager.inGame) {
+          Cursor.lockState = inGameMenu.activeSelf && MatchManager.manager.inGame ? CursorLockMode.Locked : CursorLockMode.None;
+          inGameMenu.SetActive(!inGameMenu.activeSelf);
+        } 
       }
     }
 
+    public void ToggleSettings(){
+      if(settingsMenu.activeSelf){
+        settingsMenu.SetActive(!settingsMenu.activeSelf);
+        settingsMenu.GetComponent<Settings>().SaveSettings();
+      } else {
+        settingsMenu.SetActive(!settingsMenu.activeSelf);
+        settingsMenu.GetComponent<Settings>().LoadSettings();
+      }
+    }
+    
     public void UpdatePlayerName() {
       Save.name = nameEntry.text;
       Save.SaveName();
