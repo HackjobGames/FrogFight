@@ -10,8 +10,12 @@ public class Settings : MonoBehaviour
     public AudioMixer audioMixer;
     public Dropdown resolutionDropdown;
     public Dropdown textureDropdown;
-    public Slider volumeSlider;
-    float currentVolume;
+    public Slider masterVolumeSlider;
+    public Slider musicVolumeSlider;
+    public Slider GameVolumeSlider;
+    float currentMasterVolume;
+    float currentMusicVolume;
+    float currentGameVolume;
     Resolution[] resolutions;
 
     void Start()
@@ -38,9 +42,17 @@ public class Settings : MonoBehaviour
         LoadSettings(currentResolutionIndex);
     }
 
-    public void SetVolume(float volume) {
-        audioMixer.SetFloat("Volume", volume);
-        currentVolume = volume;
+    public void SetMasterVolume(float volume) {
+        audioMixer.SetFloat("Master", volume);
+        currentMasterVolume = volume;
+    }
+    public void SetMusicVolume(float volume) {
+        audioMixer.SetFloat("Music", volume);
+        currentMusicVolume = volume;
+    }
+    public void SetGameVolume(float volume) {
+        audioMixer.SetFloat("Game", volume);
+        currentGameVolume = volume;
     }
     public void SetFullscreen(bool isFullscreen) {
         Screen.fullScreen = isFullscreen;
@@ -55,10 +67,6 @@ public class Settings : MonoBehaviour
         QualitySettings.masterTextureLimit = textureIndex;
     }
 
-   
-    public void ExitGame() {
-        Application.Quit();
-    }
     public void SaveSettings() {
         
         PlayerPrefs.SetInt("ResolutionPreference", 
@@ -67,8 +75,12 @@ public class Settings : MonoBehaviour
                 textureDropdown.value);
         PlayerPrefs.SetInt("FullscreenPreference", 
                 Convert.ToInt32(Screen.fullScreen));
-        PlayerPrefs.SetFloat("VolumePreference", 
-                currentVolume); 
+        PlayerPrefs.SetFloat("MasterVolumePreference", 
+                currentMasterVolume); 
+        PlayerPrefs.SetFloat("MusicVolumePreference", 
+                currentMusicVolume);
+        PlayerPrefs.SetFloat("GameVolumePreference", 
+                currentGameVolume);
     }
 
     public void LoadSettings(int currentResolutionIndex) {
@@ -87,11 +99,14 @@ public class Settings : MonoBehaviour
             Convert.ToBoolean(PlayerPrefs.GetInt("FullscreenPreference"));
         else
             Screen.fullScreen = true;
-        if (PlayerPrefs.HasKey("VolumePreference"))
-            volumeSlider.value = 
-                        PlayerPrefs.GetFloat("VolumePreference");
-        else
-            volumeSlider.value = 
-                        PlayerPrefs.GetFloat("VolumePreference");
+        // if (PlayerPrefs.HasKey("VolumePreference"))
+        //     volumeSlider.value = 
+        //                 PlayerPrefs.GetFloat("VolumePreference");
+        // else
+        //     volumeSlider.value = 
+        //                 PlayerPrefs.GetFloat("VolumePreference");
+        masterVolumeSlider.value = PlayerPrefs.GetFloat("MasterVolumePreference");
+        musicVolumeSlider.value = PlayerPrefs.GetFloat("MusicVolumePreference");
+        GameVolumeSlider.value = PlayerPrefs.GetFloat("GameVolumePreference");
     }
 }
