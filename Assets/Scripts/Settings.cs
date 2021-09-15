@@ -99,12 +99,6 @@ public class Settings : MonoBehaviour
             Convert.ToBoolean(PlayerPrefs.GetInt("FullscreenPreference"));
         else
             Screen.fullScreen = true;
-        // if (PlayerPrefs.HasKey("VolumePreference"))
-        //     volumeSlider.value = 
-        //                 PlayerPrefs.GetFloat("VolumePreference");
-        // else
-        //     volumeSlider.value = 
-        //                 PlayerPrefs.GetFloat("VolumePreference");
         masterVolumeSlider.value = PlayerPrefs.GetFloat("MasterVolumePreference");
         musicVolumeSlider.value = PlayerPrefs.GetFloat("MusicVolumePreference");
         GameVolumeSlider.value = PlayerPrefs.GetFloat("GameVolumePreference");
