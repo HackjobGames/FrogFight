@@ -3,7 +3,47 @@ guid: 68806c6dc6b78344dbd6a6c8ccac947b
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Island_Land
+    second: {fileID: 2100000, guid: b0bae0c7880ec4f4cb9825fd8d4f18a9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Island_Leaves
+    second: {fileID: 2100000, guid: 95511d80cdbae8c45944f2d680cfac16, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Island_Stalagtites
+    second: {fileID: 2100000, guid: cf4071ecc7ddba94298e14d37523ead2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Island_Wood
+    second: {fileID: 2100000, guid: b4bd128cd71091045b9b245d834a21cb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Leaves
+    second: {fileID: 2100000, guid: 12940117cf2062140a1d314b73e4a567, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material
+    second: {fileID: 2100000, guid: 063132127f33c96439684d726b868ef1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stalagtites
+    second: {fileID: 2100000, guid: ee7aad67f95524048bae5f8511f45a70, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Wood
+    second: {fileID: 2100000, guid: b42f9e67bd2496342b6b53efd89e8cca, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
