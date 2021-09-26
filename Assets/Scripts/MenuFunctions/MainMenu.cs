@@ -119,6 +119,10 @@ public class MainMenu : MonoBehaviour
       StartCoroutine(GetMatches());
     }
 
+    public void Quit() {
+      Application.Quit();
+    }
+
     public void Join() {
       if (roomInput.text.Length == 6) {
         ServerManager.server.matchID = roomInput.text;
