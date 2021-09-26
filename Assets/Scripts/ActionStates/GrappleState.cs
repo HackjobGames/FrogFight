@@ -42,7 +42,6 @@ public class GrappleState : State
         if(character.movement_machine.cur_state != character.swinging_state){
             state_machine.ChangeState(character.idle_state);
         }
-        // character.UpdateTonguePositions();
     }
     public override void PhysicsUpdate()
     {

@@ -506,7 +506,7 @@ AudioSource:
   m_GameObject: {fileID: 1138303379594623074}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 24300002, guid: c81140a6b36b0db4d914456d84266b38, type: 2}
+  OutputAudioMixerGroup: {fileID: -8463317996452064335, guid: c81140a6b36b0db4d914456d84266b38, type: 2}
   m_audioClip: {fileID: 8300000, guid: 1aca37341436b9e4d8b82320d640c624, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.205
@@ -941,7 +941,7 @@ AudioSource:
   m_GameObject: {fileID: 2659476177011247478}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 24300002, guid: c81140a6b36b0db4d914456d84266b38, type: 2}
+  OutputAudioMixerGroup: {fileID: -8463317996452064335, guid: c81140a6b36b0db4d914456d84266b38, type: 2}
   m_audioClip: {fileID: 8300000, guid: d23a8d422a1d8ad4e8aeaf7d605817ed, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.205
@@ -1173,7 +1173,7 @@ MonoBehaviour:
   sceneId: 0
   serverOnly: 0
   visible: 0
-  m_AssetId: 873080fce58848411817e5082c51599a
+  m_AssetId: 
   hasSpawned: 0
 --- !u!114 &2017410132370448294
 MonoBehaviour:
@@ -1372,20 +1372,12 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   clientAuthority: 1
-  sendInterval: 0.05
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
+  localPositionSensitivity: 0.01
+  localRotationSensitivity: 0.01
+  localScaleSensitivity: 0.01
+  compressRotation: 0
   interpolateScale: 1
-  bufferTimeMultiplier: 3
-  bufferSizeLimit: 64
-  catchupThreshold: 6
-  catchupMultiplier: 0.1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  syncScale: 1
   target: {fileID: 3088629165924765204}
 --- !u!1 &3074907815035930217
 GameObject:
@@ -1664,7 +1656,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: -1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.0042566773, y: -0.00031908436, z: -0.0003645304}
+  m_ConnectedAnchor: {x: 0.0042566773, y: -0.00031772075, z: -0.00073903875}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_TwistLimitSpring:
@@ -2691,7 +2683,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.0000000028341003, y: 0.0012761299, z: -0.00011794128}
+  m_ConnectedAnchor: {x: 0.0000000028340998, y: 0.0012761276, z: -0.00011794163}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -3842,7 +3834,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.0042566773, y: -0.00031908628, z: -0.00036453022}
+  m_ConnectedAnchor: {x: -0.0042566773, y: -0.0003177227, z: -0.0007390389}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_TwistLimitSpring:
@@ -3969,7 +3961,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -2.4067257e-10, y: 0.008743222, z: -0.0010094532}
+  m_ConnectedAnchor: {x: -1.6285648e-10, y: 0.00879898, z: -0.00068306836}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_TwistLimitSpring:
@@ -4086,7 +4078,7 @@ AudioSource:
   m_GameObject: {fileID: 8640101586236651034}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 24300002, guid: c81140a6b36b0db4d914456d84266b38, type: 2}
+  OutputAudioMixerGroup: {fileID: -8463317996452064335, guid: c81140a6b36b0db4d914456d84266b38, type: 2}
   m_audioClip: {fileID: 8300000, guid: bc0acc3743abaf04f9e2fda399a98477, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.205
