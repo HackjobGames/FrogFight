@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using Obi;
 
 public class Character : NetworkBehaviour
 {
@@ -59,6 +60,9 @@ public class Character : NetworkBehaviour
     private GameObject aim_marker;
     private MeshRenderer aim_marker_mesh;
     private RaycastHit camera_hit;
+
+    [SerializeField]
+    private Obi.ObiRope tongue;
     private RaycastHit tongue_hit;
 
     [SerializeField]
@@ -149,6 +153,8 @@ public class Character : NetworkBehaviour
             hit_location = new GameObject();
             hit_location.transform.position = tongue_hit.point;
             hit_location.transform.parent = tongue_hit.transform;
+            tongue.transform.parent.gameObject.SetActive(true);
+            tongue.GetComponents<Obi.ObiParticleAttachment>()[1].target = hit_location.transform;
             initial_tongue_distance = Vector3.Distance(player.position, tongue_hit.transform.position);
             cur_tongue_distance = initial_tongue_distance;
             slurpSound.Play();
@@ -163,7 +169,9 @@ public class Character : NetworkBehaviour
     }
 
     public void StopGrapple(){
+        //tongue.transform.parent.gameObject.SetActive(false);
         head.rotation = new Quaternion();
+        tongue.GetComponents<Obi.ObiParticleAttachment>()[1].target = null;
         Destroy(player_pivot_location);
         Destroy(hit_location);
     }

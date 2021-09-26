@@ -20,7 +20,7 @@ public class ServerManager : NetworkManager
   public static ServerManager server;
   DarkReflectiveMirrorTransport darkTransport;
 
-  public override void Start() {
+  public override void Awake() {
     base.Start();
     darkTransport = GetComponent<DarkReflectiveMirrorTransport>();
     server = this;

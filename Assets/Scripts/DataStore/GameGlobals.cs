@@ -28,9 +28,9 @@ public class GameGlobals : NetworkBehaviour
     }
 
     void SetDefaultValues() {
-      slam_input.text = slam_power + "";
-      tongue_input.text = max_tongue_distance + "";
-      game_mode = "Survival";
+      // slam_input.text = slam_power + "";
+      // tongue_input.text = max_tongue_distance + "";
+      // game_mode = "Survival";
     }
 
     public void UpdateGameMode() {
