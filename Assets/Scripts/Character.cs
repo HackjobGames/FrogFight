@@ -53,7 +53,6 @@ public class Character : NetworkBehaviour
     private Transform main_camera;
     [SerializeField]
     private Transform player;
-    public GameObject hit_location;
     private GameObject player_pivot_location;
     [SerializeField]
     private GameObject aim_marker_prefab;
@@ -63,6 +62,8 @@ public class Character : NetworkBehaviour
 
     [SerializeField]
     private Obi.ObiRope tongue;
+    public Transform hit_location;
+    private Vector3 hit_original_position;
     private RaycastHit tongue_hit;
 
     [SerializeField]
@@ -150,11 +151,10 @@ public class Character : NetworkBehaviour
     public bool StartGrapple(){
         if(Physics.Raycast(look_at.position, main_camera.forward, out camera_hit, max_tongue_distance, is_grappleable) &&
           Physics.Raycast(mouth.position, (camera_hit.point- mouth.position).normalized, out tongue_hit, max_tongue_distance, is_grappleable)) {
-            hit_location = new GameObject();
-            hit_location.transform.position = tongue_hit.point;
-            hit_location.transform.parent = tongue_hit.transform;
+            tongue.GetComponent<MeshRenderer>().enabled = true;
+            hit_location.position = tongue_hit.point;
+            tongue.SetFilterCategory(1);
             tongue.transform.parent.gameObject.SetActive(true);
-            tongue.GetComponents<Obi.ObiParticleAttachment>()[1].target = hit_location.transform;
             initial_tongue_distance = Vector3.Distance(player.position, tongue_hit.transform.position);
             cur_tongue_distance = initial_tongue_distance;
             slurpSound.Play();
@@ -164,16 +164,12 @@ public class Character : NetworkBehaviour
         }
     }
 
-    public void DisableTongue(){
-        Destroy(player_pivot_location);
-    }
-
     public void StopGrapple(){
         //tongue.transform.parent.gameObject.SetActive(false);
         head.rotation = new Quaternion();
-        tongue.GetComponents<Obi.ObiParticleAttachment>()[1].target = null;
-        Destroy(player_pivot_location);
-        Destroy(hit_location);
+        tongue.gameObject.layer = 0;
+        tongue.GetComponent<MeshRenderer>().enabled = false;
+        tongue.SetFilterCategory(10);
     }
     
 
@@ -183,7 +179,8 @@ public class Character : NetworkBehaviour
       }
       Rigidbody hitBody = tongue_hit.collider.GetComponent<Rigidbody>();
       Character character = tongue_hit.collider.GetComponentInParent<Character>();
-      Vector3 diff = hit_location.transform.position - head.position;
+
+      Vector3 diff = tongue.GetParticlePosition(10) - head.position;
       Vector3 dir = diff.normalized;
       head.rotation = Quaternion.FromToRotation(Vector3.forward, dir);
       Vector3 force = (diff.magnitude > max_tongue_strength) ? diff * max_tongue_strength/diff.magnitude : diff;
@@ -236,8 +233,8 @@ public class Character : NetworkBehaviour
       head_initial_pos = head.localRotation;
       spine_initial_pos = new Quaternion(0f, 0f, 0f, 1);
       spine = GetComponentInChildren<Impact>();
-
-
+      hit_original_position = hit_location.position;
+      tongue.SetFilterCategory(10);
       if(this.isLocalPlayer) {
         main_camera.gameObject.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;

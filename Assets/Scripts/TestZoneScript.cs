@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Obi;
 public class TestZoneScript : MonoBehaviour
 {
-    // Start is called before the first frame update
+  public Obi.ObiRope rope;
+
     void Start()
     {
+     // rope.path.RemoveControlPoint(0);
       ServerManager.server.StartHost();
       StartCoroutine(WaitASec());
     }
