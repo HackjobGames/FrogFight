@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Project.Scripts.Utils;
 using UnityEngine;
+using Obi;
 
 namespace Project.Scripts.Fractures
 {
@@ -139,7 +140,7 @@ namespace Project.Scripts.Fractures
             var mc = chunk.AddComponent<MeshCollider>();
             mc.inflateMesh = true;
             mc.convex = true;
-
+            chunk.AddComponent<ObiCollider>();
             return chunk;
         }
     }
