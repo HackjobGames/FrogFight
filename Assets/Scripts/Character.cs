@@ -64,7 +64,7 @@ public class Character : NetworkBehaviour
     private Obi.ObiRope tongue;
     public Transform hit_location;
     private Vector3 hit_original_position;
-    private RaycastHit tongue_hit;
+    public RaycastHit tongue_hit;
 
     [SerializeField]
     private Transform head;
@@ -153,8 +153,6 @@ public class Character : NetworkBehaviour
           Physics.Raycast(mouth.position, (camera_hit.point- mouth.position).normalized, out tongue_hit, max_tongue_distance, is_grappleable)) {
             tongue.GetComponent<MeshRenderer>().enabled = true;
             hit_location.position = tongue_hit.point;
-            tongue.SetFilterCategory(1);
-            tongue.transform.parent.gameObject.SetActive(true);
             initial_tongue_distance = Vector3.Distance(player.position, tongue_hit.transform.position);
             cur_tongue_distance = initial_tongue_distance;
             slurpSound.Play();
@@ -165,11 +163,9 @@ public class Character : NetworkBehaviour
     }
 
     public void StopGrapple(){
-        //tongue.transform.parent.gameObject.SetActive(false);
         head.rotation = new Quaternion();
         tongue.gameObject.layer = 0;
         tongue.GetComponent<MeshRenderer>().enabled = false;
-        tongue.SetFilterCategory(10);
     }
     
 
@@ -234,7 +230,7 @@ public class Character : NetworkBehaviour
       spine_initial_pos = new Quaternion(0f, 0f, 0f, 1);
       spine = GetComponentInChildren<Impact>();
       hit_original_position = hit_location.position;
-      tongue.SetFilterCategory(10);
+      tongue.GetComponent<MeshRenderer>().enabled = false;
       if(this.isLocalPlayer) {
         main_camera.gameObject.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;

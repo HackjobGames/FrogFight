@@ -21,7 +21,7 @@ public class SwingingState : State
     public override void HandleInput()
     {
         base.HandleInput();
-        if(Input.GetMouseButtonUp(0) || !character.hit_location){
+        if(Input.GetMouseButtonUp(0) || !character.tongue_hit.collider){
             state_machine.ChangeState(character.falling_state);
         }
     }
