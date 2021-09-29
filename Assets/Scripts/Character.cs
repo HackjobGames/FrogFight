@@ -152,6 +152,12 @@ public class Character : NetworkBehaviour
             initial_tongue_distance = Vector3.Distance(player.position, tongue_hit.transform.position);
             cur_tongue_distance = initial_tongue_distance;
             slurpSound.Play();
+
+            hit_location.AddComponent<CableComponent>();
+            cable_component = hit_location.GetComponent<CableComponent>();
+            cable_component.endPoint = mouth;
+            cable_component.cableMaterial = tongue_material;
+            cable_component.cableLength = initial_tongue_distance;
             return true;
         } else {
             return false;
@@ -166,6 +172,16 @@ public class Character : NetworkBehaviour
         head.rotation = new Quaternion();
         Destroy(player_pivot_location);
         Destroy(hit_location);
+    }
+
+    public void UpdateTonguePositions() {
+      if (hit_location) {
+        cur_tongue_distance = Vector3.Distance(mouth.position, hit_location.transform.position);
+      }
+      if(cable_component.line != null){
+        cable_component.line.SetPosition(cable_component.segments, mouth.position);
+        cable_component.cableLength = cur_tongue_distance;
+      }
     }
     
 
