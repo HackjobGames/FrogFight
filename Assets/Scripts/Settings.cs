@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -36,7 +37,6 @@ public class Settings : MonoBehaviour
                 && resolutions[i].height == Screen.currentResolution.height)
                 currentResolutionIndex = i;
         }
-
         resolutionDropdown.AddOptions(options);
         resolutionDropdown.RefreshShownValue();
         LoadSettings(currentResolutionIndex);
@@ -103,4 +103,5 @@ public class Settings : MonoBehaviour
         musicVolumeSlider.value = PlayerPrefs.GetFloat("MusicVolumePreference");
         GameVolumeSlider.value = PlayerPrefs.GetFloat("GameVolumePreference");
     }
+
 }

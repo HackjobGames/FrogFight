@@ -54,7 +54,7 @@ public class ServerManager : NetworkManager
 
   IEnumerator GetHostID(int serverID) {
     string privateString = isPrivate ? "true" : "false";
-    UnityWebRequest req = UnityWebRequest.Get($"http://66.41.159.125:8090/host?relayID={serverID}&hostName={Save.name}&isPrivate={privateString}&password={password}&maxPlayers={maxPlayers}");
+    UnityWebRequest req = UnityWebRequest.Get($"http://66.41.159.125:8090/host?relayID={serverID}&hostName={Save.save.name}&isPrivate={privateString}&password={password}&maxPlayers={maxPlayers}");
     yield return req.SendWebRequest();
 
     if(req.result != UnityWebRequest.Result.Success){
