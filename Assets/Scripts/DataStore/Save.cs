@@ -35,10 +35,6 @@ public class Save {
               Debug.Log(e);
               save = new Save("", new float[]{0, 0, 0});
             }
-            Debug.Log(save.name);
-            Debug.Log(save.color[0]);
-            Debug.Log(save.color[1]);
-            Debug.Log(save.color[2]);
             stream.Close();
         }
     }
