@@ -35,6 +35,9 @@ public class Save {
               Debug.Log(e);
               save = new Save("", new float[]{0, 0, 0});
             }
+            if (save == null) {
+              save = new Save("", new float[]{0, 0, 0});
+            }
             stream.Close();
         }
     }
