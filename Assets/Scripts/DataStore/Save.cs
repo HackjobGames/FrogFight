@@ -6,7 +6,7 @@ using System.Text;
 
 [Serializable]
 public class Save {
-    static string path = Application.persistentDataPath + "/frog.name";
+    static string path = Application.persistentDataPath + "/frog";
 
     public string name;
     public float[] color;
