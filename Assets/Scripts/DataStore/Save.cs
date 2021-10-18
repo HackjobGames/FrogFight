@@ -6,7 +6,7 @@ using System.Text;
 
 [Serializable]
 public class Save {
-    static string path = Application.persistentDataPath + "/frog";
+    static string path = Application.persistentDataPath + "/frug";
 
     public string name;
     public float[] color;
@@ -32,13 +32,12 @@ public class Save {
             try {
               save = formatter.Deserialize(stream) as Save;
             } catch(Exception e) {
-              Debug.Log(e);
-              save = new Save("", new float[]{0, 0, 0});
-            }
-            if (save == null) {
               save = new Save("", new float[]{0, 0, 0});
             }
             stream.Close();
+        }
+        if (save == null) {
+          save = new Save("", new float[]{0, 0, 0});
         }
     }
 }
