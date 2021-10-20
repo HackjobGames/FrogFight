@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using UnityEngine.Networking;
 using System.Text;
 using Newtonsoft.Json;
+using HSVPicker;
 
 public class MainMenu : MonoBehaviour
 {
@@ -29,13 +30,15 @@ public class MainMenu : MonoBehaviour
     public GameObject matchButtonDialog;
     public GameObject inGameMenu;
     public GameObject settingsMenu;
+    public ColorPicker picker;
     public static MainMenu menu;
     
 
     private void Start() {
       Save.Load();
+      nameEntry.text = Save.save.name;
+      picker.AssignColor(new Color(Save.save.color[0], Save.save.color[1], Save.save.color[2]));
       menu = this;
-      nameEntry.text = Save.name;
     }
 
     void Update() {
@@ -44,6 +47,17 @@ public class MainMenu : MonoBehaviour
           Cursor.lockState = inGameMenu.activeSelf && MatchManager.manager.inGame ? CursorLockMode.Locked : CursorLockMode.None;
           inGameMenu.SetActive(!inGameMenu.activeSelf);
         } 
+      }
+    }
+
+    public void OnColorChange() {
+      if (Save.save != null) {
+        Save.save.color = new float[] {
+          picker.R,
+          picker.G,
+          picker.B,
+        };
+        Save.SaveGame();
       }
     }
 
@@ -58,8 +72,8 @@ public class MainMenu : MonoBehaviour
     }
     
     public void UpdatePlayerName() {
-      Save.name = nameEntry.text;
-      Save.SaveName();
+      Save.save.name = nameEntry.text;
+      Save.SaveGame();
     }
 
     public void Disconnect() {
