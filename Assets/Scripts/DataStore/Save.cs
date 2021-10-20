@@ -1,24 +1,43 @@
 using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System;
+using System.Text;
 
-public static class Save {
+[Serializable]
+public class Save {
     static string path = Application.persistentDataPath + "/frog";
-    public static string name;
 
-    public static void SaveName(){
+    public string name;
+    public float[] color;
+
+    public static Save save;
+
+    public Save(string name, float[] color) {
+      this.name = name;
+      this.color = color;
+    }
+
+    public static void SaveGame(){
         BinaryFormatter formatter = new BinaryFormatter();
         FileStream stream = new FileStream(path, FileMode.Create);
-        formatter.Serialize(stream, name);
+        formatter.Serialize(stream, save);
         stream.Close();
     }
+
     public static void Load(){
         if(File.Exists(path)){
             BinaryFormatter formatter = new BinaryFormatter();
             FileStream stream = new FileStream(path, FileMode.Open);
-            name = formatter.Deserialize(stream) as string;
-            Debug.Log(name);
+            try {
+              save = formatter.Deserialize(stream) as Save;
+            } catch(Exception e) {
+              save = new Save("", new float[]{0, 0, 0});
+            }
             stream.Close();
+        }
+        if (save == null) {
+          save = new Save("", new float[]{0, 0, 0});
         }
     }
 }

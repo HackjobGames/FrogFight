@@ -15,7 +15,7 @@ public class CableComponent : MonoBehaviour
 	public int totalSegments = 10;
 	public float segmentsPerUnit = 2f;
 	public int segments = 0; 
-	public float cableWidth = 0.1f;
+	public float cableWidth = 0.5f;
 
 	// Solver config
 	public int verletIterations = 2;

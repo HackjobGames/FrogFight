@@ -47,7 +47,8 @@
     "com.unity.modules.vr" : "1.0.0",
     "com.unity.modules.wind" : "1.0.0",
     "com.unity.modules.xr" : "1.0.0",
-    "jillejr.newtonsoft.json-for-unity" : "13.0.102"
+    "jillejr.newtonsoft.json-for-unity" : "13.0.102",
+    "judah4.hsvcolorpickerunity": "https://github.com/judah4/HSV-Color-Picker-Unity.git#upm"
   },
   "scopedRegistries" : [
     {

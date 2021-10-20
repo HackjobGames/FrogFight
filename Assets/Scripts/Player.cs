@@ -18,12 +18,16 @@ public class Player : NetworkBehaviour
   [SyncVar]
   public int score;
 
+  [SyncVar]
+  public Color color;
+
   public static Player localPlayer;
   
   public void Start() {
     StartCoroutine(WaitForGlobals());
     if (this.isLocalPlayer) {
-      SetName(Save.name);
+      SetName(Save.save.name);
+      SetColor(new Color(Save.save.color[0], Save.save.color[1], Save.save.color[2]));
       localPlayer = this;
     }
   }
@@ -32,6 +36,12 @@ public class Player : NetworkBehaviour
   public void SetName(string name)
   {
     this.playerName = name;
+  }
+
+  [Command]
+  public void SetColor(Color color)
+  {
+    this.color = color;
   }
 
   private void OnDestroy() {

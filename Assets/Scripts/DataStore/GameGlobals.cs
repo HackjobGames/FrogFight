@@ -19,6 +19,7 @@ public class GameGlobals : NetworkBehaviour
     public InputField slam_input;
 
     public Text[] playerNames;
+    public Image[] playerColors = new Image[4];
 
     public static GameGlobals globals;
 
@@ -46,10 +47,12 @@ public class GameGlobals : NetworkBehaviour
           if (playerNames[i]) {
             playerNames[i].text = players[i].playerName;
           }
+          playerColors[i].color = players[i].color;
         } else {
           if (playerNames[i]) {
             playerNames[i].text = "";
           }
+          playerColors[i].color = new Color(0,0,0,0);
         }
         
       }

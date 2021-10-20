@@ -18,8 +18,6 @@ public class MatchManager : NetworkBehaviour
   public Button playButton;
   public bool inGame = false;
   public static MatchManager manager;
-  public Material[] playerMaterials = new Material[4];
-  public Image[] playerColors = new Image[4];
   public GameObject forestPrefab;
   public GameObject currentMapInstance;
   public AudioSource song;
@@ -45,9 +43,6 @@ public class MatchManager : NetworkBehaviour
     if (this.isServer) {
       forest.GetComponent<Button>().interactable = true;
       checkMark.GetComponent<Button>().interactable = true;
-    }
-    for(int i = 0; i < playerColors.Length; i++){
-      playerColors[i].color = playerMaterials[i].color;
     }
   }
   
@@ -87,7 +82,7 @@ public class MatchManager : NetworkBehaviour
       players[i].GetComponent<Character>().enabled = true;
       players[i].dead = false;
       players[i].GetComponentInChildren<Impact>().transform.position = spawns[i].transform.position;
-      players[i].GetComponentInChildren<SkinnedMeshRenderer>().material = playerMaterials[i];
+      players[i].GetComponentInChildren<SkinnedMeshRenderer>().material.color = players[i].color;
     }
   }
 
