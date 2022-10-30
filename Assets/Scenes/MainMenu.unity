@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731704, g: 0.13414668, b: 0.12107805, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731697, g: 0.13414674, b: 0.12107822, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -226,6 +226,7 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
+  m_ShouldActivateOnSelect: 1
 --- !u!114 &4873471
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2680,6 +2681,7 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
+  m_ShouldActivateOnSelect: 1
 --- !u!114 &273470038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2824,6 +2826,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 0
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
@@ -13699,8 +13702,6 @@ GameObject:
   - component: {fileID: 1207018273}
   - component: {fileID: 1207018279}
   - component: {fileID: 1207018276}
-  - component: {fileID: 1207018278}
-  - component: {fileID: 1207018277}
   - component: {fileID: 1207018280}
   - component: {fileID: 1207018281}
   m_Layer: 0
@@ -13790,72 +13791,6 @@ MonoBehaviour:
   inGameMenu: {fileID: 3022018472237205880}
   settingsMenu: {fileID: 2065153369}
   picker: {fileID: 1093493468}
---- !u!114 &1207018277
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1207018272}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c080dc3450b727418b7ddb4e0fc10f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  connectToRelayOnAwake: 1
-  relayIP: 66.41.159.125
-  relayPort: 4296
-  forceRelayTraffic: 0
-  relayPassword: 
-  maxServerPlayers: 10
-  serverName: My awesome server!
-  extraServerData: Cool Map 1
-  showOnServerList: 1
-  showDebugLogs: 0
-  serverListUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  isAuthenticated: 0
-  useWebsockets: 0
-  serverID: 0
-  directConnectTimeout: 5
---- !u!114 &1207018278
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1207018272}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d2b44c570cb28644b8762e0b13e7c23, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  host: 66.41.159.125
-  port: 4296
-  noDelay: 0
-  autoConnect: 0
-  invokeFromDispatcher: 1
-  sniffData: 0
-  objectCacheSettings:
-    maxWriters: 2
-    maxReaders: 2
-    maxMessages: 4
-    maxMessageBuffers: 4
-    maxSocketAsyncEventArgs: 32
-    maxActionDispatcherTasks: 16
-    maxAutoRecyclingArrays: 4
-    extraSmallMemoryBlockSize: 16
-    maxExtraSmallMemoryBlocks: 2
-    smallMemoryBlockSize: 64
-    maxSmallMemoryBlocks: 2
-    mediumMemoryBlockSize: 256
-    maxMediumMemoryBlocks: 2
-    largeMemoryBlockSize: 1024
-    maxLargeMemoryBlocks: 2
-    extraLargeMemoryBlockSize: 4096
-    maxExtraLargeMemoryBlocks: 2
-    maxMessageReceivedEventArgs: 4
 --- !u!114 &1207018279
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13877,7 +13812,7 @@ MonoBehaviour:
   serverBatchInterval: 0
   offlineScene: 
   onlineScene: 
-  transport: {fileID: 1207018277}
+  transport: {fileID: 0}
   networkAddress: 66.41.159.125
   maxConnections: 100
   disconnectInactiveConnections: 0
@@ -15464,6 +15399,7 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
+  m_ShouldActivateOnSelect: 1
 --- !u!114 &1446254740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16798,6 +16734,7 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
+  m_ShouldActivateOnSelect: 1
 --- !u!114 &1606340012
 MonoBehaviour:
   m_ObjectHideFlags: 0

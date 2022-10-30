@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using System.Text;
-using Newtonsoft.Json;
 using HSVPicker;
 
 public class MainMenu : MonoBehaviour
@@ -25,9 +24,7 @@ public class MainMenu : MonoBehaviour
     public Text joinError;
     public GameObject errorDialog;
     public GameObject joinDialog;
-    public GameObject matchButtonPrefab;
     public GameObject buttonContainer;
-    public GameObject matchButtonDialog;
     public GameObject inGameMenu;
     public GameObject settingsMenu;
     public ColorPicker picker;
@@ -103,10 +100,6 @@ public class MainMenu : MonoBehaviour
       passwordDialog.SetActive(status);
     }
 
-    public void toggleMatchDialog(bool status) {
-      matchButtonDialog.SetActive(status);
-    }
-
     public void toggleJoinDialog(bool status) {
       joinDialog.SetActive(status);
       joinError.text = "";
@@ -124,15 +117,6 @@ public class MainMenu : MonoBehaviour
       ServerManager.server.Host();
     }
 
-    public void Play() {
-      matchButtonDialog.SetActive(true);
-      StartCoroutine(GetMatches());
-    }
-
-    public void Refresh() {
-      StartCoroutine(GetMatches());
-    }
-
     public void Quit() {
       Application.Quit();
     }
@@ -145,34 +129,6 @@ public class MainMenu : MonoBehaviour
         joinError.text = "";
       } else {
         joinError.text = "Match ID must be 6 digits long.";
-      }
-    }
-
-    
-    public void JoinFromMatch(Match match) {
-      ServerManager.server.matchID = match.MatchID;
-      ServerManager.server.password = joinPassword.text;
-      ServerManager.server.Join();
-    }
-
-    IEnumerator GetMatches() {
-      foreach (Transform obj in buttonContainer.transform) {
-        Destroy(obj.gameObject);
-      }
-      UnityWebRequest req = UnityWebRequest.Get($"http://66.41.159.125:8090/getMatches");
-      yield return req.SendWebRequest();
-      int ix = 0;
-      Match[] matches = JsonConvert.DeserializeObject<Match[]>(Encoding.UTF8.GetString(req.downloadHandler.data));
-      RectTransform containerRect = buttonContainer.GetComponent<RectTransform>();
-      containerRect.sizeDelta = new Vector2(containerRect.sizeDelta.x, matchButtonPrefab.GetComponent<RectTransform>().sizeDelta.y * matches.Length + 10);
-      foreach(Match match in matches) {
-        GameObject button = Instantiate(matchButtonPrefab) as GameObject;
-        button.transform.SetParent(buttonContainer.transform);
-        button.GetComponent<MatchButton>().SetMatch(match);
-        RectTransform rect = button.GetComponent<RectTransform>();
-        rect.localScale = new Vector3(1,1,1);
-        rect.anchoredPosition3D = new Vector3(-10, -matchButtonPrefab.GetComponent<RectTransform>().rect.height * ((float)ix - (.5f * (matches.Length - 1))), 0);
-        ix++;
       }
     }
 }

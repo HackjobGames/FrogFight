@@ -18,21 +18,21 @@ public class ServerManager : NetworkManager
   public GameObject lobbyUIPrefab;
   public GameObject lobbyUI;
   public static ServerManager server;
-  DarkReflectiveMirrorTransport darkTransport;
+  public Transport networkTransport;
 
   public override void Start() {
     base.Start();
-    darkTransport = GetComponent<DarkReflectiveMirrorTransport>();
+    transport = gameObject.GetComponent<Transport>();
     server = this;
   }
 
   public void Host() {
-    ServerManager.server.StartHost();
-    StartCoroutine(GetHostID(darkTransport.serverID));
+    // ServerManager.server.StartHost();
+    // StartCoroutine(GetHostID());
   }
 
   public void Join() {
-    StartCoroutine(TryConnect());
+    // StartCoroutine(TryConnect());
   }
   public void Disconnect() {
     if (MatchManager.manager.isServer) {
@@ -52,40 +52,6 @@ public class ServerManager : NetworkManager
     return obj;
   }
 
-  IEnumerator GetHostID(int serverID) {
-    string privateString = isPrivate ? "true" : "false";
-    UnityWebRequest req = UnityWebRequest.Get($"http://66.41.159.125:8090/host?relayID={serverID}&hostName={Save.save.name}&isPrivate={privateString}&password={password}&maxPlayers={maxPlayers}");
-    yield return req.SendWebRequest();
-
-    if(req.result != UnityWebRequest.Result.Success){
-      print(req.error);
-    } else {
-      print(Encoding.UTF8.GetString(req.downloadHandler.data));
-      matchID = Encoding.UTF8.GetString(req.downloadHandler.data);
-      lobbyUI = Instantiate(lobbyUIPrefab) as GameObject;
-      NetworkServer.Spawn(lobbyUI);
-    }
-  }
-
-  IEnumerator TryConnect() {
-    UnityWebRequest req = UnityWebRequest.Get($"http://66.41.159.125:8090/join?matchID={matchID}&password={password}");
-    yield return req.SendWebRequest();
-    string responseMessage = Encoding.UTF8.GetString(req.downloadHandler.data);
-    if(req.result != UnityWebRequest.Result.Success) {
-      MainMenu.menu.apiError.text = responseMessage;
-      MainMenu.menu.errorDialog.SetActive(true);
-    } else {
-      if (responseMessage != "private") {
-        networkAddress = responseMessage;
-        StartClient();
-        StartCoroutine(WaitForLobbySpawn());
-        MainMenu.menu.passwordDialog.SetActive(false);
-        MainMenu.menu.mainMenuUi.SetActive(false);
-      } else {
-        MainMenu.menu.passwordDialog.SetActive(true);
-      }
-    }
-  }
   IEnumerator WaitForLobbySpawn() {
     yield return new WaitUntil(() => GameObject.FindObjectOfType<GameGlobals>());
     lobbyUI = GameObject.FindObjectOfType<GameGlobals>().gameObject;
