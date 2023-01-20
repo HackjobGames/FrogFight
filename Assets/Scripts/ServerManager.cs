@@ -46,9 +46,16 @@ public class ServerManager : NetworkManager
     return obj;
   }
 
+  public override void OnClientConnect() {
+    base.OnClientConnect();
+    StartCoroutine(WaitForLobbySpawn());
+  }
+
+
   IEnumerator WaitForLobbySpawn() {
     yield return new WaitUntil(() => GameObject.FindObjectOfType<GameGlobals>());
     lobbyUI = GameObject.FindObjectOfType<GameGlobals>().gameObject;
   }
+
 
 }

@@ -78,7 +78,7 @@ public class MainMenu : MonoBehaviour
     }
 
     public void UpdateRoomCode() {
-      roomInput.text = roomInput.text.ToUpper();
+      roomInput.text = roomInput.text;
     }
 
     public void toggleErrorDialog(bool status) {

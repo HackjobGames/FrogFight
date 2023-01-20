@@ -810,7 +810,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &79543361
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13233,13 +13233,11 @@ MonoBehaviour:
   - {fileID: 6631824366866260547, guid: fdd9b8c2731a44f4f889c7f6281560bc, type: 3}
   - {fileID: 5696622811837506397, guid: bc758f7a26a981647a99cda443296690, type: 3}
   timeInterpolationGui: 0
-  matchID: 
-  isPrivate: 0
-  password: 
   maxPlayers: 0
+  connectIp: 
   network: {fileID: 1207018279}
   lobbyUIPrefab: {fileID: 6631824366866260547, guid: fdd9b8c2731a44f4f889c7f6281560bc, type: 3}
-  lobbyUI: {fileID: 6631824366866260547, guid: fdd9b8c2731a44f4f889c7f6281560bc, type: 3}
+  lobbyUI: {fileID: 0}
   networkTransport: {fileID: 1207018282}
 --- !u!114 &1207018280
 MonoBehaviour:
@@ -15796,14 +15794,14 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1606340012}
   m_TextComponent: {fileID: 235447168}
   m_Placeholder: {fileID: 942776579}
-  m_ContentType: 2
+  m_ContentType: 0
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 4
+  m_KeyboardType: 0
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 1
-  m_CharacterLimit: 6
+  m_CharacterValidation: 0
+  m_CharacterLimit: 100
   m_OnSubmit:
     m_PersistentCalls:
       m_Calls:
