@@ -1,19 +1,12 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using Mirror;
-using UnityEngine.Networking;
-using System.Text;
 
 
 public class ServerManager : NetworkManager
 {
-  public string matchID = null;
-  public bool isPrivate = false;
-  public string password = null;
   public int maxPlayers = 0;
+  public string connectIp = "";
   public NetworkManager network;
   public GameObject lobbyUIPrefab;
   public GameObject lobbyUI;
@@ -27,12 +20,13 @@ public class ServerManager : NetworkManager
   }
 
   public void Host() {
-    // ServerManager.server.StartHost();
-    // StartCoroutine(GetHostID());
+    ServerManager.server.StartHost();
+    lobbyUI = Instantiate(lobbyUIPrefab) as GameObject;
+    NetworkServer.Spawn(lobbyUI);
   }
 
   public void Join() {
-    // StartCoroutine(TryConnect());
+    ServerManager.server.StartClient(new System.Uri(connectIp));
   }
   public void Disconnect() {
     if (MatchManager.manager.isServer) {

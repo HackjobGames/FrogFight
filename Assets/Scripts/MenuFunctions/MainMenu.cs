@@ -1,11 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.Networking;
-using System.Text;
 using HSVPicker;
 
 public class MainMenu : MonoBehaviour
@@ -84,7 +78,6 @@ public class MainMenu : MonoBehaviour
     }
 
     public void UpdateRoomCode() {
-      print(roomInput.text.ToUpper());
       roomInput.text = roomInput.text.ToUpper();
     }
 
@@ -105,14 +98,7 @@ public class MainMenu : MonoBehaviour
       joinError.text = "";
     }
 
-    public void toggleIsPrivate() {
-      hostPassword.interactable = isPrivate.isOn;
-      hostPassword.text = isPrivate.isOn ? hostPassword.text : "";
-    }
-
     public void Host() {
-      ServerManager.server.isPrivate = isPrivate.isOn;
-      ServerManager.server.password = hostPassword.text;
       ServerManager.server.maxPlayers = maxPlayers.value + 2;
       ServerManager.server.Host();
     }
@@ -122,13 +108,7 @@ public class MainMenu : MonoBehaviour
     }
 
     public void Join() {
-      if (roomInput.text.Length == 6) {
-        ServerManager.server.matchID = roomInput.text;
-        ServerManager.server.password = joinPassword.text;
-        ServerManager.server.Join();
-        joinError.text = "";
-      } else {
-        joinError.text = "Match ID must be 6 digits long.";
-      }
+      ServerManager.server.connectIp = roomInput.text;
+      ServerManager.server.Join();
     }
 }

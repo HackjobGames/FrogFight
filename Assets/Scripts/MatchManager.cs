@@ -1,10 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Mirror;
 using UnityEngine.UI;
-using UnityEngine.Networking;
 
 public class MatchManager : NetworkBehaviour
 {
@@ -107,10 +104,6 @@ public class MatchManager : NetworkBehaviour
 
   public IEnumerator DelayEndGame() {
     yield return new WaitForSeconds(3);
-    if (this.isServer) {
-      UnityWebRequest req = UnityWebRequest.Get($"http://66.41.159.125:8090/ping?matchID={ServerManager.server.matchID}");
-      req.SendWebRequest();
-    }
     Player[] players = GameGlobals.globals.GetPlayers();
     foreach(Player player in players) {
       player.GetComponent<Character>().ResetCharacter();
@@ -138,8 +131,5 @@ public class MatchManager : NetworkBehaviour
     MainMenu.menu.mainMenuUi.SetActive(true);
     MainMenu.menu.menuCamera.SetActive(true);
     Cursor.lockState = CursorLockMode.None;
-    string route = this.isServer ? "Match" : "Player"; 
-    UnityWebRequest req = UnityWebRequest.Get($"http://66.41.159.125:8090/remove{route}?matchID={ServerManager.server.matchID}");
-    req.SendWebRequest();
   }
 }

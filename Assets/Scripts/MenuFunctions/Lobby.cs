@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
 
@@ -8,7 +5,6 @@ public class Lobby : NetworkBehaviour
 {
   public Image menu;
   public Button menuButton;
-  public Text codeDisplay;
 
   public static Lobby lobby;
 
@@ -18,7 +14,6 @@ public class Lobby : NetworkBehaviour
     if (this.isServer) {
       menuButton.interactable = true;
     }
-    codeDisplay.text = "Code: " + ServerManager.server.matchID;
   }
 
   public void toggleMenu(bool enable) {
@@ -27,10 +22,6 @@ public class Lobby : NetworkBehaviour
 
   public void Disconnect() {
     ServerManager.server.Disconnect();
-  }
-
-  public void CopyCode() {
-    GUIUtility.systemCopyBuffer = ServerManager.server.matchID;
   }
     
 }
