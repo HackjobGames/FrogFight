@@ -10,7 +10,6 @@ public class MainMenu : MonoBehaviour
     public InputField hostPassword;
     public InputField joinPassword;
     public Toggle isPrivate;
-    public Dropdown maxPlayers;
     public GameObject passwordDialog;
     public GameObject menuCamera;
     public GameObject mainMenuUi;
@@ -99,8 +98,13 @@ public class MainMenu : MonoBehaviour
     }
 
     public void Host() {
-      ServerManager.server.maxPlayers = maxPlayers.value + 2;
-      ServerManager.server.Host();
+      if (nameEntry.text.Length == 0) {
+        toggleErrorDialog(true);
+        apiError.text = "You need to enter a name before entering a game.";
+      } else {
+        ServerManager.server.Host();
+      }
+      
     }
 
     public void Quit() {
@@ -108,7 +112,12 @@ public class MainMenu : MonoBehaviour
     }
 
     public void Join() {
-      ServerManager.server.connectIp = roomInput.text;
-      ServerManager.server.Join();
+      if (nameEntry.text.Length == 0) {
+        toggleErrorDialog(true);
+        apiError.text = "You need to enter a name before entering a game.";
+      } else {
+        ServerManager.server.connectIp = roomInput.text;
+        ServerManager.server.Join();
+      }
     }
 }

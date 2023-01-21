@@ -5,7 +5,6 @@ using Mirror;
 
 public class ServerManager : NetworkManager
 {
-  public int maxPlayers = 0;
   public string connectIp = "";
   public NetworkManager network;
   public GameObject lobbyUIPrefab;
@@ -26,7 +25,7 @@ public class ServerManager : NetworkManager
   }
 
   public void Join() {
-    ServerManager.server.StartClient(new System.Uri(connectIp));
+    ServerManager.server.StartClient(new System.Uri($"kcp://{connectIp}"));
   }
   public void Disconnect() {
     if (MatchManager.manager.isServer) {
@@ -56,6 +55,5 @@ public class ServerManager : NetworkManager
     yield return new WaitUntil(() => GameObject.FindObjectOfType<GameGlobals>());
     lobbyUI = GameObject.FindObjectOfType<GameGlobals>().gameObject;
   }
-
 
 }
