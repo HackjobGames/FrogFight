@@ -41,6 +41,7 @@ public class MatchManager : NetworkBehaviour
       forest.GetComponent<Button>().interactable = true;
       checkMark.GetComponent<Button>().interactable = true;
     }
+    ResetGameState();
   }
   
   [ClientRpc]
@@ -104,6 +105,10 @@ public class MatchManager : NetworkBehaviour
 
   public IEnumerator DelayEndGame() {
     yield return new WaitForSeconds(3);
+    ResetGameState();
+  }
+
+  public void ResetGameState() {
     Player[] players = GameGlobals.globals.GetPlayers();
     foreach(Player player in players) {
       player.GetComponent<Character>().ResetCharacter();
@@ -121,7 +126,7 @@ public class MatchManager : NetworkBehaviour
       playButton.interactable = true;
       ServerManager.server.DestroyNetworkObject(currentMapInstance);
       serverLoaded = false;
-    }
+    }  
   }
 
   override public void OnStopClient() {
